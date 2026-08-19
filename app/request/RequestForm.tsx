@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { CHURCH_NAME, EMERGENCY_NUMBER, REVIEW_CADENCE } from '@/lib/church'
+import { CATEGORIES, type Category } from '@/lib/categories'
 import { getBrowserId } from '@/lib/browserId'
 import { supabase } from '@/lib/supabase'
 
@@ -14,6 +15,7 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
   const [body, setBody] = useState('')
   const [isMember, setIsMember] = useState<Membership>('unanswered')
   const [wantsCounseling, setWantsCounseling] = useState(false)
+  const [categories, setCategories] = useState<Category[]>([])
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [phone, setPhone] = useState('')
@@ -50,6 +52,7 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
       // 'unanswered' is stored as null: the question is optional, and declining
       // to answer is a real answer rather than a third category.
       p_is_member: isMember === 'unanswered' ? null : isMember,
+      p_categories: categories,
       p_first_name: isNamed ? firstName.trim() : null,
       p_last_name: isNamed ? lastName.trim() : null,
       p_phone: isNamed ? phone.trim() : null,
@@ -184,6 +187,32 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
               autoFocus
             />
           </div>
+
+          <fieldset className="field">
+            <legend className="label">What is it about?</legend>
+            <p className="hint">
+              Tick as many as fit, or none at all. It helps the prayer team pray
+              through similar things together.
+            </p>
+            <div className="choices">
+              {CATEGORIES.map(({ value, label }) => (
+                <label key={value} className="choice">
+                  <input
+                    type="checkbox"
+                    checked={categories.includes(value)}
+                    onChange={(event) =>
+                      setCategories((current) =>
+                        event.target.checked
+                          ? [...current, value]
+                          : current.filter((item) => item !== value),
+                      )
+                    }
+                  />
+                  <span>{label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
 
           {isNamed && (
             <>

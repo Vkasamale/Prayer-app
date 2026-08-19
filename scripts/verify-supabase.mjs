@@ -45,11 +45,25 @@ const submitted = await supabase.rpc('submit_prayer', {
   p_browser_id: '00000000-0000-4000-8000-000000000001',
   p_kind: 'prayer',
   p_is_member: null,
+  p_categories: ['provision', 'family'],
   p_first_name: null,
   p_last_name: null,
   p_phone: null,
 })
 check('anonymous submission accepted', !submitted.error, submitted.error?.message)
+
+// Categories are an enum in the database, so a made-up one must be refused
+// rather than quietly stored.
+const badCategory = await supabase.rpc('submit_prayer', {
+  p_body: 'AUTOMATED CHECK - should never be stored',
+  p_browser_id: '00000000-0000-4000-8000-000000000001',
+  p_categories: ['not_a_real_category'],
+})
+check(
+  'unknown category refused',
+  Boolean(badCategory.error),
+  badCategory.error ? '' : 'it was accepted',
+)
 
 // 2. An empty request is refused. The database is the last line, not the form.
 const empty = await supabase.rpc('submit_prayer', {

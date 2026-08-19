@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { CHURCH_NAME } from '@/lib/church'
+import { CATEGORIES, categoryLabel } from '@/lib/categories'
 
 // The prayer team's view, worked through on the prayer day.
 //
@@ -32,6 +33,7 @@ type Submission = {
   body: string | null
   kind: 'prayer' | 'counseling'
   is_member: 'yes' | 'no' | null
+  categories: string[]
   prayed_over_at: string | null
   flagged_urgent: boolean
   redacted_at: string | null
@@ -133,6 +135,7 @@ function PrayerList() {
   const [rows, setRows] = useState<Submission[] | null>(null)
   const [stats, setStats] = useState<Stats | null>(null)
   const [showPrayed, setShowPrayed] = useState(false)
+  const [grouped, setGrouped] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
@@ -229,65 +232,40 @@ function PrayerList() {
           </button>
         </div>
 
+        {shown.length > 0 && (
+          <label className="choice group-toggle">
+            <input
+              type="checkbox"
+              checked={grouped}
+              onChange={(event) => setGrouped(event.target.checked)}
+            />
+            <span>Group by what it is about</span>
+          </label>
+        )}
+
         {shown.length === 0 ? (
           <p className="empty">
             {showPrayed
               ? 'Nothing has been marked prayed over yet.'
               : 'Nothing is waiting. The list is clear.'}
           </p>
+        ) : grouped ? (
+          groupByCategory(shown).map(({ key, label, rows: groupRows }) => (
+            <section key={key} className="group">
+              <h2 className="group-heading">
+                {label} <span className="group-count">{groupRows.length}</span>
+              </h2>
+              <ul className="requests">
+                {groupRows.map((row) => (
+                  <Request key={row.id} row={row} update={update} remove={remove} />
+                ))}
+              </ul>
+            </section>
+          ))
         ) : (
           <ul className="requests">
             {shown.map((row) => (
-              <li
-                key={row.id}
-                className={'request' + (row.flagged_urgent ? ' request-urgent' : '')}
-              >
-                <div className="request-meta">
-                  <span className="who">
-                    {row.is_named ? (row.first_name ?? 'Name removed') : 'Anonymous'}
-                  </span>
-                  {row.kind === 'counseling' && (
-                    <span className="tag tag-counseling">Wants to talk</span>
-                  )}
-                  {row.flagged_urgent && <span className="tag tag-urgent">Urgent</span>}
-                  <span className="when">
-                    {new Date(row.created_at).toLocaleDateString(undefined, {
-                      day: 'numeric',
-                      month: 'short',
-                    })}
-                  </span>
-                </div>
-
-                <p className="request-body">
-                  {row.body ?? (
-                    <em className="cleared">Cleared by the retention policy.</em>
-                  )}
-                </p>
-
-                <div className="request-actions">
-                  <button
-                    className="quiet-button"
-                    onClick={() =>
-                      update(row.id, {
-                        prayed_over_at: row.prayed_over_at
-                          ? null
-                          : new Date().toISOString(),
-                      })
-                    }
-                  >
-                    {row.prayed_over_at ? 'Move back to waiting' : 'Mark prayed over'}
-                  </button>
-                  <button
-                    className="quiet-button"
-                    onClick={() => update(row.id, { flagged_urgent: !row.flagged_urgent })}
-                  >
-                    {row.flagged_urgent ? 'Remove urgent flag' : 'Flag urgent'}
-                  </button>
-                  <button className="quiet-button danger" onClick={() => remove(row.id)}>
-                    Delete
-                  </button>
-                </div>
-              </li>
+              <Request key={row.id} row={row} update={update} remove={remove} />
             ))}
           </ul>
         )}
@@ -334,4 +312,89 @@ function Stat({ value, label }: { value: number; label: string }) {
       <span className="stat-label">{label}</span>
     </li>
   )
+}
+
+type RowAction = (id: string, patch: Record<string, unknown>) => void
+
+function Request({
+  row,
+  update,
+  remove,
+}: {
+  row: Submission
+  update: RowAction
+  remove: (id: string) => void
+}) {
+  return (
+    <li className={'request' + (row.flagged_urgent ? ' request-urgent' : '')}>
+      <div className="request-meta">
+        <span className="who">
+          {row.is_named ? (row.first_name ?? 'Name removed') : 'Anonymous'}
+        </span>
+        {row.kind === 'counseling' && <span className="tag tag-counseling">Wants to talk</span>}
+        {row.flagged_urgent && <span className="tag tag-urgent">Urgent</span>}
+        <span className="when">
+          {new Date(row.created_at).toLocaleDateString(undefined, {
+            day: 'numeric',
+            month: 'short',
+          })}
+        </span>
+      </div>
+
+      <p className="request-body">
+        {row.body ?? <em className="cleared">Cleared by the retention policy.</em>}
+      </p>
+
+      {/* Shown even when grouped: a request filed under provision may also be
+          about family, and the team should see that without hunting for it. */}
+      {row.categories.length > 1 && (
+        <p className="also">Also: {row.categories.map(categoryLabel).join(', ')}</p>
+      )}
+
+      <div className="request-actions">
+        <button
+          className="quiet-button"
+          onClick={() =>
+            update(row.id, {
+              prayed_over_at: row.prayed_over_at ? null : new Date().toISOString(),
+            })
+          }
+        >
+          {row.prayed_over_at ? 'Move back to waiting' : 'Mark prayed over'}
+        </button>
+        <button
+          className="quiet-button"
+          onClick={() => update(row.id, { flagged_urgent: !row.flagged_urgent })}
+        >
+          {row.flagged_urgent ? 'Remove urgent flag' : 'Flag urgent'}
+        </button>
+        <button className="quiet-button danger" onClick={() => remove(row.id)}>
+          Delete
+        </button>
+      </div>
+    </li>
+  )
+}
+
+// A request appears under every category it was given, so the team can pray
+// through provision in one pass without losing the ones that are also about
+// family. Requests with no categories collect at the end under "Not sorted",
+// which is a normal state: ticking a box is optional and always will be.
+function groupByCategory(rows: Submission[]) {
+  // Typed loosely on purpose: CATEGORIES is `as const`, so an inferred type
+  // would not admit the "Not sorted" group appended below.
+  const groups: { key: string; label: string; rows: Submission[] }[] = CATEGORIES.map(
+    ({ value, label }) => ({
+      key: value as string,
+      label: label as string,
+      rows: rows.filter((row) => row.categories.includes(value)),
+    }),
+  ).filter((group) => group.rows.length > 0)
+
+  const unsorted = rows.filter((row) => row.categories.length === 0)
+  if (unsorted.length > 0) {
+    groups.push({ key: 'unsorted', label: 'Not sorted', rows: unsorted })
+  }
+
+  return groups
 }

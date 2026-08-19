@@ -503,3 +503,34 @@ h1 {
 }
 
 .stat-note + .stat-note { margin-top: 0.4rem; }
+
+/* --- Grouped list -------------------------------------------------------- */
+
+.group-toggle { align-self: flex-start; }
+
+.group { margin: 0; }
+
+.group-heading {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 1.15rem;
+  color: #eef3f2;
+  margin: 0 0 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.group-count {
+  font-family: var(--body);
+  font-size: 0.75rem;
+  color: var(--quiet);
+}
+
+.also {
+  margin: -0.3rem 0 0.9rem;
+  font-size: 0.78rem;
+  color: var(--quiet);
+}
