@@ -223,6 +223,10 @@ create view submissions_for_team with (security_invoker = off) as
   left join submitters sub on sub.id = s.submitter_id
   where is_team_member();
 
+-- Supabase grants privileges on new objects in the public schema to anon and
+-- authenticated by default, and that applies to views as well as tables. Revoke
+-- before granting, or the public key can reach this view.
+revoke all on submissions_for_team from anon, authenticated;
 grant select on submissions_for_team to authenticated;
 
 -- ---------------------------------------------------------------------------

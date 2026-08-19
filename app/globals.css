@@ -1,0 +1,192 @@
+/* Flood Church prayer app.
+   A dim sanctuary at dusk: the person using this is at the back of the room and
+   does not want to be looked at. Nothing on screen is bright except one warm
+   light, and the amber accent appears exactly once. */
+
+:root {
+  --night:  #101a1f;
+  --deep:   #17252c;
+  --raised: #1d2f38;
+  --line:   #263a44;
+  --mist:   #d5dedd;
+  --quiet:  #8fa1a4;
+  --candle: #d9a441;
+
+  --display: 'Petrona', Georgia, 'Times New Roman', serif;
+  --body: 'Karla', ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--night);
+  color: var(--mist);
+  font-family: var(--body);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100svh;
+  line-height: 1.6;
+}
+
+/* The one lit thing on the page. Sits behind the heading and fades out well
+   before the choices, so the eye lands on the words first. */
+.glow {
+  position: fixed;
+  top: -18vh;
+  left: 50%;
+  width: min(46rem, 130vw);
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(217, 164, 65, 0.14) 0%,
+    rgba(217, 164, 65, 0.05) 38%,
+    transparent 68%
+  );
+  pointer-events: none;
+  animation: breathe 11s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.75; }
+  50%      { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glow { animation: none; }
+  * { transition: none !important; }
+}
+
+.page {
+  position: relative;
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-height: 100svh;
+}
+
+/* --- Crisis notice ------------------------------------------------------- */
+/* Permanent, above everything, shown before anyone types a word. It is not
+   triggered by anything and never hides. */
+
+.notice {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--candle);
+  border-radius: 2px;
+  background: var(--deep);
+  padding: 0.9rem 1rem;
+  font-size: 0.875rem;
+  color: var(--quiet);
+}
+
+.notice p { margin: 0; }
+.notice p + p { margin-top: 0.5rem; }
+
+.notice strong {
+  color: var(--mist);
+  font-weight: 600;
+}
+
+.notice a {
+  color: var(--candle);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(217, 164, 65, 0.4);
+  white-space: nowrap;
+}
+
+.notice a:hover { border-bottom-color: var(--candle); }
+
+/* --- Heading ------------------------------------------------------------- */
+
+.eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--quiet);
+  margin: 0 0 0.75rem;
+}
+
+h1 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2rem, 9vw, 2.75rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.75rem;
+  color: #eef3f2;
+}
+
+.lede {
+  margin: 0;
+  color: var(--quiet);
+  font-size: 1rem;
+  max-width: 28rem;
+}
+
+/* --- The two paths ------------------------------------------------------- */
+/* Both are full-weight cards. Neither is styled as the lesser option: the
+   anonymous path is the reason this app exists and is not a fallback. */
+
+.paths {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.path {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: var(--deep);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 1.15rem 1.25rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.path:hover {
+  background: var(--raised);
+  border-color: #34505d;
+}
+
+.path:focus-visible {
+  outline: 2px solid var(--candle);
+  outline-offset: 2px;
+}
+
+.path-name {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #eef3f2;
+  margin: 0 0 0.3rem;
+}
+
+.path-detail {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--quiet);
+}
+
+.footnote {
+  margin: auto 0 0;
+  padding-top: 1.5rem;
+  font-size: 0.8rem;
+  color: #6f8285;
+  border-top: 1px solid var(--line);
+}
+
+.footnote p { margin: 0; }
+.footnote p + p { margin-top: 0.4rem; }
