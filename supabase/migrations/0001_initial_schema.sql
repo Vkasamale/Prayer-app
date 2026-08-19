@@ -251,7 +251,11 @@ create function purge_expired_submissions() returns integer
     select count(*)::integer from purged;
 $fn$;
 
-revoke all on function purge_expired_submissions() from public;
+-- from public removes only the implicit grant. Supabase also grants execute to
+-- anon and authenticated explicitly, so both must be named or this function
+-- stays callable by the public key — and it clears the text of every request
+-- past its retention window.
+revoke all on function purge_expired_submissions() from public, anon, authenticated;
 
 -- NOT SCHEDULED YET. This function does nothing until something calls it. Wire
 -- it to pg_cron in the Supabase dashboard, or to a Vercel cron route, before

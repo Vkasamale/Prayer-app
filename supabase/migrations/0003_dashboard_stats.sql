@@ -49,7 +49,9 @@ language sql stable security definer set search_path = public, pg_catalog as $fn
   where is_team_member();
 $fn$;
 
-revoke all on function dashboard_stats() from public;
+-- from public alone is not enough: Supabase grants execute to anon and
+-- authenticated explicitly through default privileges, and that grant survives.
+revoke all on function dashboard_stats() from public, anon, authenticated;
 grant execute on function dashboard_stats() to authenticated;
 
 commit;
