@@ -190,3 +190,121 @@ h1 {
 
 .footnote p { margin: 0; }
 .footnote p + p { margin-top: 0.4rem; }
+
+/* --- Form ---------------------------------------------------------------- */
+
+.field {
+  margin: 0 0 1.5rem;
+  padding: 0;
+  border: 0;
+}
+
+.label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--mist);
+  padding: 0;
+  margin: 0 0 0.25rem;
+}
+
+.hint {
+  margin: 0 0 0.6rem;
+  font-size: 0.8rem;
+  color: var(--quiet);
+}
+
+.input {
+  width: 100%;
+  background: var(--deep);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--mist);
+  font: inherit;
+  padding: 0.7rem 0.8rem;
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--candle);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 9rem;
+  line-height: 1.6;
+}
+
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Generous hit area: this is used one-handed, on a phone, often by someone
+   who is upset. */
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.4rem 0.8rem 0.4rem 0.6rem;
+  background: var(--deep);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.choice:hover { background: var(--raised); }
+
+.choice input {
+  accent-color: var(--candle);
+  width: 1.05rem;
+  height: 1.05rem;
+  margin: 0;
+  flex: none;
+}
+
+.choice:focus-within {
+  outline: 2px solid var(--candle);
+  outline-offset: 1px;
+}
+
+.error {
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid #7c4a3a;
+  border-left: 3px solid #c8705a;
+  border-radius: 2px;
+  background: #2a1d1b;
+  color: #eccfc7;
+  font-size: 0.875rem;
+}
+
+.send {
+  width: 100%;
+  min-height: 3rem;
+  font: inherit;
+  font-weight: 600;
+  color: #16212a;
+  background: var(--candle);
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.send:hover:not(:disabled) { background: #e8b559; }
+
+.send:focus-visible {
+  outline: 2px solid var(--mist);
+  outline-offset: 2px;
+}
+
+.send:disabled {
+  background: var(--line);
+  color: var(--quiet);
+  cursor: default;
+}
