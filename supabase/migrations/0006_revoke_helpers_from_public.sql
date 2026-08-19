@@ -19,12 +19,16 @@ revoke all on function is_leadership()             from public, anon, authentica
 revoke all on function purge_expired_submissions() from public, anon, authenticated;
 revoke all on function dashboard_stats()           from public, anon, authenticated;
 
--- The team's own call goes back, for the signed-in role only.
+-- The team's own calls go back, for the signed-in role only.
 grant execute on function dashboard_stats() to authenticated;
 
--- is_team_member() and is_leadership() stay closed to everyone. They are called
--- from inside policies and views, which run as the definer, so no caller needs
--- the privilege directly.
+-- Corrected in 0007: this file originally left is_team_member() and
+-- is_leadership() closed to everyone, reasoning that policies run as the
+-- definer. They do not — a row-level security policy expression is evaluated as
+-- the calling role, so the team needs execute on the helpers its own policies
+-- call, and revoking from everyone locked the team out along with the public.
+grant execute on function is_team_member() to authenticated;
+grant execute on function is_leadership() to authenticated;
 --
 -- purge_expired_submissions() stays closed too. Retention is a scheduled job,
 -- never something triggered from a browser.
