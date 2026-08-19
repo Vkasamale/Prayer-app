@@ -36,7 +36,10 @@ alter table submissions
 -- submit_prayer takes the counseling contact details.
 -- ---------------------------------------------------------------------------
 
+-- Both signatures: the one this replaces, and the one it creates. Dropping only
+-- the old one meant a re-run collided with its own previous attempt.
 drop function if exists submit_prayer(text, uuid, submission_kind, membership_answer, prayer_category[], text, text, text);
+drop function if exists submit_prayer(text, uuid, submission_kind, membership_answer, prayer_category[], text, text, text, text, boolean, contact_preference);
 
 create function submit_prayer(
   p_body             text,
