@@ -1,41 +1,95 @@
 # Next session
 
-> **Crisis escalation protocol is decided** (2026-08-19). See PROJECT_BRIEF.md section 10b. Outstanding piece: Vincent supplies the church emergency number on 2026-08-20, and confirms whether that phone is answered outside service hours. The submission form is unblocked.
+## 0. Do this first — the live site is broken until you do
 
-## Setup
-- No repo created yet.
-- No accounts, hosting, or domains set up yet.
-- Stack: PWA, no backend framework chosen yet.
+Run `supabase/migrations/0010_anonymous_counseling_contact.sql` in the Supabase
+SQL editor.
 
-## 0. Do this first
-Get the church emergency number from Vincent and confirm whether that phone is answered outside service hours. If it is not, the crisis screen must say so plainly. The crisis protocol itself is settled — PROJECT_BRIEF.md section 10b.
+The deployed form calls `submit_prayer` with the new contact parameters, and the
+database function does not have them yet, so **every submission on
+send-a-prayer.vercel.app fails** until 0010 is applied. Not only counseling ones.
 
-## 1. Moderation — decided
-Raw feed, no filter. The prayer team deletes junk by hand, so the team view needs a delete action. See PROJECT_BRIEF.md section 10c.
+Then confirm it worked:
 
-## 2. Counseling contact method — mostly settled
-Named submitters give a phone number, so the prayer team calls. Remaining question: what a counseling request looks like on the anonymous path, where there is nobody to call. Either the option is hidden there, or it shows a one-way "here is how to reach us" instead.
+```
+npm run verify
+```
 
-## 3. Build order once above is settled
-1. Identity choice screen — named (first name, last name, phone) or anonymous, shown before anything else
-2. Optional "Are you part of Flood Church?" question (Yes / No / Prefer not to say), both paths
-3. Submission form (free text; name/phone carried over when named)
-4. Prayer team view (list, mark as prayed-over, delete junk)
-5. Prayer team dashboard (counts: total, distinct submitters, unprayed-over, repeats, membership breakdown)
-6. Counseling request flag (distinct from general prayer submission)
-7. QR code generation (single static code, lowest priority, do last)
+That script may itself need updating for the new signature — it was written
+against the older one. Fixing it is the second task.
 
-## Closed — do not re-test
-(nothing yet, project hasn't started)
+## 1. Confirm which migrations are actually applied
 
-## Decided 2026-08-19
-- Identity choice is the first screen: named (first name, last name, phone) or anonymous. Anonymous stays anonymous, permanently.
-- Distinct submitters are counted via an opaque browser-local ID, which carries no identifying data. See PROJECT_BRIEF.md section 10a.
-- The prayer team gets a dashboard of counts, not analytics on individuals.
+Applied and confirmed during the last session: 0001–0007, 0009.
+Uncertain: **0008** (the retention schedule). Check with:
 
-## Still outstanding
-- Church emergency number, and whether it is answered out of hours (see "Do this first")
-- Counseling on the anonymous path
-- Anonymous retention window: 30 days assumed, 90 also fine — confirm with Vincent
-- Country the church is in, for the data-protection question on the indefinite contact database
-- Whether one QR code is enough or church wants multiple
+```sql
+select jobname, schedule, active from cron.job;
+```
+
+If nothing comes back, run `0008_schedule_retention.sql`. Without it the 90-day
+deletion the app promises on its own pages does not happen.
+
+## 2. Clear the test rows
+
+Two obvious markers were used: `WALKTHROUGH TEST%` and `AUTOMATED CHECK%` in the
+body, plus a submitter with the last name `Deleteme`. Remove those rows from
+`submissions` and `submitters` in the SQL editor.
+
+## 3. Point Supabase auth at the live address
+
+Supabase dashboard → Authentication → URL Configuration. Set **Site URL** to
+`https://send-a-prayer.vercel.app` and add it to **Redirect URLs**, or team
+sign-in will not work on the deployed site. It has only ever been tested on
+localhost.
+
+## 4. Test the counseling paths
+
+Never run against real data. Both need checking once 0010 is in:
+
+- Anonymous, ticking "I would like someone to talk to", leaving only a number
+- Named, same
+- Leadership tab shows both, with the WhatsApp and meet-in-person markers
+
+## Where the project stands
+
+Live at **https://send-a-prayer.vercel.app**, public, not announced, no QR code
+printed.
+
+Built and tested end to end: the identity choice, the submission form with
+categories, the prayer team's grouped list, dashboard counts with time windows,
+and the leadership counseling view.
+
+Every decision made so far, with its reasoning, is in `PROJECT_BRIEF.md` sections
+10a–10h. `ROADMAP.md` has the phases. `BACKLOG.md` says what is deliberately not
+being built and why.
+
+## Still to build
+
+1. **QR code** — Phase 2, small, and the last thing before a real trial
+2. **Print-ready QR material** for the church
+3. **A real test run** with 2-3 prayer team members, per the roadmap
+
+## Open questions nobody has answered
+
+- Should an anonymous person be told, before ticking the counseling box, that
+  they cannot be reached without a number? The form says so at the field, but not
+  before the choice.
+- Does the prayer team want several category groups open at once? Only one opens
+  at a time today, which suits working through a theme but not comparing.
+
+## Watch out for
+
+- **Never run `npx next build` while the dev server is running.** It overwrites
+  `.next` underneath the running server, and the app starts throwing module
+  errors that look like real bugs. It cost time twice last session. Use
+  `npx tsc --noEmit` to check types instead.
+- **Supabase grants new objects in `public` to `anon` by default.** Every new
+  table, view or function needs an explicit
+  `revoke ... from public, anon, authenticated`. Revoking `from public` alone is
+  not enough. This caused four separate defects last session; the checks at the
+  bottom of each migration are what caught them, so keep writing them.
+- **Row-level security policy expressions run as the calling role**, so the
+  `authenticated` role needs `execute` on any helper function a policy calls.
+- **Apply the migration before pushing code that depends on it.** The live site
+  is currently broken for exactly that reason.
