@@ -16,33 +16,42 @@
 
 begin;
 
-create type prayer_category as enum (
-  'health',
-  'mental_health',
-  'provision',
-  'work_studies',
-  'family',
-  'relationships',
-  'grief',
-  'guidance',
-  'faith',
-  'someone_i_love',
-  'protection',
-  'thanks',
-  'other'
-);
+-- Guarded so this file can be re-run: the first attempt failed partway through,
+-- at the view, and how much of it landed depends on whether the editor wrapped
+-- the whole file in its own transaction.
+do $guard$
+begin
+  if not exists (select 1 from pg_type where typname = 'prayer_category') then
+    create type prayer_category as enum (
+      'health',
+      'mental_health',
+      'provision',
+      'work_studies',
+      'family',
+      'relationships',
+      'grief',
+      'guidance',
+      'faith',
+      'someone_i_love',
+      'protection',
+      'thanks',
+      'other'
+    );
+  end if;
+end $guard$;
 
 alter table submissions
-  add column categories prayer_category[] not null default '{}';
+  add column if not exists categories prayer_category[] not null default '{}';
 
 -- Lets the team view pull "everything touching provision" without scanning
 -- every row once the list grows.
-create index submissions_categories_idx on submissions using gin (categories);
+create index if not exists submissions_categories_idx on submissions using gin (categories);
 
 -- submit_prayer gains a categories argument. Dropped and recreated rather than
 -- replaced: adding a parameter changes the signature, and a bare CREATE OR
 -- REPLACE would leave the old version in place as a second overload.
-drop function submit_prayer(text, uuid, submission_kind, membership_answer, text, text, text);
+drop function if exists submit_prayer(text, uuid, submission_kind, membership_answer, text, text, text);
+drop function if exists submit_prayer(text, uuid, submission_kind, membership_answer, prayer_category[], text, text, text);
 
 create function submit_prayer(
   p_body       text,
@@ -90,12 +99,18 @@ begin
 end;
 $fn$;
 
-revoke all on function submit_prayer(text, uuid, submission_kind, membership_answer, prayer_category[], text, text, text) from public;
+revoke all on function submit_prayer(text, uuid, submission_kind, membership_answer, prayer_category[], text, text, text) from public, anon, authenticated;
 grant execute on function submit_prayer(text, uuid, submission_kind, membership_answer, prayer_category[], text, text, text) to anon, authenticated;
 
 -- The prayer team's view carries the categories through, so the Wednesday
 -- meeting can work theme by theme instead of one request at a time.
-create or replace view submissions_for_team with (security_invoker = off) as
+--
+-- Dropped rather than replaced. CREATE OR REPLACE VIEW can only append columns
+-- at the end, and categories belongs beside the other request fields, so
+-- replacing it in place fails with "cannot change name of view column".
+drop view if exists submissions_for_team;
+
+create view submissions_for_team with (security_invoker = off) as
   select
     s.id,
     s.body,

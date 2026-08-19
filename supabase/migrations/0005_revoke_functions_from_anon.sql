@@ -20,10 +20,14 @@
 
 begin;
 
-revoke all on function dashboard_stats()           from anon, authenticated;
-revoke all on function purge_expired_submissions() from anon, authenticated;
-revoke all on function is_team_member()            from anon, authenticated;
-revoke all on function is_leadership()             from anon, authenticated;
+-- public must be named alongside anon. Revoking from anon alone leaves the
+-- implicit grant every function carries, and anon reaches the function through
+-- it. Corrected here; 0006 exists because the first version of this file got
+-- that wrong.
+revoke all on function dashboard_stats()           from public, anon, authenticated;
+revoke all on function purge_expired_submissions() from public, anon, authenticated;
+revoke all on function is_team_member()            from public, anon, authenticated;
+revoke all on function is_leadership()             from public, anon, authenticated;
 
 -- The team's own call goes back, for the signed-in role only.
 grant execute on function dashboard_stats() to authenticated;
@@ -58,7 +62,12 @@ begin
     from pg_proc p
     join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public'
-     and p.proname <> 'submit_prayer'
+     and p.proname in (
+       'is_team_member',
+       'is_leadership',
+       'purge_expired_submissions',
+       'dashboard_stats'
+     )
      and has_function_privilege('anon', p.oid, 'execute');
 
   if v_functions is not null then
