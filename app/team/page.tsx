@@ -250,18 +250,25 @@ function PrayerList() {
               : 'Nothing is waiting. The list is clear.'}
           </p>
         ) : grouped ? (
-          groupByCategory(shown).map(({ key, label, rows: groupRows }) => (
-            <section key={key} className="group">
-              <h2 className="group-heading">
-                {label} <span className="group-count">{groupRows.length}</span>
-              </h2>
-              <ul className="requests">
-                {groupRows.map((row) => (
-                  <Request key={row.id} row={row} update={update} remove={remove} />
-                ))}
-              </ul>
-            </section>
-          ))
+          <>
+            <Summary groups={groupByCategory(shown)} total={shown.length} />
+            {groupByCategory(shown).map(({ key, label, rows: groupRows }) => (
+              // A native details element: collapsing is the browser's job, and
+              // it keeps a hundred requests from becoming an endless page.
+              // Closed by default, because the meeting works one theme at a
+              // time and the summary above already says what is waiting.
+              <details key={key} className="group" name="prayer-group">
+                <summary className="group-heading">
+                  {label} <span className="group-count">{groupRows.length}</span>
+                </summary>
+                <ul className="requests">
+                  {groupRows.map((row) => (
+                    <Request key={row.id} row={row} update={update} remove={remove} />
+                  ))}
+                </ul>
+              </details>
+            ))}
+          </>
         ) : (
           <ul className="requests">
             {shown.map((row) => (
@@ -397,4 +404,51 @@ function groupByCategory(rows: Submission[]) {
   }
 
   return groups
+}
+
+// What the prayer team sees the moment they open this on Wednesday: how much is
+// waiting and what it is about, before opening a single theme.
+function Summary({
+  groups,
+  total,
+}: {
+  groups: { key: string; label: string; rows: Submission[] }[]
+  total: number
+}) {
+  const urgent = groups.flatMap((group) => group.rows).filter((row) => row.flagged_urgent)
+  // The same request appears in several groups, so count distinct ids.
+  const urgentCount = new Set(urgent.map((row) => row.id)).size
+  const biggest = [...groups].sort((a, b) => b.rows.length - a.rows.length)[0]
+
+  return (
+    <section className="summary" aria-label="Summary">
+      <p className="summary-line">
+        <strong>
+          {total} {total === 1 ? 'request' : 'requests'}
+        </strong>{' '}
+        to pray over, across {groups.length}{' '}
+        {groups.length === 1 ? 'theme' : 'themes'}
+        {biggest && groups.length > 1 && (
+          <>
+            . Most are about <strong>{biggest.label.toLowerCase()}</strong>
+          </>
+        )}
+        .
+      </p>
+
+      {urgentCount > 0 && (
+        <p className="summary-line summary-urgent">
+          {urgentCount} {urgentCount === 1 ? 'is' : 'are'} flagged urgent.
+        </p>
+      )}
+
+      <ul className="summary-themes">
+        {groups.map((group) => (
+          <li key={group.key} className="summary-theme">
+            {group.label} <span className="group-count">{group.rows.length}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
 }

@@ -534,3 +534,94 @@ h1 {
   font-size: 0.78rem;
   color: var(--quiet);
 }
+
+/* --- Wednesday summary --------------------------------------------------- */
+/* The first thing the prayer team sees when they open this. Says what tonight
+   holds before anyone opens a single theme. */
+
+.summary {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--candle);
+  border-radius: 3px;
+  background: var(--deep);
+  padding: 1rem 1.1rem;
+}
+
+.summary-line {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--mist);
+}
+
+.summary-line strong { color: #eef3f2; }
+
+.summary-urgent {
+  margin-top: 0.35rem;
+  color: var(--candle);
+  font-size: 0.85rem;
+}
+
+.summary-themes {
+  list-style: none;
+  margin: 0.8rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.summary-theme {
+  font-size: 0.78rem;
+  color: var(--quiet);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 0.2rem 0.5rem;
+}
+
+/* --- Collapsible groups -------------------------------------------------- */
+
+details.group {
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: rgba(23, 37, 44, 0.5);
+}
+
+details.group + details.group { margin-top: 0.5rem; }
+
+/* summary carries the group heading, so the heading's own rule is overridden
+   here rather than fought with elsewhere. */
+.group > .group-heading {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-bottom: 0;
+  cursor: pointer;
+  list-style: none;
+  align-items: center;
+}
+
+.group > .group-heading::-webkit-details-marker { display: none; }
+
+/* A disclosure caret drawn in CSS: no icon file, no library. */
+.group > .group-heading::before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 5px solid var(--quiet);
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: rotate 140ms ease;
+  flex: none;
+}
+
+details.group[open] > .group-heading::before { rotate: 90deg; }
+
+.group > .group-heading:hover { background: var(--raised); }
+
+.group > .group-heading:focus-visible {
+  outline: 2px solid var(--candle);
+  outline-offset: -2px;
+}
+
+details.group[open] > .group-heading { border-bottom: 1px solid var(--line); }
+
+details.group > .requests { padding: 0.75rem; }
