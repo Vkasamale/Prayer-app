@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 import { CHURCH_NAME } from '@/lib/church'
 import { CATEGORIES, categoryLabel } from '@/lib/categories'
 
@@ -48,12 +48,12 @@ export default function TeamPage() {
   const [signedIn, setSignedIn] = useState(false)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
+    getSupabase().auth.getSession().then(({ data }) => {
       setSignedIn(Boolean(data.session))
       setReady(true)
     })
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = getSupabase().auth.onAuthStateChange((_event, session) => {
       setSignedIn(Boolean(session))
     })
     return () => listener.subscription.unsubscribe()
@@ -73,7 +73,7 @@ function SignIn() {
     event.preventDefault()
     setError(null)
     setBusy(true)
-    const { error: signInError } = await supabase.auth.signInWithPassword({
+    const { error: signInError } = await getSupabase().auth.signInWithPassword({
       email: email.trim(),
       password,
     })
@@ -141,7 +141,7 @@ function PrayerList() {
   const load = useCallback(async () => {
     // Urgent first, then oldest waiting first: someone who has been waiting a
     // fortnight should not sink below this morning's arrivals.
-    const { data, error: loadError } = await supabase
+    const { data, error: loadError } = await getSupabase()
       .from('submissions_for_team')
       .select('*')
       .order('flagged_urgent', { ascending: false })
@@ -156,7 +156,7 @@ function PrayerList() {
 
     // Counts come from the database rather than from the rows above, because
     // distinct-submitter counts cannot be worked out from a filtered list.
-    const { data: statRows } = await supabase.rpc('dashboard_stats')
+    const { data: statRows } = await getSupabase().rpc('dashboard_stats')
     setStats((statRows?.[0] as Stats) ?? null)
   }, [])
 
@@ -165,7 +165,7 @@ function PrayerList() {
   }, [load])
 
   async function update(id: string, patch: Record<string, unknown>) {
-    const { error: updateError } = await supabase
+    const { error: updateError } = await getSupabase()
       .from('submissions')
       .update(patch)
       .eq('id', id)
@@ -181,7 +181,7 @@ function PrayerList() {
     if (!window.confirm('Delete this submission permanently? This cannot be undone.')) {
       return
     }
-    const { error: deleteError } = await supabase.from('submissions').delete().eq('id', id)
+    const { error: deleteError } = await getSupabase().from('submissions').delete().eq('id', id)
     if (deleteError) {
       setError('That could not be deleted. Reload and try again.')
       return
@@ -204,7 +204,7 @@ function PrayerList() {
             <p className="eyebrow">{CHURCH_NAME}</p>
             <h1>Prayer team</h1>
           </div>
-          <button className="quiet-button" onClick={() => supabase.auth.signOut()}>
+          <button className="quiet-button" onClick={() => getSupabase().auth.signOut()}>
             Sign out
           </button>
         </header>

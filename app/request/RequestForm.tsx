@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { CHURCH_NAME, EMERGENCY_NUMBER, REVIEW_CADENCE } from '@/lib/church'
 import { CATEGORIES, type Category } from '@/lib/categories'
 import { getBrowserId } from '@/lib/browserId'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 
 type Membership = 'yes' | 'no' | 'unanswered'
 
@@ -45,7 +45,7 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
     }
 
     setSending(true)
-    const { error: sendError } = await supabase.rpc('submit_prayer', {
+    const { error: sendError } = await getSupabase().rpc('submit_prayer', {
       p_body: trimmed,
       p_browser_id: getBrowserId(),
       p_kind: wantsCounseling ? 'counseling' : 'prayer',
