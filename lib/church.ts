@@ -16,7 +16,7 @@ export const CHURCH_NAME = 'Flood Church'
 // on a crisis screen are worse than none.
 export const EMERGENCY_NUMBER: string | null = null
 
-// There is no fixed prayer day. Requests are prayed over when the team next
-// meets, and the copy says exactly that rather than implying a schedule the
-// church does not keep.
-export const REVIEW_CADENCE = 'when the prayer team next meets'
+// The prayer meeting is Wednesday evening, and that is when requests are prayed
+// over. Naming the day matters: someone deciding whether to wait needs a real
+// answer, not a vague one.
+export const REVIEW_CADENCE = 'at the Wednesday evening prayer meeting'

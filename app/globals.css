@@ -456,3 +456,50 @@ h1 {
   flex-wrap: wrap;
   gap: 0.5rem;
 }
+
+/* --- Dashboard ----------------------------------------------------------- */
+/* Counts, not analytics. Quiet by design: the list underneath is the work, and
+   these numbers should not compete with it. */
+
+.dashboard {
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--deep);
+  padding: 1.1rem 1.2rem;
+}
+
+.stat-row {
+  list-style: none;
+  margin: 0 0 0.9rem;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: 1rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.stat-value {
+  font-family: var(--display);
+  font-size: 1.9rem;
+  line-height: 1;
+  color: #eef3f2;
+}
+
+.stat-label {
+  font-size: 0.78rem;
+  color: var(--quiet);
+}
+
+.stat-note {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--quiet);
+}
+
+.stat-note + .stat-note { margin-top: 0.4rem; }

@@ -14,6 +14,19 @@ import { CHURCH_NAME } from '@/lib/church'
 // Contact details are not on this page. The prayer team prays by first name;
 // leadership reads phone numbers from the submitters table separately.
 
+type Stats = {
+  submissions_total: number
+  submissions_waiting: number
+  submissions_prayed_over: number
+  counseling_requests: number
+  submitters_distinct: number
+  submitters_named: number
+  submitters_anonymous: number
+  members_yes: number
+  members_no: number
+  members_unanswered: number
+}
+
 type Submission = {
   id: string
   body: string | null
@@ -118,6 +131,7 @@ function SignIn() {
 
 function PrayerList() {
   const [rows, setRows] = useState<Submission[] | null>(null)
+  const [stats, setStats] = useState<Stats | null>(null)
   const [showPrayed, setShowPrayed] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -136,6 +150,11 @@ function PrayerList() {
     }
     setError(null)
     setRows(data as Submission[])
+
+    // Counts come from the database rather than from the rows above, because
+    // distinct-submitter counts cannot be worked out from a filtered list.
+    const { data: statRows } = await supabase.rpc('dashboard_stats')
+    setStats((statRows?.[0] as Stats) ?? null)
   }, [])
 
   useEffect(() => {
@@ -188,6 +207,8 @@ function PrayerList() {
         </header>
 
         {error && <p className="error" role="alert">{error}</p>}
+
+        {stats && <Dashboard stats={stats} />}
 
         <div className="tabs" role="tablist">
           <button
@@ -272,5 +293,45 @@ function PrayerList() {
         )}
       </main>
     </>
+  )
+}
+
+// The tracking view: how much has come in, and how many different people it came
+// from. Deliberately counts and nothing else — no behaviour, no individuals.
+function Dashboard({ stats }: { stats: Stats }) {
+  const answered = stats.members_yes + stats.members_no
+
+  return (
+    <section className="dashboard" aria-label="Totals">
+      <ul className="stat-row">
+        <Stat value={stats.submissions_total} label="requests in total" />
+        <Stat value={stats.submissions_waiting} label="still waiting" />
+        <Stat value={stats.submitters_distinct} label="different people" />
+        <Stat value={stats.counseling_requests} label="asked to talk" />
+      </ul>
+
+      <p className="stat-note">
+        {stats.submitters_anonymous} anonymous and {stats.submitters_named} named.
+        The anonymous figure counts browsers, not people, so it is a floor — the
+        same person on a new phone counts twice.
+      </p>
+
+      {answered > 0 && (
+        <p className="stat-note">
+          Of those who answered, {stats.members_yes} said they are part of the
+          church and {stats.members_no} said they are not.{' '}
+          {stats.members_unanswered} did not say.
+        </p>
+      )}
+    </section>
+  )
+}
+
+function Stat({ value, label }: { value: number; label: string }) {
+  return (
+    <li className="stat">
+      <span className="stat-value">{value}</span>
+      <span className="stat-label">{label}</span>
+    </li>
   )
 }
