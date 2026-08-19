@@ -41,7 +41,7 @@ GitHub (repo), Vercel (hosting), Supabase (Postgres + auth for the team login). 
 
 ## Before the QR code goes anywhere
 - [x] Schedule purge_expired_submissions — pg_cron, nightly at 03:15 (migration 0008)
-- [ ] A custom domain: a QR code pointing at a vercel.app address is not a link anyone would trust
+- [x] Domain — a vercel.app address is fine for the QR code. Decided by Vincent 2026-08-19; raised as a trust concern and settled. No custom domain needed.
 - [ ] Leadership view for contact details, so counseling requests can actually be followed up
 - [x] Emergency numbers — Malawi police 997 and ambulance 998
 - [ ] Real test run with 2-3 prayer team members
