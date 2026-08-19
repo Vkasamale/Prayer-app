@@ -614,3 +614,17 @@ details.group[open] > .group-heading .group-heading-inner::before { rotate: 90de
 details.group[open] > .group-heading { border-bottom: 1px solid var(--line); }
 
 details.group > .requests { padding: 0.75rem; }
+
+/* --- Sharing ------------------------------------------------------------- */
+
+.share {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.share-note {
+  font-size: 0.8rem;
+  color: var(--quiet);
+}

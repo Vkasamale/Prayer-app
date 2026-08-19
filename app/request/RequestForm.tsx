@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { CHURCH_NAME, EMERGENCY_NUMBER, REVIEW_CADENCE } from '@/lib/church'
+import { EMERGENCY_NUMBER, REVIEW_CADENCE } from '@/lib/church'
+import ShareLink from '../ShareLink'
 import { CATEGORIES, type Category } from '@/lib/categories'
 import { getBrowserId } from '@/lib/browserId'
 import { getSupabase } from '@/lib/supabase'
@@ -76,7 +77,6 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
         <div className="glow" aria-hidden="true" />
         <main className="page">
           <header>
-            <p className="eyebrow">{CHURCH_NAME}</p>
             <h1>It is with the prayer team.</h1>
             <p className="lede">
               They will pray over it {REVIEW_CADENCE}.
@@ -108,6 +108,8 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
               <p className="path-detail">Starts again from the beginning.</p>
             </Link>
           </nav>
+
+          <ShareLink />
         </main>
       </>
     )
@@ -145,7 +147,7 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
 
         <form onSubmit={handleSubmit} noValidate>
           <fieldset className="field">
-            <legend className="label">Are you part of {CHURCH_NAME}?</legend>
+            <legend className="label">Do you go to this church?</legend>
             <p className="hint">You do not have to answer this.</p>
             <div className="choices">
               {(
@@ -174,8 +176,8 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
               Your request
             </label>
             <p className="hint">
-              As much or as little as you want. The prayer team reads it as you
-              wrote it.
+              As much or as little as you want. Only the prayer team and church
+              leadership read it, exactly as you wrote it.
             </p>
             <textarea
               id="body"

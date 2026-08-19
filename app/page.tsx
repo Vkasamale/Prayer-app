@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { CHURCH_NAME, EMERGENCY_NUMBER, REVIEW_CADENCE } from '@/lib/church'
+import { EMERGENCY_NUMBER, REVIEW_CADENCE } from '@/lib/church'
+import ShareLink from './ShareLink'
 
 // The identity choice, shown before the form and before anything is typed.
 //
@@ -11,7 +12,13 @@ import { CHURCH_NAME, EMERGENCY_NUMBER, REVIEW_CADENCE } from '@/lib/church'
 //    has no crisis line, so what the notice carries is the plain truth that
 //    nobody is reading this in real time.
 //
-// 2. Staying anonymous is listed first and given equal visual weight. The usual
+// 2. The church is not named anywhere on the congregation's side. Someone may
+//    pass this link to a friend who has no warm feelings towards the church, or
+//    towards church in general, and a name at the top gives them a reason to
+//    close the tab before reading a word. The disclaimer still says who reads
+//    the requests, so nobody is submitting into the dark.
+//
+// 3. Staying anonymous is listed first and given equal visual weight. The usual
 //    pattern buries the anonymous option as a grey afterthought, which tells
 //    someone the way they want to do this is the lesser way. This app exists for
 //    the person who will not walk to the front, so that ordering is inverted.
@@ -39,7 +46,6 @@ export default function IdentityChoice() {
         </section>
 
         <header>
-          <p className="eyebrow">{CHURCH_NAME}</p>
           <h1>Share what is on your heart.</h1>
           <p className="lede">
             The prayer team will pray over what you send. First, choose how you
@@ -65,14 +71,21 @@ export default function IdentityChoice() {
           </Link>
         </nav>
 
+        <ShareLink />
+
         <footer className="footnote">
+          <p>
+            <strong>Only the prayer team and church leadership can read what you
+            send.</strong> It is not posted anywhere, not shown to the
+            congregation, and not shared outside that team.
+          </p>
           <p>
             Choosing to stay anonymous keeps you anonymous. There is no sign-in
             here, and never will be.
           </p>
           <p>
-            If you share your name, {CHURCH_NAME} keeps your contact details so
-            the team can follow up. Ask us any time and we will remove them.
+            If you share your name, the church keeps your contact details so the
+            team can follow up. Ask any time and we will remove them.
           </p>
         </footer>
       </main>
