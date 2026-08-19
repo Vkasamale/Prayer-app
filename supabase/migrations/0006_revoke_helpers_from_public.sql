@@ -29,9 +29,9 @@ grant execute on function dashboard_stats() to authenticated;
 -- call, and revoking from everyone locked the team out along with the public.
 grant execute on function is_team_member() to authenticated;
 grant execute on function is_leadership() to authenticated;
---
--- purge_expired_submissions() stays closed too. Retention is a scheduled job,
--- never something triggered from a browser.
+
+-- purge_expired_submissions() stays closed to everyone. Retention is a scheduled
+-- job, never something triggered from a browser.
 
 commit;
 
