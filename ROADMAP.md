@@ -28,7 +28,7 @@ GitHub (repo), Vercel (hosting), Supabase (Postgres + auth for the team login). 
 - [x] Data retention and access decided — request text deleted 90 days after prayed-over, contact details kept indefinitely, leadership-only access, removal on request. See PROJECT_BRIEF.md section 10d.
 
 ## Phase 1 — Core loop (current phase)
-- [x] Repo on GitHub and Supabase project (Vercel not set up yet)
+- [x] Repo on GitHub, Supabase project, and Vercel deployment (live at prayer-app-vkasamales-projects.vercel.app, Vercel Authentication turned off 2026-08-19 so the congregation can reach it)
 - [x] Supabase schema + row-level security policies (public client has no table access at all; writes go through submit_prayer)
 - [x] Latency notice on identity screen, form, and confirmation screen
 - [x] Identity choice screen (named vs anonymous), shown before the form
@@ -38,6 +38,13 @@ GitHub (repo), Vercel (hosting), Supabase (Postgres + auth for the team login). 
 - [x] Team-side login (roles enforced in the database; leadership-only contact view not built yet)
 - [ ] Prayer team dashboard (total submissions, distinct submitters named vs anonymous, unprayed-over count, repeat grouping, membership breakdown)
 - [ ] One real test run with 2-3 prayer team members before anything is public
+
+## Before the QR code goes anywhere
+- [ ] Schedule purge_expired_submissions — the 90-day retention policy does nothing until something calls it
+- [ ] A custom domain: a QR code pointing at a vercel.app address is not a link anyone would trust
+- [ ] Leadership view for contact details, so counseling requests can actually be followed up
+- [ ] National emergency number in lib/church.ts, once the country is confirmed
+- [ ] Real test run with 2-3 prayer team members
 
 ## Phase 2 — Extended features
 - [ ] Counseling request flag, distinct from general prayer submission

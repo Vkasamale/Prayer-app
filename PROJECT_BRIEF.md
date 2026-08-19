@@ -119,6 +119,45 @@ Self-declared and unverifiable — anyone can tick any box. Verifying membership
 
 Dashboard gains a breakdown: members / not members / did not say.
 
+## 10f. The church is not named to the congregation — decided 2026-08-19
+
+The app carries no church name on any page a congregation member or visitor
+sees: not the title, not the headers, not the preview card that appears when the
+link is sent through WhatsApp or Messenger.
+
+The reason is sharing. Somebody may pass this to a friend who has no warm
+feelings towards this church, or towards church in general, and a name at the top
+gives that person a reason to close the tab before reading a word. The people
+most worth reaching are exactly the ones a name would turn away.
+
+What replaces it is a plain statement of who reads the requests: only the prayer
+team and church leadership, not the congregation, not anyone outside that team.
+Shown on the first screen and again on the form. Nobody is submitting into the
+dark; they simply are not being asked to accept a brand first.
+
+The membership question asks "Do you go to this church?" rather than naming it,
+which keeps its meaning both for someone standing in the building and for someone
+who was sent the link.
+
+The name stays on the prayer team's own pages, which only the team sees.
+
+*Open tension, worth watching in testing:* removing the name lowers the barrier
+for a wary friend, but a person receiving a cold link has no idea who is praying
+for them. The disclaimer carries that trust now. If it reads as too anonymous, a
+single line naming the town rather than the church would restore it without
+restoring the barrier.
+
+## 10g. Sharing — decided 2026-08-19
+
+A "Share this with someone" button on the first screen and after submitting,
+using the browser's own share sheet: WhatsApp, Messenger, Facebook, SMS, email,
+whatever the person already has. On desktop it copies the link.
+
+Deliberately not the official Facebook or WhatsApp share widgets. Those load
+scripts from those companies, which would tell them who is looking at a prayer
+request page — the opposite of what this app promises. Nothing leaves the browser
+until the person chooses a recipient.
+
 ## 10b. Crisis escalation protocol — decided 2026-08-19
 
 Anonymity is locked, so an anonymous submitter cannot be traced or contacted. Escalation therefore never means "we reach them." It can only mean "they can reach help themselves, immediately, without waiting on the prayer team." Everything below follows from that.
