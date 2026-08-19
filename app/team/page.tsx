@@ -28,6 +28,24 @@ type Stats = {
   members_unanswered: number
 }
 
+type Counseling = {
+  id: string
+  body: string | null
+  categories: string[]
+  created_at: string
+  prayed_over_at: string | null
+  first_name: string
+  last_name: string
+  phone: string
+}
+
+// null means all time.
+const PERIODS: { label: string; days: number | null }[] = [
+  { label: 'Last 7 days', days: 7 },
+  { label: 'Last 30 days', days: 30 },
+  { label: 'All time', days: null },
+]
+
 type Submission = {
   id: string
   body: string | null
@@ -136,6 +154,10 @@ function PrayerList() {
   const [stats, setStats] = useState<Stats | null>(null)
   const [showPrayed, setShowPrayed] = useState(false)
   const [grouped, setGrouped] = useState(true)
+  const [periodDays, setPeriodDays] = useState<number | null>(null)
+  const [isLeadership, setIsLeadership] = useState(false)
+  const [counseling, setCounseling] = useState<Counseling[] | null>(null)
+  const [showCounseling, setShowCounseling] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
@@ -156,9 +178,25 @@ function PrayerList() {
 
     // Counts come from the database rather than from the rows above, because
     // distinct-submitter counts cannot be worked out from a filtered list.
-    const { data: statRows } = await getSupabase().rpc('dashboard_stats')
+    const { data: statRows } = await getSupabase().rpc('dashboard_stats', {
+      p_days: periodDays,
+    })
     setStats((statRows?.[0] as Stats) ?? null)
-  }, [])
+
+    // Leadership sees one extra tab. The database decides this, not the browser:
+    // a member who forced the flag on would still read nothing, because the view
+    // itself checks is_leadership().
+    const { data: leadership } = await getSupabase().rpc('is_leadership')
+    setIsLeadership(Boolean(leadership))
+
+    if (leadership) {
+      const { data: contacts } = await getSupabase()
+        .from('counseling_for_leadership')
+        .select('*')
+        .order('created_at', { ascending: true })
+      setCounseling((contacts as Counseling[]) ?? [])
+    }
+  }, [periodDays])
 
   useEffect(() => {
     load()
@@ -211,28 +249,52 @@ function PrayerList() {
 
         {error && <p className="error" role="alert">{error}</p>}
 
-        {stats && <Dashboard stats={stats} />}
+        {stats && (
+          <Dashboard
+            stats={stats}
+            periodDays={periodDays}
+            onPeriodChange={setPeriodDays}
+          />
+        )}
 
         <div className="tabs" role="tablist">
           <button
             role="tab"
-            aria-selected={!showPrayed}
-            className={'tab' + (!showPrayed ? ' tab-on' : '')}
-            onClick={() => setShowPrayed(false)}
+            aria-selected={!showPrayed && !showCounseling}
+            className={'tab' + (!showPrayed && !showCounseling ? ' tab-on' : '')}
+            onClick={() => {
+              setShowPrayed(false)
+              setShowCounseling(false)
+            }}
           >
             Waiting ({waiting.length})
           </button>
           <button
             role="tab"
-            aria-selected={showPrayed}
-            className={'tab' + (showPrayed ? ' tab-on' : '')}
-            onClick={() => setShowPrayed(true)}
+            aria-selected={showPrayed && !showCounseling}
+            className={'tab' + (showPrayed && !showCounseling ? ' tab-on' : '')}
+            onClick={() => {
+              setShowPrayed(true)
+              setShowCounseling(false)
+            }}
           >
             Prayed over ({prayed.length})
           </button>
+          {isLeadership && (
+            <button
+              role="tab"
+              aria-selected={showCounseling}
+              className={'tab' + (showCounseling ? ' tab-on' : '')}
+              onClick={() => setShowCounseling(true)}
+            >
+              Wants to talk ({counseling?.length ?? 0})
+            </button>
+          )}
         </div>
 
-        {shown.length > 0 && (
+        {showCounseling && <CounselingList rows={counseling ?? []} />}
+
+        {!showCounseling && shown.length > 0 && (
           <label className="choice group-toggle">
             <input
               type="checkbox"
@@ -243,7 +305,7 @@ function PrayerList() {
           </label>
         )}
 
-        {shown.length === 0 ? (
+        {showCounseling ? null : shown.length === 0 ? (
           <p className="empty">
             {showPrayed
               ? 'Nothing has been marked prayed over yet.'
@@ -285,11 +347,33 @@ function PrayerList() {
 
 // The tracking view: how much has come in, and how many different people it came
 // from. Deliberately counts and nothing else — no behaviour, no individuals.
-function Dashboard({ stats }: { stats: Stats }) {
+function Dashboard({
+  stats,
+  periodDays,
+  onPeriodChange,
+}: {
+  stats: Stats
+  periodDays: number | null
+  onPeriodChange: (days: number | null) => void
+}) {
   const answered = stats.members_yes + stats.members_no
 
   return (
     <section className="dashboard" aria-label="Totals">
+      <div className="periods" role="tablist" aria-label="Time window">
+        {PERIODS.map((period) => (
+          <button
+            key={period.label}
+            role="tab"
+            aria-selected={periodDays === period.days}
+            className={'period' + (periodDays === period.days ? ' period-on' : '')}
+            onClick={() => onPeriodChange(period.days)}
+          >
+            {period.label}
+          </button>
+        ))}
+      </div>
+
       <ul className="stat-row">
         <Stat value={stats.submissions_total} label="requests in total" />
         <Stat value={stats.submissions_waiting} label="still waiting" />
@@ -444,5 +528,47 @@ function Summary({
         </p>
       )}
     </section>
+  )
+}
+
+// Counseling follow-up, for leadership only. The one screen in this app that
+// shows a phone number.
+//
+// Anonymous requests are absent by design: there is nobody to ring. They stay in
+// the prayer list and are prayed for like any other.
+function CounselingList({ rows }: { rows: Counseling[] }) {
+  if (rows.length === 0) {
+    return <p className="empty">Nobody has asked to talk.</p>
+  }
+
+  return (
+    <ul className="requests">
+      {rows.map((row) => (
+        <li key={row.id} className="request">
+          <div className="request-meta">
+            <span className="who">
+              {row.first_name} {row.last_name}
+            </span>
+            {row.prayed_over_at && <span className="tag">Prayed over</span>}
+            <span className="when">
+              {new Date(row.created_at).toLocaleDateString(undefined, {
+                day: 'numeric',
+                month: 'short',
+              })}
+            </span>
+          </div>
+
+          <p className="request-body">
+            {row.body ?? <em className="cleared">Cleared by the retention policy.</em>}
+          </p>
+
+          <div className="request-actions">
+            <a className="quiet-button" href={'tel:' + row.phone.replace(/\s/g, '')}>
+              Call {row.phone}
+            </a>
+          </div>
+        </li>
+      ))}
+    </ul>
   )
 }

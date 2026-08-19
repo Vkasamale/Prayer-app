@@ -628,3 +628,42 @@ details.group > .requests { padding: 0.75rem; }
   font-size: 0.8rem;
   color: var(--quiet);
 }
+
+/* --- Dashboard time windows ---------------------------------------------- */
+
+.periods {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.period {
+  font: inherit;
+  font-size: 0.78rem;
+  color: var(--quiet);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 0.25rem 0.55rem;
+  cursor: pointer;
+}
+
+.period:hover { color: var(--mist); background: var(--raised); }
+
+.period:focus-visible {
+  outline: 2px solid var(--candle);
+  outline-offset: 2px;
+}
+
+.period-on {
+  color: #16212a;
+  background: var(--candle);
+  border-color: var(--candle);
+}
+
+/* A link styled as a button: calling is a real link, so it stays an anchor and
+   keeps the phone's own dialler behaviour. */
+a.quiet-button {
+  display: inline-block;
+  text-decoration: none;
+}
