@@ -176,7 +176,9 @@ What carries the weight instead is the honesty: every screen states plainly that
 
 **There is no fixed prayer day.** Requests are prayed over when the prayer team next meets, and the copy says exactly that rather than implying a schedule the church does not keep. Submission timestamps give the team the timing detail they need.
 
-*Open, raised and not resolved:* the national emergency number. Every country has one, it costs the church nothing, needs nobody on call, and makes no promise the church has to keep — but it gives a person in danger somewhere to go. Blocked only on knowing which country the church is in; EMERGENCY_NUMBER in lib/church.ts is null until then, and every screen hides the line rather than showing a guess.
+**Emergency numbers — added 2026-08-19.** The church is in Malawi, so the screens now show the police on 997 and an ambulance on 998. They cost the church nothing and need nobody on call.
+
+Reporting says these lines are unreliable in practice: coverage varies by area and by mobile network, and the 997 rapid-response line has had well-documented problems. They are shown anyway, because a number that sometimes works beats no number at all, and the wording never promises an answer — it says where to try. Worth revisiting with the church, who know the local reality better than any source.
 
 **Deliberately rejected:**
 - *Keyword or AI detection of crisis text* — fails both ways. It misses real crises phrased obliquely, since people in crisis rarely use the obvious words, and it creates false confidence that the app is watching. Static contact shown to everyone covers the same ground and cannot silently fail.

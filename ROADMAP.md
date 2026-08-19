@@ -40,10 +40,10 @@ GitHub (repo), Vercel (hosting), Supabase (Postgres + auth for the team login). 
 - [ ] One real test run with 2-3 prayer team members before anything is public
 
 ## Before the QR code goes anywhere
-- [ ] Schedule purge_expired_submissions — the 90-day retention policy does nothing until something calls it
+- [x] Schedule purge_expired_submissions — pg_cron, nightly at 03:15 (migration 0008)
 - [ ] A custom domain: a QR code pointing at a vercel.app address is not a link anyone would trust
 - [ ] Leadership view for contact details, so counseling requests can actually be followed up
-- [ ] National emergency number in lib/church.ts, once the country is confirmed
+- [x] Emergency numbers — Malawi police 997 and ambulance 998
 - [ ] Real test run with 2-3 prayer team members
 
 ## Phase 2 — Extended features

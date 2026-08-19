@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { EMERGENCY_NUMBER, REVIEW_CADENCE } from '@/lib/church'
+import { EMERGENCY_CONTACTS, REVIEW_CADENCE } from '@/lib/church'
 import ShareLink from '../ShareLink'
 import { CATEGORIES, type Category } from '@/lib/categories'
 import { getBrowserId } from '@/lib/browserId'
@@ -91,12 +91,15 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
               <strong>Please do not wait on this page for a reply.</strong> Nobody
               is reading it.
             </p>
-            {EMERGENCY_NUMBER && (
+            {EMERGENCY_CONTACTS.length > 0 && (
               <p>
                 If you are in danger, call{' '}
-                <a href={'tel:' + EMERGENCY_NUMBER.replace(/\s/g, '')}>
-                  {EMERGENCY_NUMBER}
-                </a>
+                {EMERGENCY_CONTACTS.map((contact, index) => (
+                  <span key={contact.phone}>
+                    {index > 0 && ' or '}
+                    {contact.label} on <a href={'tel:' + contact.phone}>{contact.phone}</a>
+                  </span>
+                ))}
                 .
               </p>
             )}
@@ -124,12 +127,15 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
             <strong>Nobody is reading this page right now.</strong> The prayer
             team prays over these {REVIEW_CADENCE}.
           </p>
-          {EMERGENCY_NUMBER && (
+          {EMERGENCY_CONTACTS.length > 0 && (
             <p>
               If you are in danger, call{' '}
-              <a href={'tel:' + EMERGENCY_NUMBER.replace(/\s/g, '')}>
-                {EMERGENCY_NUMBER}
-              </a>
+              {EMERGENCY_CONTACTS.map((contact, index) => (
+                <span key={contact.phone}>
+                  {index > 0 && ' or '}
+                  {contact.label} on <a href={'tel:' + contact.phone}>{contact.phone}</a>
+                </span>
+              ))}
               .
             </p>
           )}
