@@ -3,17 +3,20 @@
 
 export const CHURCH_NAME = 'Flood Church'
 
-// TODO — Vincent supplies this on 2026-08-20. Placeholder ships nowhere near
-// the QR code: a wrong number on a crisis notice is worse than no number.
-export const CRISIS_CONTACT = {
-  label: 'the church',
-  phone: '000 000 0000',
-  // Also outstanding: confirm whether this phone is answered outside service
-  // hours. If it is not, ANSWERED_HOURS must say so plainly. Implying someone is
-  // always there, when nobody is, leaves a person in crisis waiting on silence.
-  answeredHours: 'checked during the week',
-} as const
+// Decided 2026-08-19: the church has no crisis line and nobody is on call, so
+// none is listed. Promising a phone nobody answers is worse than promising
+// nothing.
+//
+// What replaces it is honesty about the delay. A person in crisis must never
+// sit waiting on this page for a reply that is not coming.
+//
+// TODO — Vincent to confirm the country, so the national emergency number can
+// be shown here. It costs the church nothing, needs nobody on call, and gives a
+// person in danger somewhere to go. Left blank rather than guessed: wrong digits
+// on a crisis screen are worse than none.
+export const EMERGENCY_NUMBER: string | null = null
 
-// TODO — the prayer team's review day has never actually been chosen. The
-// latency notice is only honest once it names the real one.
-export const PRAYER_DAY = 'the prayer team’s set day'
+// There is no fixed prayer day. Requests are prayed over when the team next
+// meets, and the copy says exactly that rather than implying a schedule the
+// church does not keep.
+export const REVIEW_CADENCE = 'when the prayer team next meets'

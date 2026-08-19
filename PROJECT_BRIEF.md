@@ -131,11 +131,13 @@ Anonymity is locked, so an anonymous submitter cannot be traced or contacted. Es
 
 **4. Prayer team gets a manual urgent flag.** A team member reading a submission can mark it urgent. Named submitter: the church calls the phone number given. Anonymous submitter: nothing can be done but pray, which is precisely why points 1-3 carry the weight.
 
-**Which number is shown.** The church's own emergency contact — the pastor's phone. Vincent supplies the number 2026-08-20. Decided against listing a national crisis line alongside it.
+**Which number is shown — revised 2026-08-19.** None. The church has no crisis line and nobody is on call, so the app lists no phone number rather than promising a phone nobody answers.
 
-*Open risk, raised and not adopted:* if the pastor's phone is unanswered out of hours, that screen leaves a person in crisis with nowhere to go. A national 24/7 crisis line as a second number closes that gap at zero cost. Revisit if the church wants it.
+What carries the weight instead is the honesty: every screen states plainly that nobody is reading the page, so a person in crisis does not sit waiting for a reply that is not coming.
 
-**Required before launch:** confirm with the church whether the pastor's phone is answered outside service hours. If it is not, the screen must say so. A number that implies someone is always there, when nobody is, is worse than no number.
+**There is no fixed prayer day.** Requests are prayed over when the prayer team next meets, and the copy says exactly that rather than implying a schedule the church does not keep. Submission timestamps give the team the timing detail they need.
+
+*Open, raised and not resolved:* the national emergency number. Every country has one, it costs the church nothing, needs nobody on call, and makes no promise the church has to keep — but it gives a person in danger somewhere to go. Blocked only on knowing which country the church is in; EMERGENCY_NUMBER in lib/church.ts is null until then, and every screen hides the line rather than showing a guess.
 
 **Deliberately rejected:**
 - *Keyword or AI detection of crisis text* — fails both ways. It misses real crises phrased obliquely, since people in crisis rarely use the obvious words, and it creates false confidence that the app is watching. Static contact shown to everyone covers the same ground and cannot silently fail.

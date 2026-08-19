@@ -20,7 +20,7 @@ GitHub (repo), Vercel (hosting), Supabase (Postgres + auth for the team login). 
 **Security requirement, not optional:** the congregation submits without logging in, so the public client writes to Supabase through the anonymous key. Row-level security must allow insert only. If public read is ever left open on the submissions table, every prayer request in the church becomes readable by anyone with the URL. This gets verified before anything goes near the QR code.
 
 ## Phase 0 — Decisions before code (complete)
-- [x] Crisis escalation protocol decided — static church emergency contact plus honest latency notice, always visible. See PROJECT_BRIEF.md section 10b. Pending: the actual phone number (2026-08-20) and whether it is answered out of hours.
+- [x] Crisis escalation protocol decided — no phone number listed, since the church has no crisis line and nobody on call. Every screen states plainly that nobody is reading the page. See PROJECT_BRIEF.md section 10b. Outstanding: the country, so the national emergency number can be shown.
 - [x] Moderation approach decided — raw feed to the prayer team, manual delete for junk, no filter. See PROJECT_BRIEF.md section 10c.
 - [x] Identity choice decided — named (first name, last name, phone) or anonymous, chosen on the first screen
 - [x] Distinct-submitter counting decided — opaque browser-local ID, counts only
@@ -28,14 +28,14 @@ GitHub (repo), Vercel (hosting), Supabase (Postgres + auth for the team login). 
 - [x] Data retention and access decided — request text deleted 90 days after prayed-over, contact details kept indefinitely, leadership-only access, removal on request. See PROJECT_BRIEF.md section 10d.
 
 ## Phase 1 — Core loop (current phase)
-- [ ] Repo on GitHub, Vercel project, Supabase project
-- [ ] Supabase schema + row-level security policies (insert-only for the public client)
-- [ ] Crisis contact + latency notice on identity screen, form, and confirmation screen
-- [ ] Identity choice screen (named vs anonymous), shown before the form
-- [ ] Optional "Are you part of Flood Church?" question (Yes / No / Prefer not to say), both paths
-- [ ] Prayer submission form (free text, plus name/phone when the named path was chosen)
-- [ ] Prayer team view (list, mark as prayed-over, delete junk)
-- [ ] Team-side login with two roles (prayer team, leadership) — leadership-only access to contact details
+- [x] Repo on GitHub and Supabase project (Vercel not set up yet)
+- [x] Supabase schema + row-level security policies (public client has no table access at all; writes go through submit_prayer)
+- [x] Latency notice on identity screen, form, and confirmation screen
+- [x] Identity choice screen (named vs anonymous), shown before the form
+- [x] Optional "Are you part of Flood Church?" question (Yes / No / Prefer not to say), both paths
+- [x] Prayer submission form (free text, plus name/phone when the named path was chosen)
+- [x] Prayer team view (list, mark as prayed-over, flag urgent, delete junk)
+- [x] Team-side login (roles enforced in the database; leadership-only contact view not built yet)
 - [ ] Prayer team dashboard (total submissions, distinct submitters named vs anonymous, unprayed-over count, repeat grouping, membership breakdown)
 - [ ] One real test run with 2-3 prayer team members before anything is public
 

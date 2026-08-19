@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { CHURCH_NAME, CRISIS_CONTACT, PRAYER_DAY } from '@/lib/church'
+import { CHURCH_NAME, EMERGENCY_NUMBER, REVIEW_CADENCE } from '@/lib/church'
 import { getBrowserId } from '@/lib/browserId'
 import { supabase } from '@/lib/supabase'
 
@@ -21,8 +21,6 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [sent, setSent] = useState(false)
-
-  const telHref = 'tel:' + CRISIS_CONTACT.phone.replace(/\s/g, '')
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
@@ -78,7 +76,7 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
             <p className="eyebrow">{CHURCH_NAME}</p>
             <h1>It is with the prayer team.</h1>
             <p className="lede">
-              They will pray over it on {PRAYER_DAY}.
+              They will pray over it {REVIEW_CADENCE}.
               {isNamed
                 ? ' They have your number if you asked to talk.'
                 : ' We do not know who you are, and we will not try to find out.'}
@@ -87,12 +85,18 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
 
           <section className="notice" aria-label="If you need someone now">
             <p>
-              <strong>
-                If you are in danger right now, call {CRISIS_CONTACT.label} on{' '}
-                <a href={telHref}>{CRISIS_CONTACT.phone}</a>.
-              </strong>
+              <strong>Please do not wait on this page for a reply.</strong> Nobody
+              is reading it.
             </p>
-            <p>Please do not wait on this page for a reply. Nobody is watching it.</p>
+            {EMERGENCY_NUMBER && (
+              <p>
+                If you are in danger, call{' '}
+                <a href={'tel:' + EMERGENCY_NUMBER.replace(/\s/g, '')}>
+                  {EMERGENCY_NUMBER}
+                </a>
+                .
+              </p>
+            )}
           </section>
 
           <nav className="paths">
@@ -112,15 +116,18 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
       <main className="page">
         <section className="notice" aria-label="Before you start">
           <p>
-            <strong>
-              If you are in danger right now, call {CRISIS_CONTACT.label} on{' '}
-              <a href={telHref}>{CRISIS_CONTACT.phone}</a>.
-            </strong>
+            <strong>Nobody is reading this page right now.</strong> The prayer
+            team prays over these {REVIEW_CADENCE}.
           </p>
-          <p>
-            The prayer team reads these on {PRAYER_DAY}. Nobody is watching this
-            page as you type.
-          </p>
+          {EMERGENCY_NUMBER && (
+            <p>
+              If you are in danger, call{' '}
+              <a href={'tel:' + EMERGENCY_NUMBER.replace(/\s/g, '')}>
+                {EMERGENCY_NUMBER}
+              </a>
+              .
+            </p>
+          )}
         </section>
 
         <header>

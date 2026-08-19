@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { CHURCH_NAME, CRISIS_CONTACT, PRAYER_DAY } from '@/lib/church'
+import { CHURCH_NAME, EMERGENCY_NUMBER, REVIEW_CADENCE } from '@/lib/church'
 
 // The identity choice, shown before the form and before anything is typed.
 //
@@ -7,7 +7,9 @@ import { CHURCH_NAME, CRISIS_CONTACT, PRAYER_DAY } from '@/lib/church'
 //
 // 1. The crisis notice is static and always visible. It is not triggered by
 //    anything the person writes, because detection fails quietly on exactly the
-//    people it matters most for. See PROJECT_BRIEF.md section 10b.
+//    people it matters most for. See PROJECT_BRIEF.md section 10b. The church
+//    has no crisis line, so what the notice carries is the plain truth that
+//    nobody is reading this in real time.
 //
 // 2. Staying anonymous is listed first and given equal visual weight. The usual
 //    pattern buries the anonymous option as a grey afterthought, which tells
@@ -15,8 +17,6 @@ import { CHURCH_NAME, CRISIS_CONTACT, PRAYER_DAY } from '@/lib/church'
 //    the person who will not walk to the front, so that ordering is inverted.
 
 export default function IdentityChoice() {
-  const telHref = 'tel:' + CRISIS_CONTACT.phone.replace(/\s/g, '')
-
   return (
     <>
       <div className="glow" aria-hidden="true" />
@@ -24,14 +24,18 @@ export default function IdentityChoice() {
       <main className="page">
         <section className="notice" aria-label="Before you start">
           <p>
-            <strong>If you are in danger right now, call {CRISIS_CONTACT.label} on{' '}
-            <a href={telHref}>{CRISIS_CONTACT.phone}</a>.</strong>
+            <strong>Nobody is reading this page right now.</strong> Requests are
+            prayed over {REVIEW_CADENCE}, so please do not wait here for a reply.
           </p>
-          <p>
-            Requests here are read by the prayer team on {PRAYER_DAY}. Nobody is
-            watching this page as you type, so please do not wait on it in an
-            emergency.
-          </p>
+          {EMERGENCY_NUMBER && (
+            <p>
+              If you are in danger, call{' '}
+              <a href={'tel:' + EMERGENCY_NUMBER.replace(/\s/g, '')}>
+                {EMERGENCY_NUMBER}
+              </a>
+              .
+            </p>
+          )}
         </section>
 
         <header>
