@@ -16,6 +16,9 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
   const [body, setBody] = useState('')
   const [isMember, setIsMember] = useState<Membership>('unanswered')
   const [wantsCounseling, setWantsCounseling] = useState(false)
+  const [contactPhone, setContactPhone] = useState('')
+  const [contactWhatsapp, setContactWhatsapp] = useState(false)
+  const [contactPref, setContactPref] = useState<'call' | 'in_person'>('call')
   const [categories, setCategories] = useState<Category[]>([])
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -38,6 +41,10 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
       setError('That is longer than we can accept. Please shorten it a little.')
       return
     }
+    if (!isNamed && wantsCounseling && !contactPhone.trim()) {
+      setError('Leave a phone number so someone can reach you.')
+      return
+    }
     if (isNamed && (!firstName.trim() || !lastName.trim() || !phone.trim())) {
       setError(
         'The prayer team needs your first name, last name and phone number to reach you.',
@@ -57,6 +64,9 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
       p_first_name: isNamed ? firstName.trim() : null,
       p_last_name: isNamed ? lastName.trim() : null,
       p_phone: isNamed ? phone.trim() : null,
+      p_contact_phone: wantsCounseling && !isNamed ? contactPhone.trim() : null,
+      p_contact_whatsapp: wantsCounseling ? contactWhatsapp : false,
+      p_contact_pref: wantsCounseling ? contactPref : null,
     })
     setSending(false)
 
@@ -268,17 +278,80 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
                 />
               </div>
 
+            </>
+          )}
+
+          <div className="field">
+            <label className="choice">
+              <input
+                type="checkbox"
+                checked={wantsCounseling}
+                onChange={(event) => setWantsCounseling(event.target.checked)}
+              />
+              <span>I would like someone to talk to, not only prayer.</span>
+            </label>
+          </div>
+
+          {wantsCounseling && (
+            <div className="nested">
+              {!isNamed && (
+                <div className="field">
+                  <label className="label" htmlFor="contactPhone">
+                    A number to reach you on
+                  </label>
+                  {/* Said plainly, before they type it. Giving a number is the one
+                      thing that makes an anonymous person reachable, and they
+                      should know that is what they are choosing. */}
+                  <p className="hint">
+                    No name needed. This number is kept with this request only, is
+                    seen by church leadership alone, and is deleted with it. It is
+                    never linked to anything else you have sent.
+                  </p>
+                  <input
+                    id="contactPhone"
+                    className="input"
+                    type="tel"
+                    autoComplete="tel"
+                    value={contactPhone}
+                    onChange={(event) => setContactPhone(event.target.value)}
+                  />
+                </div>
+              )}
+
               <div className="field">
                 <label className="choice">
                   <input
                     type="checkbox"
-                    checked={wantsCounseling}
-                    onChange={(event) => setWantsCounseling(event.target.checked)}
+                    checked={contactWhatsapp}
+                    onChange={(event) => setContactWhatsapp(event.target.checked)}
                   />
-                  <span>I would like someone to talk to, not only prayer.</span>
+                  <span>This number is on WhatsApp</span>
                 </label>
               </div>
-            </>
+
+              <fieldset className="field">
+                <legend className="label">How would you rather talk?</legend>
+                <div className="choices">
+                  {(
+                    [
+                      ['call', 'Over the phone'],
+                      ['in_person', 'Meet in person'],
+                    ] as const
+                  ).map(([value, label]) => (
+                    <label key={value} className="choice">
+                      <input
+                        type="radio"
+                        name="contactPref"
+                        value={value}
+                        checked={contactPref === value}
+                        onChange={() => setContactPref(value)}
+                      />
+                      <span>{label}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            </div>
           )}
 
           {error && (

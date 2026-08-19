@@ -60,8 +60,9 @@ export default function IdentityChoice() {
           <Link className="path" href="/request?identity=anonymous">
             <p className="path-name">Stay anonymous</p>
             <p className="path-detail">
-              No name, no number, nothing kept. We will not know who you are, and
-              we will not try to find out.
+              No name, nothing kept. We will not know who you are, and we will not
+              try to find out — unless you ask us to get in touch, and leave a
+              number for that alone.
             </p>
           </Link>
 

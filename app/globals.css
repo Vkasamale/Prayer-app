@@ -667,3 +667,13 @@ a.quiet-button {
   display: inline-block;
   text-decoration: none;
 }
+
+/* Fields that only appear once something above them is ticked. The rule marks
+   them as belonging to that choice rather than floating loose in the form. */
+.nested {
+  border-left: 2px solid var(--line);
+  padding-left: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.nested .field:last-child { margin-bottom: 0; }

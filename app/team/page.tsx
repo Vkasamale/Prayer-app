@@ -34,9 +34,12 @@ type Counseling = {
   categories: string[]
   created_at: string
   prayed_over_at: string | null
-  first_name: string
-  last_name: string
+  first_name: string | null
+  last_name: string | null
   phone: string
+  contact_whatsapp: boolean
+  contact_pref: 'call' | 'in_person' | null
+  is_named: boolean
 }
 
 // null means all time.
@@ -547,8 +550,12 @@ function CounselingList({ rows }: { rows: Counseling[] }) {
         <li key={row.id} className="request">
           <div className="request-meta">
             <span className="who">
-              {row.first_name} {row.last_name}
+              {row.is_named ? row.first_name + ' ' + row.last_name : 'Anonymous'}
             </span>
+            {row.contact_pref === 'in_person' && (
+              <span className="tag tag-counseling">Wants to meet</span>
+            )}
+            {row.contact_whatsapp && <span className="tag">On WhatsApp</span>}
             {row.prayed_over_at && <span className="tag">Prayed over</span>}
             <span className="when">
               {new Date(row.created_at).toLocaleDateString(undefined, {
@@ -566,6 +573,14 @@ function CounselingList({ rows }: { rows: Counseling[] }) {
             <a className="quiet-button" href={'tel:' + row.phone.replace(/\s/g, '')}>
               Call {row.phone}
             </a>
+            {/* An anonymous person gave this number and nothing else. There is no
+                name to look up, and none should be sought. */}
+            {!row.is_named && (
+              <span className="share-note">
+                This number is all they gave. Ask nothing more of them than they
+                offered.
+              </span>
+            )}
           </div>
         </li>
       ))}
