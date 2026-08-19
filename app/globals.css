@@ -561,23 +561,6 @@ h1 {
   font-size: 0.85rem;
 }
 
-.summary-themes {
-  list-style: none;
-  margin: 0.8rem 0 0;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
-.summary-theme {
-  font-size: 0.78rem;
-  color: var(--quiet);
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  padding: 0.2rem 0.5rem;
-}
-
 /* --- Collapsible groups -------------------------------------------------- */
 
 details.group {
@@ -588,21 +571,27 @@ details.group {
 
 details.group + details.group { margin-top: 0.5rem; }
 
-/* summary carries the group heading, so the heading's own rule is overridden
-   here rather than fought with elsewhere. */
+/* The summary keeps its default display. Making a summary element flex stops
+   the browser's own click-to-toggle, so the layout goes on a span inside it. */
 .group > .group-heading {
+  display: block;
   margin: 0;
   padding: 0.75rem 1rem;
   border-bottom: 0;
   cursor: pointer;
   list-style: none;
-  align-items: center;
 }
 
 .group > .group-heading::-webkit-details-marker { display: none; }
 
+.group-heading-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 /* A disclosure caret drawn in CSS: no icon file, no library. */
-.group > .group-heading::before {
+.group-heading-inner::before {
   content: '';
   width: 0;
   height: 0;
@@ -613,7 +602,7 @@ details.group + details.group { margin-top: 0.5rem; }
   flex: none;
 }
 
-details.group[open] > .group-heading::before { rotate: 90deg; }
+details.group[open] > .group-heading .group-heading-inner::before { rotate: 90deg; }
 
 .group > .group-heading:hover { background: var(--raised); }
 

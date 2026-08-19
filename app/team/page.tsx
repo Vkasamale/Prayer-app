@@ -259,7 +259,9 @@ function PrayerList() {
               // time and the summary above already says what is waiting.
               <details key={key} className="group" name="prayer-group">
                 <summary className="group-heading">
-                  {label} <span className="group-count">{groupRows.length}</span>
+                  <span className="group-heading-inner">
+                    {label} <span className="group-count">{groupRows.length}</span>
+                  </span>
                 </summary>
                 <ul className="requests">
                   {groupRows.map((row) => (
@@ -441,14 +443,6 @@ function Summary({
           {urgentCount} {urgentCount === 1 ? 'is' : 'are'} flagged urgent.
         </p>
       )}
-
-      <ul className="summary-themes">
-        {groups.map((group) => (
-          <li key={group.key} className="summary-theme">
-            {group.label} <span className="group-count">{group.rows.length}</span>
-          </li>
-        ))}
-      </ul>
     </section>
   )
 }
