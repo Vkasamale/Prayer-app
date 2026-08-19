@@ -28,7 +28,7 @@ GitHub (repo), Vercel (hosting), Supabase (Postgres + auth for the team login). 
 - [x] Data retention and access decided — request text deleted 90 days after prayed-over, contact details kept indefinitely, leadership-only access, removal on request. See PROJECT_BRIEF.md section 10d.
 
 ## Phase 1 — Core loop (current phase)
-- [x] Repo on GitHub, Supabase project, and Vercel deployment (live at prayer-app-vkasamales-projects.vercel.app, Vercel Authentication turned off 2026-08-19 so the congregation can reach it)
+- [x] Repo on GitHub, Supabase project, and Vercel deployment (live at send-a-prayer.vercel.app, Vercel Authentication turned off 2026-08-19 so the congregation can reach it)
 - [x] Supabase schema + row-level security policies (public client has no table access at all; writes go through submit_prayer)
 - [x] Latency notice on identity screen, form, and confirmation screen
 - [x] Identity choice screen (named vs anonymous), shown before the form
@@ -41,7 +41,7 @@ GitHub (repo), Vercel (hosting), Supabase (Postgres + auth for the team login). 
 
 ## Before the QR code goes anywhere
 - [x] Schedule purge_expired_submissions — pg_cron, nightly at 03:15 (migration 0008)
-- [x] Domain — a vercel.app address is fine for the QR code. Decided by Vincent 2026-08-19; raised as a trust concern and settled. No custom domain needed.
+- [x] Domain — send-a-prayer.vercel.app, claimed 2026-08-19. A vercel.app address is fine for the QR code; raised as a trust concern and settled. The name carries no personal or church identifier, which matches the decision in PROJECT_BRIEF.md section 10f.
 - [ ] Leadership view for contact details, so counseling requests can actually be followed up
 - [x] Emergency numbers — Malawi police 997 and ambulance 998
 - [ ] Real test run with 2-3 prayer team members

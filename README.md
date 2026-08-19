@@ -6,7 +6,11 @@ can still be prayed for.
 
 ## Status
 
-Phase 1. All Phase 0 decisions are closed; no application code written yet.
+Live at **https://send-a-prayer.vercel.app** — not yet announced to the
+congregation, and no QR code printed.
+
+Phase 1 is built and tested end to end: the identity choice, the submission form
+with categories, the prayer team's grouped list, and the dashboard counts.
 
 ## Documentation
 
