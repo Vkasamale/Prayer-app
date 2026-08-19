@@ -24,6 +24,19 @@ Everything here is deliberately not being built yet, with the reason it's deferr
 
 **What has to be settled before either is built:** whether prayer request text may leave the church's own database at all. That is a leadership decision, not a technical one, and it decides the rest. If the answer is no, the submitter-picked version is the only candidate left.
 
+## Deferred feature — the prayer team entering requests themselves
+
+Vincent, 2026-08-19: the team should be able to add prayer requests of their own,
+for people who asked in person or who will never use a phone. The app currently
+holds only what the congregation submits through the form, so anything prayed over
+on a Wednesday that arrived by conversation is invisible to the counts and to the
+grouping.
+
+Deferred rather than dismissed. It needs a decision first about whose consent is
+being recorded: a team member typing someone else's disclosure is a different act
+from that person typing it themselves, and the name attached is not the name of
+anyone who agreed to anything. Worth building, worth thinking about first.
+
 ## Related but separate project
 
 - **Discipleship Bible study app** (devotional feed, ACTS/SOAP journaling, emotion-based verse retrieval) — this is a *different app* with a different user, different scope, and no external deadline. It is explicitly not part of the prayer app project. See its own PROJECT_BRIEF.md when that project starts. Do not let features from this idea bleed into the prayer app's scope.

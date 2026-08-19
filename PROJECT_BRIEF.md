@@ -119,6 +119,28 @@ Self-declared and unverifiable — anyone can tick any box. Verifying membership
 
 Dashboard gains a breakdown: members / not members / did not say.
 
+## 10h. Counseling on the anonymous path — decided 2026-08-19
+
+Someone who stayed anonymous can ask to talk. They give a phone number and
+nothing else: no name, no location. They also say whether that number takes
+WhatsApp, and whether they would rather be rung or meet in person.
+
+This is the single place the anonymity promise bends, and it bends by the
+person's own hand, for one request, because they asked to be reached. Three rules
+keep it honest, and all three are enforced in the database rather than promised:
+
+1. The number attaches to that one request and is never joined back to the
+   browser id, so nothing the person sent earlier becomes identifiable.
+2. It does not enter the church's permanent contact list. **Confirmed by Vincent:
+   choosing to stay anonymous and leaving a number for one conversation is not
+   consent to be in the church's list.** The retention job clears the number
+   along with the words at 90 days.
+3. The form says all of this before they type it, and the anonymous option on the
+   first screen no longer claims no number is ever kept.
+
+A named submitter is treated differently on purpose: they gave their name knowing
+it would be kept, so their contact record stays indefinitely.
+
 ## 10f. The church is not named to the congregation — decided 2026-08-19
 
 The app carries no church name on any page a congregation member or visitor
