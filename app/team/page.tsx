@@ -152,15 +152,18 @@ function SignIn() {
   )
 }
 
+// Four mutually exclusive views, so one value rather than a pair of booleans
+// that can both be true.
+type Tab = 'waiting' | 'prayed' | 'counseling' | 'totals'
+
 function PrayerList() {
   const [rows, setRows] = useState<Submission[] | null>(null)
   const [stats, setStats] = useState<Stats | null>(null)
-  const [showPrayed, setShowPrayed] = useState(false)
+  const [tab, setTab] = useState<Tab>('waiting')
   const [grouped, setGrouped] = useState(true)
   const [periodDays, setPeriodDays] = useState<number | null>(null)
   const [isLeadership, setIsLeadership] = useState(false)
   const [counseling, setCounseling] = useState<Counseling[] | null>(null)
-  const [showCounseling, setShowCounseling] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
@@ -179,13 +182,6 @@ function PrayerList() {
     setError(null)
     setRows(data as Submission[])
 
-    // Counts come from the database rather than from the rows above, because
-    // distinct-submitter counts cannot be worked out from a filtered list.
-    const { data: statRows } = await getSupabase().rpc('dashboard_stats', {
-      p_days: periodDays,
-    })
-    setStats((statRows?.[0] as Stats) ?? null)
-
     // Leadership sees one extra tab. The database decides this, not the browser:
     // a member who forced the flag on would still read nothing, because the view
     // itself checks is_leadership().
@@ -199,22 +195,61 @@ function PrayerList() {
         .order('created_at', { ascending: true })
       setCounseling((contacts as Counseling[]) ?? [])
     }
-  }, [periodDays])
+  }, [])
 
   useEffect(() => {
     load()
   }, [load])
 
+  // The counts are fetched only when the totals tab is open, and again when the
+  // time window changes. They are the least urgent thing on the page and used to
+  // be downloaded on every visit and after every tick, on phones paying for data.
+  //
+  // They come from the database rather than from the rows above, because
+  // distinct-submitter counts cannot be worked out from a filtered list.
+  useEffect(() => {
+    if (tab !== 'totals') return
+    let current = true
+    getSupabase()
+      .rpc('dashboard_stats', { p_days: periodDays })
+      .then(({ data }) => {
+        if (current) setStats((data?.[0] as Stats) ?? null)
+      })
+    return () => {
+      current = false
+    }
+  }, [tab, periodDays])
+
+  // Marking a request prayed over used to call load(), which re-downloaded every
+  // request and every body. Twenty ticks at a Wednesday meeting meant twenty-one
+  // downloads of the same list, on phones paying for the data. The row is patched
+  // in place instead; the database is still what decides, and a failure reloads
+  // rather than leaving the screen lying.
   async function update(id: string, patch: Record<string, unknown>) {
-    const { error: updateError } = await getSupabase()
+    const { data, error: updateError } = await getSupabase()
       .from('submissions')
       .update(patch)
       .eq('id', id)
-    if (updateError) {
+      .select('id, prayed_over_at, flagged_urgent')
+      .single()
+
+    if (updateError || !data) {
       setError('That change did not save. Reload and try again.')
+      load()
       return
     }
-    load()
+
+    setRows((current) =>
+      (current ?? []).map((row) =>
+        row.id === id
+          ? {
+              ...row,
+              prayed_over_at: data.prayed_over_at as string | null,
+              flagged_urgent: data.flagged_urgent as boolean,
+            }
+          : row,
+      ),
+    )
   }
 
   async function remove(id: string) {
@@ -227,14 +262,15 @@ function PrayerList() {
       setError('That could not be deleted. Reload and try again.')
       return
     }
-    load()
+    setRows((current) => (current ?? []).filter((row) => row.id !== id))
+    setCounseling((current) => (current ?? []).filter((row) => row.id !== id))
   }
 
   if (rows === null && !error) return null
 
   const waiting = (rows ?? []).filter((row) => !row.prayed_over_at)
   const prayed = (rows ?? []).filter((row) => row.prayed_over_at)
-  const shown = showPrayed ? prayed : waiting
+  const shown = tab === 'prayed' ? prayed : waiting
 
   return (
     <>
@@ -252,52 +288,60 @@ function PrayerList() {
 
         {error && <p className="error" role="alert">{error}</p>}
 
-        {stats && (
-          <Dashboard
-            stats={stats}
-            periodDays={periodDays}
-            onPeriodChange={setPeriodDays}
-          />
-        )}
-
+        {/* The counts sat above the list and took most of the first screen on a
+            phone, so the team scrolled past the tracking to reach the work. They
+            are a tab of their own now: still there, no longer in the way. */}
         <div className="tabs" role="tablist">
           <button
             role="tab"
-            aria-selected={!showPrayed && !showCounseling}
-            className={'tab' + (!showPrayed && !showCounseling ? ' tab-on' : '')}
-            onClick={() => {
-              setShowPrayed(false)
-              setShowCounseling(false)
-            }}
+            aria-selected={tab === 'waiting'}
+            className={'tab' + (tab === 'waiting' ? ' tab-on' : '')}
+            onClick={() => setTab('waiting')}
           >
             Waiting ({waiting.length})
           </button>
           <button
             role="tab"
-            aria-selected={showPrayed && !showCounseling}
-            className={'tab' + (showPrayed && !showCounseling ? ' tab-on' : '')}
-            onClick={() => {
-              setShowPrayed(true)
-              setShowCounseling(false)
-            }}
+            aria-selected={tab === 'prayed'}
+            className={'tab' + (tab === 'prayed' ? ' tab-on' : '')}
+            onClick={() => setTab('prayed')}
           >
             Prayed over ({prayed.length})
           </button>
           {isLeadership && (
             <button
               role="tab"
-              aria-selected={showCounseling}
-              className={'tab' + (showCounseling ? ' tab-on' : '')}
-              onClick={() => setShowCounseling(true)}
+              aria-selected={tab === 'counseling'}
+              className={'tab' + (tab === 'counseling' ? ' tab-on' : '')}
+              onClick={() => setTab('counseling')}
             >
               Wants to talk ({counseling?.length ?? 0})
             </button>
           )}
+          <button
+            role="tab"
+            aria-selected={tab === 'totals'}
+            className={'tab' + (tab === 'totals' ? ' tab-on' : '')}
+            onClick={() => setTab('totals')}
+          >
+            Totals
+          </button>
         </div>
 
-        {showCounseling && <CounselingList rows={counseling ?? []} />}
+        {tab === 'totals' &&
+          (stats ? (
+            <Dashboard
+              stats={stats}
+              periodDays={periodDays}
+              onPeriodChange={setPeriodDays}
+            />
+          ) : (
+            <p className="empty">Counting…</p>
+          ))}
 
-        {!showCounseling && shown.length > 0 && (
+        {tab === 'counseling' && <CounselingList rows={counseling ?? []} />}
+
+        {(tab === 'waiting' || tab === 'prayed') && shown.length > 0 && (
           <label className="choice group-toggle">
             <input
               type="checkbox"
@@ -308,9 +352,9 @@ function PrayerList() {
           </label>
         )}
 
-        {showCounseling ? null : shown.length === 0 ? (
+        {tab === 'counseling' || tab === 'totals' ? null : shown.length === 0 ? (
           <p className="empty">
-            {showPrayed
+            {tab === 'prayed'
               ? 'Nothing has been marked prayed over yet.'
               : 'Nothing is waiting. The list is clear.'}
           </p>
