@@ -83,6 +83,18 @@ actually want. Revoking `from public` alone is not enough. This caused four
 separate defects in one session. The checks at the bottom of each migration are
 what caught them, so keep writing them.
 
+### Row-level security filters rows, never columns
+A policy of `is_team_member()` on `submissions` let every prayer team member
+read `contact_phone` straight off the table through PostgREST, past the
+leadership-gated view. RLS cannot express "not that column". When a table holds
+something only some roles may see, grant the columns explicitly — and grant
+`update` per column too, or the team can rewrite the words a person wrote. The
+leadership view still works because it is `security_invoker = off` and reads
+those columns as its owner.
+
+**A view is not a boundary.** If the base table is readable, the view is
+decoration. Check the table whenever you check a view.
+
 ### Permission mistakes fail as absence, not as errors
 A missing grant shows up as an empty list, not an exception. A view that
 returns no rows is not evidence that it is empty. `counseling_for_leadership`
