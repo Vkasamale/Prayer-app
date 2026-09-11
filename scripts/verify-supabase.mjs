@@ -124,6 +124,15 @@ check(
   leadership.error ? '' : 'it returned ' + leadership.data.length + ' row(s)',
 )
 
+// 9. The monthly trend is team-only too. It is counts rather than words, but
+//    counts of a church's prayer requests are still nobody else's business.
+const trend = await supabase.rpc('monthly_stats', { p_months: 3 })
+check(
+  'public key cannot read the monthly trend',
+  Boolean(trend.error),
+  trend.error ? '' : 'it returned ' + JSON.stringify(trend.data),
+)
+
 console.log('')
 if (failures.length) {
   console.error(failures.length + ' check(s) failed: ' + failures.join(', '))

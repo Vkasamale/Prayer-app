@@ -504,6 +504,66 @@ h1 {
 
 .stat-note + .stat-note { margin-top: 0.4rem; }
 
+/* --- The monthly trend --------------------------------------------------- */
+/* One bar a month, oldest at the top. One measure, so no legend and no colour
+   coding: the heading says what it is and every value is written out beside its
+   bar, which means the chart never has to be seen in colour to be read. */
+
+.trend { margin-top: 1.2rem; }
+
+.trend-title {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 1rem;
+  color: #eef3f2;
+  margin: 0 0 0.7rem;
+}
+
+.trend-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.trend-row {
+  display: grid;
+  grid-template-columns: 3.6rem 1fr 2rem;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 1.6rem;
+}
+
+.trend-month {
+  font-size: 0.75rem;
+  color: var(--quiet);
+  white-space: nowrap;
+}
+
+.trend-track {
+  height: 0.7rem;
+  background: var(--night);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.trend-bar {
+  display: block;
+  height: 100%;
+  background: var(--candle);
+  /* Rounded only at the end the data reaches, so the baseline stays square. */
+  border-radius: 0 3px 3px 0;
+}
+
+.trend-count {
+  font-size: 0.8rem;
+  color: var(--mist);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 /* --- Grouped list -------------------------------------------------------- */
 
 .group-toggle { align-self: flex-start; }

@@ -49,6 +49,12 @@ const PERIODS: { label: string; days: number | null }[] = [
   { label: 'All time', days: null },
 ]
 
+type MonthRow = {
+  month: string
+  requests: number
+  counseling: number
+}
+
 type Submission = {
   id: string
   body: string | null
@@ -392,6 +398,82 @@ function PrayerList() {
   )
 }
 
+// Requests per month, oldest first. The time windows above answer "how much
+// lately"; each one replaces the last, so none of them can answer "is this
+// growing". That is a different question and it gets its own row of bars.
+//
+// Counts only, like everything else on this tab.
+function Trend() {
+  const [months, setMonths] = useState<MonthRow[] | null>(null)
+
+  useEffect(() => {
+    let current = true
+    getSupabase()
+      .rpc('monthly_stats', { p_months: 12 })
+      .then(({ data }) => {
+        if (current) setMonths((data as MonthRow[]) ?? [])
+      })
+    return () => {
+      current = false
+    }
+  }, [])
+
+  if (!months) return null
+
+  const most = Math.max(1, ...months.map((m) => m.requests))
+  const anything = months.some((m) => m.requests > 0)
+
+  return (
+    <section className="trend" aria-label="Requests each month">
+      <h2 className="trend-title">Requests each month</h2>
+
+      {anything ? (
+        <ol className="trend-rows">
+          {months.map((month) => {
+            const label = new Date(month.month + 'T00:00:00').toLocaleDateString('en-GB', {
+              month: 'short',
+              year: '2-digit',
+            })
+            return (
+              <li
+                key={month.month}
+                className="trend-row"
+                title={
+                  label +
+                  ': ' +
+                  month.requests +
+                  (month.requests === 1 ? ' request' : ' requests') +
+                  (month.counseling > 0 ? ', ' + month.counseling + ' asked to talk' : '')
+                }
+              >
+                <span className="trend-month">{label}</span>
+                <span className="trend-track">
+                  {/* A month with one request must still show something, or a
+                      quiet month reads as a broken chart. */}
+                  <span
+                    className="trend-bar"
+                    style={{
+                      width:
+                        month.requests === 0
+                          ? 0
+                          : 'max(3px, ' + (month.requests / most) * 100 + '%)',
+                    }}
+                  />
+                </span>
+                {/* The number is text, so the bars are never the only way to
+                    read this. */}
+                <span className="trend-count">{month.requests}</span>
+              </li>
+            )
+          })}
+        </ol>
+      ) : (
+        <p className="empty">Nothing yet. This fills in as requests come in.</p>
+      )}
+    </section>
+  )
+}
+
 // The tracking view: how much has come in, and how many different people it came
 // from. Deliberately counts and nothing else — no behaviour, no individuals.
 function Dashboard({
@@ -433,6 +515,8 @@ function Dashboard({
         The anonymous figure counts browsers, not people, so it is a floor — the
         same person on a new phone counts twice.
       </p>
+
+      <Trend />
 
       {answered > 0 && (
         <p className="stat-note">
