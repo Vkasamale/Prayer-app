@@ -4,34 +4,34 @@
 
 ### What Vincent needs to do, shortest first
 
-1. **Delete the test rows.** Four rows in `submissions`, all labelled. An agent
-   is not permitted to run deletes. Paste into the Supabase SQL editor:
+1. **Create one ordinary prayer team account**, role `prayer_team`, not
+   leadership. Supabase dashboard → Authentication → Users → Add user, then tell
+   the agent the email and it will add the `team_members` row.
 
-   ```sql
-   delete from submissions where body like 'AUTOMATED CHECK%';
-   ```
+   This is the last untested boundary in the product: that a prayer team member
+   can read the prayer list but **cannot** see counseling phone numbers. It
+   cannot be faked in SQL, because `team_members.user_id` has a foreign key to
+   `auth.users`. Everything around it is proven — leadership sees the counseling
+   row, a signed-in non-leadership account sees zero — but the role that three
+   real people will actually hold has never been exercised.
 
-   This is the whole table — there is no real data in it yet.
+2. **Decide one thing.** Should an anonymous person be warned, *before* ticking
+   "I would like someone to talk to", that they cannot be reached without a
+   number? The form says so at the field, but not before the choice. Cheap
+   either way; the question is what it does to the person reading it.
 
-2. **Point Supabase auth at the live address.** Supabase dashboard →
-   Authentication → URL Configuration. Set **Site URL** to
-   `https://send-a-prayer.vercel.app` and add it to **Redirect URLs**. Team
-   sign-in has only ever been tested on localhost, so it is unproven on the
-   deployed site until this is done.
-
-3. **Answer one open question.** Should an anonymous person be warned, *before*
-   ticking "I would like someone to talk to", that they cannot be reached
-   without giving a number? The form says so at the field, but not before the
-   choice. Either answer is cheap to build; the question is what it does to the
-   person reading it.
+3. **Print the poster and the card** and put one up. They are in `design/`,
+   published as a design canvas; Export PDF gives both.
 
 ### What the session should pick up, in order
 
-1. **Sign in to the team view on the live site** and confirm it works, once
-   item 2 above is done. This is the last unproven path in the product.
-2. **The QR code** — Phase 2, small, and the last thing before a real trial.
-3. **Print-ready QR material** for the church.
-4. **A real test run** with 2–3 prayer team members, per `ROADMAP.md`.
+1. **Add the `team_members` row** for the new account and finish the boundary
+   test above.
+2. **Put two or three realistic invented requests in through the form**, not by
+   SQL, so the prayer team has something to look at. Do this close to the trial,
+   not before — the rows have to be cleared again afterwards, and only Vincent
+   can clear them.
+3. **The test run** with 2–3 prayer team members, per `ROADMAP.md`.
 
 ### State of play, one line each
 
@@ -40,7 +40,9 @@
 - `npx tsc --noEmit`: clean.
 - Live at https://send-a-prayer.vercel.app, public, not announced, no QR printed.
 - Both counseling paths, anonymous and named, verified correct in the database.
-- Team sign-in on the live site: **not proven.** Waits on agenda item 2.
+- Team sign-in on the live site: **works**, confirmed 2026-09-11 by Vincent.
+- The database is empty: no submissions, no submitters. One account, leadership.
+- A prayer team member's view of the product: **never exercised.** No such account exists.
 
 ## Handoff ledger
 
@@ -50,7 +52,8 @@ above when you pick a handoff up.
 | # | Date | Headline task | Outcome | Evidence |
 |---|---|---|---|---|
 | 1 | 2026-08-19 | Build the product end to end: identity choice, form, team list, dashboard, leadership counseling view | landed | 30 commits; migrations 0001–0010 written; deployed to Vercel |
-| 2 | 2026-09-11 | Apply migration 0010 and clear the deck for the QR code | partly landed | 0010 was already applied — verified by function signature, columns, view and grants. `npm run verify` extended from 8 to 10 checks, all passing. Both counseling paths verified by rollback test. Test-row delete refused to the agent, handed to Vincent. |
+| 2 | 2026-09-11 | Apply migration 0010 and clear the deck for the QR code | landed | 0010 was already applied — verified by function signature, columns, view and grants. `npm run verify` extended from 8 to 10 checks, all passing. Both counseling paths verified by rollback test. Test-row delete refused to the agent, handed to Vincent and done. |
+| 3 | 2026-09-11 | Write the standing rules down, build the QR material, prove team sign-in | landed | `AGENTS.md` and `CLAUDE.md` written; handoff ledger started; a hook now enforces two of the rules; QR code and A4/A6 print material built and checked pixel-for-pixel against the generator; team sign-in confirmed working on the live site by Vincent. |
 
 ## Setup
 
@@ -91,6 +94,22 @@ above when you pick a handoff up.
   path, so empty strings would create a nameless submitter row.
 - **The `WALKTHROUGH TEST%` rows and the `Deleteme` submitter are already gone.**
   `submitters` is empty.
+
+## Closed 2026-09-11, second pass — do not re-test
+
+- **The counseling boundary is proven in both directions for leadership.**
+  Tested against the live database inside a rolled-back transaction, so no rows
+  were left: with an anonymous counseling request carrying a phone number in
+  place, the leadership account sees 1 row in `counseling_for_leadership` and a
+  signed-in account that is not leadership sees 0. `submissions_for_team` has no
+  contact columns at all — the prayer team's view cannot leak a number even if a
+  policy were wrong, because the column is not in it. It also exposes
+  `first_name` only, never a surname.
+- **Team sign-in works on the live site.** Email and password, not a magic link,
+  so `signInWithPassword` does not depend on the Site URL setting at all — that
+  setting governs magic links, OAuth and password resets. A deliberately wrong
+  password returns 400 from Supabase and the app shows "That email and password
+  did not match." without leaking the raw error.
 
 ## Still outstanding
 
