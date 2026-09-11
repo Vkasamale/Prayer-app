@@ -47,7 +47,7 @@ GitHub (repo), Vercel (hosting), Supabase (Postgres + auth for the team login). 
 - [ ] Real test run with 2-3 prayer team members
 
 ## Phase 2 — Extended features
-- [ ] Counseling request flag, distinct from general prayer submission
+- [x] Counseling request flag, distinct from general prayer submission — built 2026-08-19, including the anonymous path (see `PROJECT_BRIEF.md` 10h)
 - [ ] QR code generation (single static code)
 - [ ] Print-ready QR placement material for the church
 
@@ -58,3 +58,30 @@ GitHub (repo), Vercel (hosting), Supabase (Postgres + auth for the team login). 
 
 ## Explicitly not on this roadmap
 Push notifications, multi-church support, analytics, congregation login, dynamic QR codes, and the entire discipleship Bible study app. See `BACKLOG.md` for why each is deferred.
+
+## Session notes
+
+Dated, newest first. One paragraph per session: what moved, what it cost, what
+it taught.
+
+### 2026-09-11
+Picked up a handoff that opened with "the live site is broken until you apply
+0010". It was already applied — the whole first item on the agenda was a ghost,
+and the second, third and fourth were partly ghosts too. Checking the database
+before acting on the claim took four queries. Extended `npm run verify` from 8
+checks to 10, covering what 0010 added, and verified both counseling paths with
+a transaction that rolls itself back so no test rows were created. Wrote
+`AGENTS.md`, which the project had been running without: every rule in it had
+already been learned and written down somewhere that only got read by accident.
+The lesson is the cheap one to state and the expensive one to skip — a handoff
+records what a session *intended*, and the database records what happened. Check
+the second before trusting the first.
+
+### 2026-08-19
+Built the whole product in one day: identity choice, submission form with
+categories, the prayer team's grouped list, dashboard counts with time windows,
+the leadership counseling view, and the anonymous counseling path. Ten
+migrations, thirty commits, deployed to Vercel. The recurring cost was Supabase
+granting every new object in `public` to `anon` by default: four separate
+defects, all caught by verification blocks written at the bottom of each
+migration. Those blocks paid for themselves the same day.

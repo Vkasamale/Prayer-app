@@ -85,7 +85,20 @@ check(
   halfNamed.error ? '' : 'it was accepted',
 )
 
-// 4-6. The public key can read nothing at all.
+// 3b. Asking to talk with no way to be reached is refused, so nobody waits on a
+//     call that cannot be made.
+const unreachable = await supabase.rpc('submit_prayer', {
+  p_body: 'AUTOMATED CHECK - should never be stored',
+  p_browser_id: '00000000-0000-4000-8000-000000000001',
+  p_kind: 'counseling',
+})
+check(
+  'anonymous counseling without a number refused',
+  Boolean(unreachable.error),
+  unreachable.error ? '' : 'it was accepted',
+)
+
+// 4-7. The public key can read nothing at all.
 for (const table of ['submissions', 'submitters', 'team_members']) {
   const { data, error } = await supabase.from(table).select('*').limit(1)
   check(
@@ -101,6 +114,14 @@ check(
   'public key cannot read submissions_for_team',
   Boolean(view.error) || (view.data?.length ?? 0) === 0,
   view.error ? '' : 'it returned ' + view.data.length + ' row(s)',
+)
+
+// 8. And nothing through leadership's follow-up list, which holds phone numbers.
+const leadership = await supabase.from('counseling_for_leadership').select('*').limit(1)
+check(
+  'public key cannot read counseling_for_leadership',
+  Boolean(leadership.error) || (leadership.data?.length ?? 0) === 0,
+  leadership.error ? '' : 'it returned ' + leadership.data.length + ' row(s)',
 )
 
 console.log('')
