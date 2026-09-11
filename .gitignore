@@ -16,3 +16,5 @@ next-env.d.ts
 # The seeded design canvas is a 2 MB build artifact of the .dc.html sources.
 design/*.html
 !design/*.dc.html
+design-list/*.html
+!design-list/*.dc.html

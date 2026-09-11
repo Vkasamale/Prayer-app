@@ -1,0 +1,43 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 390,
+      "h": 2000,
+      "title": "As opened - themes closed",
+      "print": "flow"
+    },
+    {
+      "file": "OneThemeOpen.dc.html",
+      "x": 510,
+      "y": 0,
+      "w": 390,
+      "h": 4300,
+      "title": "One theme open (12 requests)",
+      "print": "flow"
+    },
+    {
+      "file": "Ungrouped.dc.html",
+      "x": 1020,
+      "y": 0,
+      "w": 390,
+      "h": 3450,
+      "title": "Grouping off - first 14 of 100",
+      "print": "flow"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "what-this-is",
+      "x": 0,
+      "y": 2090,
+      "w": 390,
+      "text": "All three artboards hold the same 100 waiting requests, at phone width (390px), using the app's own stylesheet. Heights are measured in a real browser, not estimated.\n\nLeft, as the team opens it: 1,952px, about 2.3 phone screens. Thirteen closed theme rows, a summary, and the dashboard above them.\n\nMiddle, one theme opened (12 requests): 4,219px, 5 screens. Opening another closes this one, so the page never grows past a single theme.\n\nRight, grouping switched off: 3,364px for only the first 14 of the 100. All 100 would run to roughly 26 screens. Unticking that checkbox is the only way to reach it.\n\nThe requests are invented. Nothing here came from a real person."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}
