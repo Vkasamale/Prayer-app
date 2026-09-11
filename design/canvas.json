@@ -1,0 +1,34 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 794,
+      "h": 1123,
+      "title": "A4 poster",
+      "print": "fixed"
+    },
+    {
+      "file": "Card.dc.html",
+      "x": 914,
+      "y": 0,
+      "w": 397,
+      "h": 559,
+      "title": "A6 card",
+      "print": "fixed"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "print-notes",
+      "x": 914,
+      "y": 640,
+      "w": 397,
+      "text": "Both are laid out at 96 px per inch: the poster is A4 (794x1123), the card is A6, half an A5 sheet (397x559).\n\nThe QR is vector, so it stays sharp at any size, and it carries the highest error correction, which is what lets it still scan when the paper gets scuffed or a corner is torn.\n\nCream paper rather than the app's dark background: an A4 of near-black would drink ink and look grey off most church printers."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

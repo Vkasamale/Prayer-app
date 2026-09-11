@@ -103,6 +103,14 @@ re-run is safe: drop both the old and the new function signature, guard
 A comment naming the shortcut and the condition that would end it. A simple
 thing reads as intent rather than ignorance.
 
+### Two of these rules are enforced by a hook
+`.claude/hooks/guard-bash.mjs` runs before every Bash command and refuses a
+`next build` while port 3000 is listening, and a `git push` carrying a commit
+that adds a migration. It is Node rather than shell because there is no `jq` on
+this machine — the first version used it, found nothing, and silently allowed
+everything. A hook that cannot fail loudly is worse than no hook, so both refusal
+paths were proven before it was wired in.
+
 ## Locale and copy
 
 - The church is in Malawi. Timezone Africa/Blantyre. Emergency numbers shown
@@ -113,6 +121,26 @@ thing reads as intent rather than ignorance.
 - Copy is plain, warm, and never clinical. Nobody reading this app is having a
   good day. No exclamation marks, no product voice, no "Oops!".
 - Never show a database error to a person. Their words stay in the box.
+
+## The QR code and the print material
+
+`public/qr/send-a-prayer.svg` is the single static QR code, generated with
+`npx qrcode -t svg -e H` at the highest error-correction level so it still scans
+once the paper is scuffed or a corner is gone. Vector, so it prints crisply at
+any size. Regenerate it only if the address changes.
+
+The poster and card live in `design/` as `.dc.html` artboards and are published
+as a design canvas. They are A4 (794x1123) and A6 (397x559) at 96 px per inch.
+Three things about them are load-bearing:
+
+- **They are cream, not the app's near-black.** An A4 flood of `#101a1f` drinks
+  ink and comes out grey on an ordinary printer.
+- **Set `box-sizing: border-box` on any new artboard.** The app sets it
+  globally; a `.dc.html` does not inherit that, so padding is added to the fixed
+  page height and the artboard silently overflows its frame.
+- **The QR modules are strokes, not fills.** The `qrcode` library emits
+  `<path stroke="#000000">`; giving that path a `fill` renders a blank white
+  square that looks fine until nobody can scan it.
 
 ## The stack, and what is unusual about it
 
