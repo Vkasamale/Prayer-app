@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { EMERGENCY_CONTACTS, REVIEW_CADENCE } from '@/lib/church'
 import ShareLink from './ShareLink'
+import QrCode from './QrCode'
 
 // The identity choice, shown before the form and before anything is typed.
 //
@@ -93,6 +94,7 @@ export default function IdentityChoice() {
         </nav>
 
         <ShareLink />
+        <QrCode />
 
         <footer className="footnote">
           <p>

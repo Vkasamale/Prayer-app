@@ -59,46 +59,50 @@ body {
   line-height: 1.6;
 }
 
-/* The gilt edge of the block, down the outer margin of the leaf. The old design
-   had a breathing candle glow here; paper does not glow, so it is gone rather
-   than recoloured. This is the only ornament on the page. */
+/* A single leaf of an open book, and the two sides are not the same — which is
+   the whole trick. Left is the spine: the paper curves down into the gutter, so
+   it darkens, and a stitched fold sits at the very edge. Right is the outer
+   edge of the block: gilt, with the faint stack of the leaves beneath it.
+   Symmetrical gilt on both sides, which is what this was before, reads as a
+   border. A book only has one spine. */
 .glow {
   position: fixed;
   inset: 0 auto 0 0;
-  width: 6px;
-  background: linear-gradient(
-    to right,
-    var(--gilt) 0%,
-    #d8bd7a 40%,
-    rgba(176, 141, 63, 0.25) 75%,
-    transparent 100%
-  );
+  width: min(34px, 7vw);
   pointer-events: none;
+  background:
+    linear-gradient(to right, rgba(60, 43, 20, 0.34) 0%, rgba(60, 43, 20, 0.13) 34%, rgba(120, 96, 48, 0.05) 68%, transparent 100%),
+    /* The fold itself: one dark hairline hard against the edge. */
+    linear-gradient(to right, rgba(43, 31, 14, 0.5) 0 1.5px, transparent 1.5px);
 }
 
 .glow::after {
   content: '';
   position: fixed;
   inset: 0 0 0 auto;
-  width: 6px;
-  background: linear-gradient(
-    to left,
-    var(--gilt) 0%,
-    #d8bd7a 40%,
-    rgba(176, 141, 63, 0.25) 75%,
-    transparent 100%
-  );
+  width: min(20px, 4.5vw);
+  background:
+    /* The stack of leaves under the top one, thinning as it goes in. */
+    repeating-linear-gradient(
+      to left,
+      rgba(140, 112, 58, 0.22) 0 1px,
+      transparent 1px 3px
+    ),
+    linear-gradient(to left, var(--gilt) 0%, #d8bd7a 30%, rgba(176, 141, 63, 0.18) 72%, transparent 100%);
 }
+
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
 
+/* The text sits clear of spine and edge both, and further from the spine — the
+   asymmetry a bound page actually has. */
 .page {
   position: relative;
   max-width: 32rem;
   margin: 0 auto;
-  padding: 2rem 1.25rem 3rem;
+  padding: 2rem calc(0.9rem + min(20px, 4.5vw)) 3rem calc(0.9rem + min(34px, 7vw));
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -381,20 +385,61 @@ h1 {
 
 /* Generous hit area: this is used one-handed, on a phone, often by someone
    who is upset. */
+/* No box. The tick or the dot is the control and is visible on its own, so the
+   border around it was drawing a second control that does nothing. The hit area
+   is untouched — this is tapped one-handed by someone upset, and that was never
+   the part that looked like a website. */
 .choice {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   min-height: 2.75rem;
-  padding: 0.4rem 0.8rem 0.4rem 0.6rem;
-  background: var(--leaf);
-  border: 1px solid var(--rule);
+  padding: 0.4rem 0.7rem 0.4rem 0.1rem;
+  background: transparent;
+  border: 0;
   border-radius: 0;
   font-size: 0.9rem;
   cursor: pointer;
 }
 
-.choice:hover { background: var(--raised); }
+.choice:hover { background: rgba(176, 141, 63, 0.08); }
+
+/* --- The QR code --------------------------------------------------------- */
+/* Shown on the page so one person can hold it up and another can scan it off
+   the screen. Set as a plate is set in a book: the image, then the caption
+   under it, centred, ruled off from the text above. */
+
+.qr { margin-top: -1rem; }
+
+.qr-plate {
+  margin: 0.9rem 0 0;
+  padding: 1.1rem 0 0;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.qr-image {
+  display: block;
+  width: 13.75rem;
+  height: auto;
+  /* The code must stay pure white behind the squares or scanners struggle, so
+     it keeps its own ground and sits on the paper as a pasted-in plate. */
+  background: #fff;
+  padding: 0.6rem;
+  border: 1px solid var(--rule);
+}
+
+.qr-caption {
+  margin: 0;
+  max-width: 22rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--faded);
+}
 
 .choice input {
   accent-color: var(--gilt);

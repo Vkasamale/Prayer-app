@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { EMERGENCY_CONTACTS, REVIEW_CADENCE } from '@/lib/church'
 import ShareLink from '../ShareLink'
+import QrCode from '../QrCode'
 import { CATEGORIES, type Category } from '@/lib/categories'
 import { getBrowserId } from '@/lib/browserId'
 import { getSupabase } from '@/lib/supabase'
@@ -136,6 +137,7 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
           </nav>
 
           <ShareLink />
+          <QrCode />
         </main>
       </>
     )
