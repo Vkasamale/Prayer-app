@@ -73,6 +73,21 @@ check('can read the team list', !list.error, list.error?.message)
 const trend = await supabase.rpc('monthly_stats', { p_months: 12 })
 check('can read the monthly trend', !trend.error, trend.error?.message)
 
+// Postgres reports a refused column as "permission denied for table
+// submissions" — the same words it uses for a table nobody may touch at all. So
+// the refusals below only mean something if a granted column still reads: that
+// is what makes them column-specific rather than the whole table being shut.
+// Without this, a migration that revoked everything would leave the three
+// checks below passing while the team list quietly broke.
+const grantedColumn = await supabase.from('submissions').select('body').limit(1)
+check(
+  'a granted column on submissions still reads',
+  !grantedColumn.error,
+  grantedColumn.error
+    ? grantedColumn.error.message + ' — the refusals below prove nothing'
+    : undefined,
+)
+
 // What it must not. A refusal here is the whole point: insufficient_privilege
 // from the column grant, not an empty result. An empty result would mean the
 // read succeeded and there simply was no data, which proves nothing.
@@ -85,11 +100,31 @@ for (const column of ['contact_phone', 'contact_whatsapp', 'contact_pref']) {
   )
 }
 
+// The named path does not use submissions.contact_phone at all: the number is
+// on submitters.phone, and 0011 never touched that table. The column grants say
+// authenticated may select phone and may update and delete every column there,
+// so whether anything stops an ordinary member rests entirely on row-level
+// security. Worth asking directly.
+const submitterPhone = await supabase.from('submitters').select('phone').limit(1)
+check(
+  'submitters.phone is out of reach',
+  Boolean(submitterPhone.error) || submitterPhone.data?.length === 0,
+  submitterPhone.error
+    ? submitterPhone.error.message
+    : submitterPhone.data?.length
+      ? `RETURNED ${submitterPhone.data.length} ROW(S) — the name and number of a real person`
+      : 'read allowed, no rows returned',
+)
+
 const leadershipView = await supabase.from('counseling_for_leadership').select('*').limit(1)
 check(
   'counseling_for_leadership returns nothing',
   Boolean(leadershipView.error) || leadershipView.data?.length === 0,
-  leadershipView.error ? leadershipView.error.message : 'returned rows',
+  leadershipView.error
+    ? leadershipView.error.message
+    : leadershipView.data?.length
+      ? `RETURNED ${leadershipView.data.length} ROW(S) — the leadership gate is open`
+      : 'read allowed, no rows returned',
 )
 
 // Writes are narrowed to two columns. Editing someone's request is not the
