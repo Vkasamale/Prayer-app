@@ -21,3 +21,4 @@
 0010_anonymous_counseling_contact.sql       2026-09-11   function signature, columns, view, grants
 0011_column_grants_on_submissions.sql       2026-09-13   authenticated select excludes contact_phone, contact_whatsapp, contact_pref; update only flagged_urgent, prayed_over_at
 0012_monthly_trend.sql                      2026-09-13   monthly_stats(p_months integer) present
+0013_question_kind.sql                      2026-09-13   enum_range is {prayer,counseling,question}

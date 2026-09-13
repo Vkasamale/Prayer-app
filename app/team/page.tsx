@@ -58,7 +58,7 @@ type MonthRow = {
 type Submission = {
   id: string
   body: string | null
-  kind: 'prayer' | 'counseling'
+  kind: 'prayer' | 'counseling' | 'question'
   is_member: 'yes' | 'no' | null
   categories: string[]
   prayed_over_at: string | null
@@ -160,7 +160,7 @@ function SignIn() {
 
 // Four mutually exclusive views, so one value rather than a pair of booleans
 // that can both be true.
-type Tab = 'waiting' | 'prayed' | 'counseling' | 'totals'
+type Tab = 'waiting' | 'prayed' | 'questions' | 'counseling' | 'totals'
 
 function PrayerList() {
   const [rows, setRows] = useState<Submission[] | null>(null)
@@ -274,9 +274,13 @@ function PrayerList() {
 
   if (rows === null && !error) return null
 
-  const waiting = (rows ?? []).filter((row) => !row.prayed_over_at)
-  const prayed = (rows ?? []).filter((row) => row.prayed_over_at)
-  const shown = tab === 'prayed' ? prayed : waiting
+  // Questions are not prayer requests and must not pad the Wednesday list, so
+  // they are held out of both and given a tab of their own.
+  const questions = (rows ?? []).filter((row) => row.kind === 'question')
+  const prayerRows = (rows ?? []).filter((row) => row.kind !== 'question')
+  const waiting = prayerRows.filter((row) => !row.prayed_over_at)
+  const prayed = prayerRows.filter((row) => row.prayed_over_at)
+  const shown = tab === 'questions' ? questions : tab === 'prayed' ? prayed : waiting
 
   return (
     <>
@@ -313,6 +317,14 @@ function PrayerList() {
             onClick={() => setTab('prayed')}
           >
             Prayed over ({prayed.length})
+          </button>
+          <button
+            role="tab"
+            aria-selected={tab === 'questions'}
+            className={'tab' + (tab === 'questions' ? ' tab-on' : '')}
+            onClick={() => setTab('questions')}
+          >
+            Questions ({questions.length})
           </button>
           {isLeadership && (
             <button
@@ -360,11 +372,13 @@ function PrayerList() {
 
         {tab === 'counseling' || tab === 'totals' ? null : shown.length === 0 ? (
           <p className="empty">
-            {tab === 'prayed'
-              ? 'Nothing has been marked prayed over yet.'
-              : 'Nothing is waiting. The list is clear.'}
+            {tab === 'questions'
+              ? 'No questions or notes have come in.'
+              : tab === 'prayed'
+                ? 'Nothing has been marked prayed over yet.'
+                : 'Nothing is waiting. The list is clear.'}
           </p>
-        ) : grouped ? (
+        ) : grouped && tab !== 'questions' ? (
           <>
             <Summary groups={groupByCategory(shown)} total={shown.length} />
             {groupByCategory(shown).map(({ key, label, rows: groupRows }) => (
