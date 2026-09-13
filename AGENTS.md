@@ -129,10 +129,32 @@ thing reads as intent rather than ignorance.
 ### Two of these rules are enforced by a hook
 `.claude/hooks/guard-bash.mjs` runs before every Bash command and refuses a
 `next build` while port 3000 is listening, and a `git push` carrying a commit
-that adds a migration. It is Node rather than shell because there is no `jq` on
-this machine — the first version used it, found nothing, and silently allowed
-everything. A hook that cannot fail loudly is worse than no hook, so both refusal
-paths were proven before it was wired in.
+that adds a migration the ledger does not vouch for. It is Node rather than shell
+because there is no `jq` on this machine — the first version used it, found
+nothing, and silently allowed everything. A hook that cannot fail loudly is worse
+than no hook, so both refusal paths were proven before it was wired in.
+
+`npm run test:hook` exercises both, including the two ways this hook has already
+been wrong: denying every push with no way to confirm, and firing on prose inside
+a heredoc. Run it after touching the hook.
+
+### Confirming a migration: `supabase/applied.txt`
+One line per migration — filename, the date it was confirmed, and what was seen:
+
+```
+0012_monthly_trend.sql    2026-09-13   monthly_stats(p_months integer) present
+```
+
+The push guard refuses any added migration this file does not name. Write the
+line only after reading the live database; the `do $check$` block at the bottom
+of each migration says what to look for. **Never write the line from the
+migration file alone** — the file is the intent, the database is the fact, and
+the whole point of the guard is that those two came apart once already.
+
+The ledger is a claim, not a proof. It earns its place by being dated, specific,
+and visible in the diff. The version of this guard that simply refused could not
+be satisfied at all, and a check nobody can satisfy is a check people route
+around.
 
 ## Locale and copy
 

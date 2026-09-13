@@ -5,7 +5,10 @@
 //      that look like real bugs.
 //   2. Never push a commit that adds a migration without knowing the migration
 //      is applied. Code shipped ahead of its migration took down every
-//      submission on the live site, not only the counseling ones.
+//      submission on the live site, not only the counseling ones. What counts
+//      as knowing is a line in supabase/applied.txt, written after reading the
+//      live database. The guard used to deny outright with no way to confirm,
+//      which made it a dead end rather than a check.
 //
 // Node rather than shell: there is no jq on this machine, and the first version
 // of this hook used it and silently allowed everything.
@@ -95,14 +98,39 @@ if (/\bgit\s+push\b/.test(withoutHeredocs(command))) {
     .map((line) => line.trim())
     .filter(Boolean)
 
-  if (added.length) {
+  // The ledger is a human claim, not a proof: a line says someone read the live
+  // database and saw the migration's effects. It beats the old outright deny
+  // because the claim is dated, says what was seen, and lands in the diff where
+  // review can catch it. A guard nobody can satisfy is a guard people route
+  // around, and this one had already blocked two legitimate pushes.
+  const root = quiet('git', ['rev-parse', '--show-toplevel']).trim()
+  let confirmed = new Set()
+  try {
+    confirmed = new Set(
+      readFileSync(root + '/supabase/applied.txt', 'utf8')
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line && !line.startsWith('#'))
+        .map((line) => line.split(/\s+/)[0]),
+    )
+  } catch {
+    // No ledger is the same as an empty one: nothing is confirmed.
+  }
+
+  const unconfirmed = [...new Set(added)].filter(
+    (file) => !confirmed.has(file.split('/').pop()),
+  )
+
+  if (unconfirmed.length) {
     deny(
-      'These commits add migrations, and pushing to main deploys immediately:\n\n' +
-        [...new Set(added)].map((f) => '  ' + f).join('\n') +
+      'These commits add migrations that supabase/applied.txt does not list as ' +
+        'applied, and pushing to main deploys immediately:\n\n' +
+        unconfirmed.map((f) => '  ' + f).join('\n') +
         '\n\nCode that calls a function the live database does not have takes down ' +
         'every submission, not only the new path (AGENTS.md). Apply the migration in ' +
-        'Supabase and confirm it against the database, then push. If it is already ' +
-        'applied, say so and run the push again.',
+        'Supabase, read the live database to confirm it took effect, then add a line ' +
+        'to supabase/applied.txt saying what you saw. Do not add the line from the ' +
+        'migration file alone - the file is the intent, the database is the fact.',
     )
   }
 }

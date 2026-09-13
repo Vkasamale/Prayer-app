@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "verify": "node scripts/verify-supabase.mjs"
+    "verify": "node scripts/verify-supabase.mjs",
+    "test:hook": "node .claude/hooks/guard-bash.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",

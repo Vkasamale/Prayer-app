@@ -1,0 +1,23 @@
+# Migrations confirmed applied to the live database.
+#
+# A line here is a claim that someone read the live database and saw the
+# migration's effects there - not that the file exists, and not that it was
+# meant to be applied. The push guard reads this file and refuses to push a
+# commit adding a migration that is not listed.
+#
+# Add a line only after checking the database itself. The check at the bottom
+# of each migration says what to look for.
+#
+# filename                                  confirmed    how
+0001_initial_schema.sql                     2026-08-19   tables present
+0002_revoke_view_from_anon.sql              2026-08-19   grants checked
+0003_dashboard_stats.sql                    2026-08-19   function present
+0004_prayer_categories.sql                  2026-08-19   column present
+0005_revoke_functions_from_anon.sql         2026-08-19   grants checked
+0006_revoke_helpers_from_public.sql         2026-08-19   grants checked
+0007_grant_helpers_to_authenticated.sql     2026-08-19   grants checked
+0008_schedule_retention.sql                 2026-09-11   cron job at 15 3 * * *
+0009_leadership_view_and_periods.sql        2026-08-19   view present
+0010_anonymous_counseling_contact.sql       2026-09-11   function signature, columns, view, grants
+0011_column_grants_on_submissions.sql       2026-09-13   authenticated select excludes contact_phone, contact_whatsapp, contact_pref; update only flagged_urgent, prayed_over_at
+0012_monthly_trend.sql                      2026-09-13   monthly_stats(p_months integer) present
