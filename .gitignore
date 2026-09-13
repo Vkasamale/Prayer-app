@@ -21,3 +21,8 @@ design-list/*.html
 
 # Supabase CLI link state, machine-local
 supabase/.temp/
+
+# Vercel CLI link state, machine-local
+.vercel/
+
+.env*
