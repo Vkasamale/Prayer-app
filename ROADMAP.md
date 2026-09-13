@@ -64,6 +64,22 @@ Push notifications, multi-church support, analytics, congregation login, dynamic
 Dated, newest first. One paragraph per session: what moved, what it cost, what
 it taught.
 
+### 2026-09-11, second session
+Audited before letting anyone else near it, and the audit earned its place: the
+prayer team could read counseling phone numbers directly off the submissions
+table, past the leadership-only view. Row-level security cannot express "not that
+column", so the fix is column grants (migration 0011). The lesson is in
+AGENTS.md: a view over a readable table is decoration, not a boundary.
+
+Also cut a Wednesday meeting's data use from about twenty-one downloads of the
+list to one, moved the counts behind a Totals tab after mocking the list at a
+hundred requests, and added a twelve-month trend. Everything measured on the
+running app rather than reasoned about, which is how all three of the day's
+defects were found.
+
+Closed with six commits unpushed, deliberately: the work continues on a second
+Claude account.
+
 ### 2026-09-11
 Picked up a handoff that opened with "the live site is broken until you apply
 0010". It was already applied — the whole first item on the agenda was a ghost,

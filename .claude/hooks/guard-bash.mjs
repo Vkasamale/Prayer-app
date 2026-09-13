@@ -59,7 +59,27 @@ if (command.includes('next build')) {
   }
 }
 
-if (/\bgit\s+push\b/.test(command)) {
+// A heredoc body is data, not commands. Without this, writing a document that
+// mentions the push command trips the guard, and a guard that fires on prose is
+// one people learn to ignore. Found the hard way: this hook blocked the writing
+// of the handover that explains how to push.
+function withoutHeredocs(text) {
+  const lines = text.split('\n')
+  const kept = []
+  let terminator = null
+  for (const line of lines) {
+    if (terminator !== null) {
+      if (line.trim() === terminator) terminator = null
+      continue
+    }
+    const opener = line.match(/<<-?\s*['"]?([A-Za-z_][A-Za-z0-9_]*)['"]?/)
+    if (opener) terminator = opener[1]
+    kept.push(line)
+  }
+  return kept.join('\n')
+}
+
+if (/\bgit\s+push\b/.test(withoutHeredocs(command))) {
   const added = quiet('git', [
     'log',
     // Overridable only so this hook can be tested against a base where a

@@ -1,48 +1,82 @@
 # Next session
 
+**Read `AGENTS.md` first.** It holds the rules that do not lapse, and most of
+them were learned the expensive way.
+
+## Start here: this project moved accounts
+
+Work continues on a second Claude Pro account. Nothing about the project itself
+moved — same repository, same Supabase project, same Vercel deployment — but the
+new session starts with no memory of the last one, so this file and `AGENTS.md`
+are the whole handover.
+
+**The first thing to do is push.** Six commits sit on `main` unpushed, and the
+two migrations they describe are *already applied to the live database*. That is
+the safe order — the database ahead of the code, never behind — but it is a
+half-finished state and should not be left sitting.
+
+Then confirm the deployment came up with `npm run verify`: eleven checks, all of
+which passed when this session closed.
+
+### What the new session needs connected
+
+- **Supabase**, for project `fcrsegyrpieibtmaptir`. Without it the database
+  cannot be read or migrated, and most of the work below is blocked.
+- **Vercel** is useful but not required; pushing to `main` deploys.
+- If neither is connected on the new account, say so before starting rather than
+  after.
+
 ## THE AGENDA
 
 ### What Vincent needs to do, shortest first
 
-1. **Create one ordinary prayer team account**, role `prayer_team`, not
-   leadership. Supabase dashboard → Authentication → Users → Add user, then tell
-   the agent the email and it will add the `team_members` row.
+1. **Create one ordinary prayer team account.** Supabase dashboard →
+   Authentication → Users → Add user. Role `prayer_team`, **not** leadership.
+   Give the agent the email and it will add the `team_members` row.
 
-   This is the last untested boundary in the product: that a prayer team member
-   can read the prayer list but **cannot** see counseling phone numbers. It
-   cannot be faked in SQL, because `team_members.user_id` has a foreign key to
-   `auth.users`. Everything around it is proven — leadership sees the counseling
-   row, a signed-in non-leadership account sees zero — but the role that three
-   real people will actually hold has never been exercised.
+   This gates everything else, and it matters more after what was found on
+   2026-09-11: the prayer team could read counseling phone numbers straight off
+   the `submissions` table, past the leadership-only view. Migration 0011 fixes
+   it and the fix is proven at the database level — but it has never been
+   exercised by a real signed-in `prayer_team` session, and that is the role
+   three real people are about to hold.
 
-2. **Decide one thing.** Should an anonymous person be warned, *before* ticking
-   "I would like someone to talk to", that they cannot be reached without a
-   number? The form says so at the field, but not before the choice. Cheap
-   either way; the question is what it does to the person reading it.
+2. **Delete the test row** left by the last `npm run verify`:
 
-3. **Print the poster and the card** and put one up. They are in `design/`,
-   published as a design canvas; Export PDF gives both.
+   ```sql
+   delete from submissions where body like 'AUTOMATED CHECK%';
+   ```
+
+   Every run writes one such row and cannot remove it: the anon key has no table
+   privileges, which is the point. Housekeeping that comes with the check, not a
+   defect.
+
+3. **Print the poster and the card.** Links under "Where things live".
+
+4. **Four decisions nobody has made.** Under "Open questions".
 
 ### What the session should pick up, in order
 
-1. **Add the `team_members` row** for the new account and finish the boundary
-   test above.
-2. **Put two or three realistic invented requests in through the form**, not by
-   SQL, so the prayer team has something to look at. Do this close to the trial,
-   not before — the rows have to be cleared again afterwards, and only Vincent
-   can clear them.
-3. **The test run** with 2–3 prayer team members, per `ROADMAP.md`.
+1. **Finish the prayer team boundary test.** Add the `team_members` row for the
+   new account, sign in as that person, and confirm from a real session that
+   counseling contact details are refused. Watch it be refused; do not take the
+   grant table's word for it.
+2. **Put two or three realistic invented requests in through the form**, so the
+   team has something to look at. Through the form, never by SQL — the form is
+   the path being tested. Close to the trial, not before: the rows have to be
+   cleared again afterwards and only Vincent can clear them.
+3. **The test run** with 2-3 prayer team members, per `ROADMAP.md`.
+4. Only then: the announcement to the congregation.
 
 ### State of play, one line each
 
-- Migrations 0001–0010: all applied and verified against the live database.
-- `npm run verify`: 10 checks, all passing.
-- `npx tsc --noEmit`: clean.
-- Live at https://send-a-prayer.vercel.app, public, not announced, no QR printed.
-- Both counseling paths, anonymous and named, verified correct in the database.
-- Team sign-in on the live site: **works**, confirmed 2026-09-11 by Vincent.
-- The database is empty: no submissions, no submitters. One account, leadership.
-- A prayer team member's view of the product: **never exercised.** No such account exists.
+- Live at https://send-a-prayer.vercel.app — public, not announced, no QR printed.
+- Migrations 0001-0012: all applied to the live database and verified.
+- `npm run verify`: 11 checks, all passing. `npx tsc --noEmit`: clean.
+- Six commits unpushed. The database is ahead of the code, which is the safe way round.
+- The database is empty apart from one `AUTOMATED CHECK` row.
+- Accounts: one, leadership. **No ordinary `prayer_team` account exists.**
+- Team sign-in on the live site: works, confirmed by Vincent 2026-09-11.
 
 ## Handoff ledger
 
@@ -51,74 +85,92 @@ above when you pick a handoff up.
 
 | # | Date | Headline task | Outcome | Evidence |
 |---|---|---|---|---|
-| 1 | 2026-08-19 | Build the product end to end: identity choice, form, team list, dashboard, leadership counseling view | landed | 30 commits; migrations 0001–0010 written; deployed to Vercel |
+| 1 | 2026-08-19 | Build the product end to end: identity choice, form, team list, dashboard, leadership counseling view | landed | 30 commits; migrations 0001-0010 written; deployed to Vercel |
 | 2 | 2026-09-11 | Apply migration 0010 and clear the deck for the QR code | landed | 0010 was already applied — verified by function signature, columns, view and grants. `npm run verify` extended from 8 to 10 checks, all passing. Both counseling paths verified by rollback test. Test-row delete refused to the agent, handed to Vincent and done. |
 | 3 | 2026-09-11 | Write the standing rules down, build the QR material, prove team sign-in | landed | `AGENTS.md` and `CLAUDE.md` written; handoff ledger started; a hook now enforces two of the rules; QR code and A4/A6 print material built and checked pixel-for-pixel against the generator; team sign-in confirmed working on the live site by Vincent. |
+| 4 | 2026-09-11 | Security audit before the congregation sees it; the list at volume; the monthly trend | landed | Found and fixed a column leak that let any prayer team member read counseling phone numbers (migration 0011). Cut a Wednesday meeting's data use from about 21 downloads to 1. Moved the counts behind a Totals tab and added a 12-month trend (migration 0012). Mocked the list at 100 requests. 11 checks passing. Six commits left unpushed for the next account. |
+
+## Where things live
+
+| Thing | Where |
+|---|---|
+| Live site | https://send-a-prayer.vercel.app |
+| Supabase project | `fcrsegyrpieibtmaptir` (a second, unrelated project shares the account — do not touch it) |
+| QR code, as a file | `public/qr/send-a-prayer.svg` |
+| Poster (A4) and card (A6), print-ready | https://claude.ai/code/artifact/0a7ecc40-20c6-4bba-aac1-e4405b35c134 — Export PDF gives both |
+| The list mocked at 100 requests | https://claude.ai/code/artifact/ea211082-8811-4d2a-b1c1-1c07ea13cf65 |
+| Artboard sources | `design/` (print), `design-list/` (the list mockups). The seeded `.html` is a build artifact and is gitignored. |
+
+If those artifact links do not open on the new account, they were published from
+the old one. The sources are in the repository and can be published again.
 
 ## Setup
 
 - Production branch: `main`. Pushing to `main` deploys to Vercel automatically.
-- Live: https://send-a-prayer.vercel.app
-- Supabase project ref: `fcrsegyrpieibtmaptir` (there is a second, unrelated
-  project on the same account — do not touch it).
 - Migrations are applied by hand, in order, from `supabase/migrations/`.
-- **Dangerous:** deleting rows, Supabase auth and dashboard settings. Vincent
-  does these. See `AGENTS.md`.
-- **Dangerous:** running `npx next build` while the dev server is running. See
-  `AGENTS.md`.
+- **Dangerous, and Vincent's alone:** deleting rows, and Supabase dashboard and
+  auth settings. See `AGENTS.md`.
+- **Dangerous:** `npx next build` while the dev server is running. A hook refuses
+  it, and also refuses a push carrying a migration it cannot confirm is applied.
 
-## Closed 2026-09-11 — do not re-test
+## Closed — do not re-test
 
-- **Migration 0010 is applied.** The previous handoff said the live site was
-  broken until it was run. It was not. Confirmed: the 11-parameter
-  `submit_prayer` signature exists, `submissions` has `contact_phone`,
-  `contact_whatsapp` and `contact_pref`, `counseling_for_leadership` exists with
-  the `is_named` column, `purge_expired_submissions` clears the contact fields,
-  and `anon` holds zero direct table privileges.
-- **Migration 0008 is applied.** `cron.job` holds `purge-expired-submissions`,
-  schedule `15 3 * * *`, active. The 90-day deletion the app promises does
-  happen.
-- **`npm run verify` works against the new function signature**, and now covers
-  the two things 0010 added: an anonymous counseling request with no phone number
-  is refused, and the public key cannot read `counseling_for_leadership`.
-- **Both counseling paths behave correctly.** Verified by a rolled-back
-  transaction, so no rows were left behind:
-  - anonymous, number only, WhatsApp yes, wants a call → stored, shows as
-    `is_named = false` with no name
-  - named, wants to meet in person → stored, name and phone from the contact
-    record
-  - an ordinary prayer request with contact details supplied → details
-    discarded, as intended
-- **The form sends `null`, not `''`, for the names on the anonymous path.**
-  Worth knowing because `submit_prayer` treats any non-null name as the named
-  path, so empty strings would create a nameless submitter row.
-- **The `WALKTHROUGH TEST%` rows and the `Deleteme` submitter are already gone.**
-  `submitters` is empty.
+### 2026-09-11, second session
 
-## Closed 2026-09-11, second pass — do not re-test
+- **The column leak is fixed and verified.** `counseling_for_leadership` is gated
+  on `is_leadership()` and that gate works, but it guarded the front door only:
+  `submissions` granted `select` to the whole `authenticated` role under a policy
+  of `is_team_member()`, which is true for every role. Any prayer team member
+  could have read every counseling phone number from the browser console.
+  Migration 0011 replaces the blanket grant with column grants excluding
+  `contact_phone`, `contact_whatsapp` and `contact_pref`, and narrows `update` to
+  `prayed_over_at` and `flagged_urgent`. Verified after applying: leadership
+  still sees the counseling row, and selecting `contact_phone` from the table is
+  refused with `insufficient_privilege`.
+- **The team's data use.** Marking a request prayed over used to re-download the
+  whole list. Measured on the running app: 4-5 requests per tick became 1, and
+  page load went from 4 to 3.
+- **The list at 100 requests is not an endless scroll.** Themes are closed by
+  default and exclusive. Measured at phone width: 1,952px closed, about 2.3
+  screens. Ungrouped it would be roughly 26 screens, and unticking "Group by what
+  it is about" is the only way to reach that.
+- **The monthly trend** (`monthly_stats()`, migration 0012) is team-only, checks
+  `is_team_member()` inside the function because a policy cannot filter
+  aggregates, and counts redacted rows so history does not rewrite itself as it
+  ages.
 
-- **The counseling boundary is proven in both directions for leadership.**
-  Tested against the live database inside a rolled-back transaction, so no rows
-  were left: with an anonymous counseling request carrying a phone number in
-  place, the leadership account sees 1 row in `counseling_for_leadership` and a
-  signed-in account that is not leadership sees 0. `submissions_for_team` has no
-  contact columns at all — the prayer team's view cannot leak a number even if a
-  policy were wrong, because the column is not in it. It also exposes
-  `first_name` only, never a surname.
-- **Team sign-in works on the live site.** Email and password, not a magic link,
-  so `signInWithPassword` does not depend on the Site URL setting at all — that
-  setting governs magic links, OAuth and password resets. A deliberately wrong
-  password returns 400 from Supabase and the app shows "That email and password
-  did not match." without leaking the raw error.
+### 2026-09-11, first session
 
-## Still outstanding
+- Migrations 0008 and 0010 are applied; the retention cron runs at `15 3 * * *`.
+- Team sign-in works. It is email and password, so `signInWithPassword` never
+  consulted the Site URL setting — that governs magic links, OAuth and password
+  resets, and is set correctly anyway.
+- Both counseling paths, anonymous and named, behave correctly.
+- The form sends `null`, not `''`, for names on the anonymous path.
+- The QR code is exactly what the generator produced — compared pixel by pixel.
 
-- Team sign-in on the live site — unproven, waits on the auth URL change.
-- The QR code, and print material for it.
-- A real test run with prayer team members.
-- Whether the prayer team wants several category groups open at once. Only one
-  opens at a time today, which suits working through a theme but not comparing.
-  Ask them during the test run rather than deciding for them.
-- `PROJECT_BRIEF.md` sections 10a–10h are out of order in the file (10a, 10, 10c,
-  10d, 10e, 10h, 10f, 10g, 10b). Harmless, but it makes the decision record hard
-  to read in sequence.
+## Open questions nobody has answered
+
+1. **Should an anonymous person be warned, before ticking "I would like someone
+   to talk to", that they cannot be reached without a number?** The form says so
+   at the field, but not before the choice. Cheap either way; the question is
+   what it does to the person reading it.
+2. **Should `browser_id` be visible to the prayer team?** It is in
+   `submissions_for_team` today, which means everything one anonymous person
+   sends from one phone is linkable by anyone on the team — not to a name, but to
+   each other. Someone who sent three requests over a month can be read as one
+   story. The app promises "we will not try to find out"; today that is restraint
+   rather than design. Dropping the column from the view would settle it.
+3. **Should deleting a request be leadership-only?** Any team member can
+   permanently delete any request. It is meant for junk, and there is no undo and
+   no record of who did it.
+4. **Does the prayer team want several category groups open at once?** Only one
+   opens at a time. Ask them during the test run rather than deciding for them.
+
+## Still to build
+
+1. The trial with real prayer team members.
+2. Print material actually printed and placed.
+3. The announcement, last.
+
+Everything in `ROADMAP.md` Phase 2 that is not listed here is done.

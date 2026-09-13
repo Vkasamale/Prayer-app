@@ -111,6 +111,17 @@ for, and that `anon` still holds no direct table privileges. Write it so a
 re-run is safe: drop both the old and the new function signature, guard
 `create type` with an existence check.
 
+### The Supabase connector rolls back plain SQL, but migrations persist
+Writes sent through the connector's plain SQL path do not survive; writes sent
+through its migration path do. This is easy to misread in both directions — test
+rows that seem to vanish, and schema changes that are quite real. To put a row in
+the database for testing, submit it through the form like anyone else.
+
+### A guard that fires on prose is a guard people learn to ignore
+The push hook matched the words "git push" anywhere in a command, so writing a
+document that *explained* pushing was refused. It now ignores heredoc bodies.
+When a check reads a command, remember that some of that command is data.
+
 ### Mark deliberate shortcuts in the code
 A comment naming the shortcut and the condition that would end it. A simple
 thing reads as intent rather than ignorance.
