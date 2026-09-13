@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { EMERGENCY_CONTACTS, REVIEW_CADENCE } from '@/lib/church'
+import { CHURCH_NAME, EMERGENCY_CONTACTS, REVIEW_CADENCE } from '@/lib/church'
 import ShareLink from '../ShareLink'
 import QrCode from '../QrCode'
 import { CATEGORIES, type Category } from '@/lib/categories'
@@ -66,7 +66,7 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
       p_last_name: isNamed ? lastName.trim() : null,
       p_phone: isNamed ? phone.trim() : null,
       p_contact_phone: wantsCounseling && !isNamed ? contactPhone.trim() : null,
-      p_contact_whatsapp: wantsCounseling ? contactWhatsapp : false,
+      p_contact_whatsapp: contactWhatsapp,
       p_contact_pref: wantsCounseling ? contactPref : null,
     })
     setSending(false)
@@ -89,7 +89,6 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
         <main className="page">
           <p className="running-head" aria-hidden="true">
             <span>Prayer requests</span>
-            <span>1 Peter 5</span>
           </p>
 
           <header>
@@ -167,86 +166,10 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
         </section>
 
         <header>
-          <p className="eyebrow">{isNamed ? 'Sharing your name' : 'Staying anonymous'}</p>
-          <h1>What would you like prayer for?</h1>
-          {!isNamed && (
-            <p className="lede">
-              Nothing you write here is tied to you. No name, no number, no sign-in.
-            </p>
-          )}
+          <h1>What are your prayer requests or praises?</h1>
         </header>
 
         <form onSubmit={handleSubmit} noValidate>
-          <fieldset className="field">
-            <legend className="label">Do you go to this church?</legend>
-            <p className="hint">You do not have to answer this.</p>
-            <div className="choices">
-              {(
-                [
-                  ['yes', 'Yes'],
-                  ['no', 'No'],
-                  ['unanswered', 'Prefer not to say'],
-                ] as const
-              ).map(([value, label]) => (
-                <label key={value} className="choice">
-                  <input
-                    type="radio"
-                    name="membership"
-                    value={value}
-                    checked={isMember === value}
-                    onChange={() => setIsMember(value)}
-                  />
-                  <span>{label}</span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
-          <div className="field">
-            <label className="label" htmlFor="body">
-              Your request
-            </label>
-            <p className="hint">
-              As much or as little as you want. Only the prayer team and church
-              leadership read it, exactly as you wrote it.
-            </p>
-            <textarea
-              id="body"
-              className="input textarea"
-              value={body}
-              maxLength={MAX_BODY}
-              rows={7}
-              onChange={(event) => setBody(event.target.value)}
-              autoFocus
-            />
-          </div>
-
-          <fieldset className="field">
-            <legend className="label">What is it about?</legend>
-            <p className="hint">
-              Tick as many as fit, or none at all. It helps the prayer team pray
-              through similar things together.
-            </p>
-            <div className="choices">
-              {CATEGORIES.map(({ value, label }) => (
-                <label key={value} className="choice">
-                  <input
-                    type="checkbox"
-                    checked={categories.includes(value)}
-                    onChange={(event) =>
-                      setCategories((current) =>
-                        event.target.checked
-                          ? [...current, value]
-                          : current.filter((item) => item !== value),
-                      )
-                    }
-                  />
-                  <span>{label}</span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
           {isNamed && (
             <>
               <div className="field">
@@ -291,10 +214,87 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
                   value={phone}
                   onChange={(event) => setPhone(event.target.value)}
                 />
+                <label className="choice">
+                  <input
+                    type="checkbox"
+                    checked={contactWhatsapp}
+                    onChange={(event) => setContactWhatsapp(event.target.checked)}
+                  />
+                  <span>This number is on WhatsApp</span>
+                </label>
               </div>
-
             </>
           )}
+
+          <fieldset className="field">
+            <legend className="label">
+              Are you a member of {CHURCH_NAME}? (optional)
+            </legend>
+            <div className="choices">
+              {(
+                [
+                  ['yes', 'Yes'],
+                  ['no', 'No'],
+                  ['unanswered', 'Prefer not to say'],
+                ] as const
+              ).map(([value, label]) => (
+                <label key={value} className="choice">
+                  <input
+                    type="radio"
+                    name="membership"
+                    value={value}
+                    checked={isMember === value}
+                    onChange={() => setIsMember(value)}
+                  />
+                  <span>{label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className="field">
+            <legend className="label">Prayer topic</legend>
+            <p className="hint">Tick as many as fit, or none at all.</p>
+            <div className="choices">
+              {CATEGORIES.map(({ value, label }) => (
+                <label key={value} className="choice">
+                  <input
+                    type="checkbox"
+                    checked={categories.includes(value)}
+                    onChange={(event) =>
+                      setCategories((current) =>
+                        event.target.checked
+                          ? [...current, value]
+                          : current.filter((item) => item !== value),
+                      )
+                    }
+                  />
+                  <span>{label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <div className="field">
+            <label className="label" htmlFor="body">
+              Write your prayer request below
+            </label>
+            <textarea
+              id="body"
+              className="input textarea"
+              value={body}
+              maxLength={MAX_BODY}
+              rows={7}
+              onChange={(event) => setBody(event.target.value)}
+              autoFocus
+            />
+            {!isNamed && (
+              <p className="hint">
+                Nothing you write here is tied to you. No name, no number, no
+                sign-in.
+              </p>
+            )}
+          </div>
 
           <div className="field">
             <label className="choice">
@@ -312,15 +312,14 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
               {!isNamed && (
                 <div className="field">
                   <label className="label" htmlFor="contactPhone">
-                    A number to reach you on
+                    Please put a phone number that we can reach you on.
                   </label>
                   {/* Said plainly, before they type it. Giving a number is the one
                       thing that makes an anonymous person reachable, and they
                       should know that is what they are choosing. */}
                   <p className="hint">
-                    No name needed. This number is kept with this request only, is
-                    seen by church leadership alone, and is deleted with it. It is
-                    never linked to anything else you have sent.
+                    No name needed. This number is kept with this request only and
+                    is seen by church leadership alone.
                   </p>
                   <input
                     id="contactPhone"
@@ -330,19 +329,16 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
                     value={contactPhone}
                     onChange={(event) => setContactPhone(event.target.value)}
                   />
+                  <label className="choice">
+                    <input
+                      type="checkbox"
+                      checked={contactWhatsapp}
+                      onChange={(event) => setContactWhatsapp(event.target.checked)}
+                    />
+                    <span>This number is on WhatsApp</span>
+                  </label>
                 </div>
               )}
-
-              <div className="field">
-                <label className="choice">
-                  <input
-                    type="checkbox"
-                    checked={contactWhatsapp}
-                    onChange={(event) => setContactWhatsapp(event.target.checked)}
-                  />
-                  <span>This number is on WhatsApp</span>
-                </label>
-              </div>
 
               <fieldset className="field">
                 <legend className="label">How would you rather talk?</legend>

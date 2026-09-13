@@ -99,7 +99,7 @@ export default function QrCode() {
         aria-expanded={shown}
         onClick={() => setShown(!shown)}
       >
-        {shown ? 'Hide the QR code' : 'Show the QR code'}
+        {shown ? 'Hide QR code' : 'Scan QR code'}
       </button>
 
       {shown && (
@@ -116,7 +116,7 @@ export default function QrCode() {
             Point a phone camera at this, or press and hold the code to save it.
           </figcaption>
           <button className="quiet-button" type="button" onClick={save}>
-            Save or send the code
+            Share QR code
           </button>
           {note && (
             <p className="share-note" role="status">

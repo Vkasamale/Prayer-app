@@ -116,12 +116,12 @@ body {
 .running-head {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
+  justify-content: center;
   gap: 1rem;
   margin: 0 0 -0.75rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--rule);
-  font-size: 0.7rem;
+  font-size: 0.95rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--faded);
@@ -860,6 +860,24 @@ details.group[open] > .group-heading { border-bottom: 1px solid var(--rule); }
 details.group > .requests { padding: 0.75rem; }
 
 /* --- Sharing ------------------------------------------------------------- */
+
+/* A second errand, below the identity choices and quieter than them. */
+.aside {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--faded);
+}
+
+.aside a {
+  color: inherit;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 0.25em;
+}
+
+.aside a:hover {
+  color: var(--ink);
+  text-decoration-color: currentColor;
+}
 
 .share {
   display: flex;

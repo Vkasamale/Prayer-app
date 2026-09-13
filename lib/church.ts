@@ -1,7 +1,7 @@
 // Details specific to Flood Church, kept in one place so nobody has to hunt
 // through components to correct them.
 
-export const CHURCH_NAME = 'Flood Church'
+export const CHURCH_NAME = 'Flood Blantyre Church'
 
 // Decided 2026-08-19: the church has no crisis line and nobody is on call, so
 // none is listed. Promising a phone nobody answers is worse than promising

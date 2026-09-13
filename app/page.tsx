@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { EMERGENCY_CONTACTS, REVIEW_CADENCE } from '@/lib/church'
 import ShareLink from './ShareLink'
 import QrCode from './QrCode'
 
@@ -7,11 +6,11 @@ import QrCode from './QrCode'
 //
 // Two things are deliberate here and should survive future edits:
 //
-// 1. The crisis notice is static and always visible. It is not triggered by
-//    anything the person writes, because detection fails quietly on exactly the
-//    people it matters most for. See PROJECT_BRIEF.md section 10b. The church
-//    has no crisis line, so what the notice carries is the plain truth that
-//    nobody is reading this in real time.
+// 1. The crisis notice does not appear on this screen. It is carried by the
+//    form screen instead (app/request/RequestForm.tsx), where it is static and
+//    always visible rather than triggered by anything the person writes,
+//    because detection fails quietly on exactly the people it matters most
+//    for. See PROJECT_BRIEF.md section 10b.
 //
 // 2. The church is not named anywhere on the congregation's side. Someone may
 //    pass this link to a friend who has no warm feelings towards the church, or
@@ -32,27 +31,7 @@ export default function IdentityChoice() {
       <main className="page">
         <p className="running-head" aria-hidden="true">
           <span>Prayer requests</span>
-          <span>Matthew 11</span>
         </p>
-
-        <section className="notice" aria-label="Before you start">
-          <p>
-            <strong>Nobody is reading this page right now.</strong> Requests are
-            prayed over {REVIEW_CADENCE}, so please do not wait here for a reply.
-          </p>
-          {EMERGENCY_CONTACTS.length > 0 && (
-            <p>
-              If you are in danger, call{' '}
-              {EMERGENCY_CONTACTS.map((contact, index) => (
-                <span key={contact.phone}>
-                  {index > 0 && ' or '}
-                  {contact.label} on <a href={'tel:' + contact.phone}>{contact.phone}</a>
-                </span>
-              ))}
-              .
-            </p>
-          )}
-        </section>
 
         <header>
           <h1>Share what is on your heart.</h1>
@@ -67,10 +46,6 @@ export default function IdentityChoice() {
             Come to me, all you who are weary and burdened, and I will give you
             rest.
             <span className="verse-ref">Matthew 11:28 (NIV)</span>
-          </p>
-          <p className="lede">
-            The prayer team will pray over what you send. First, choose how you
-            would like to be known.
           </p>
         </header>
 
@@ -92,6 +67,12 @@ export default function IdentityChoice() {
             </p>
           </Link>
         </nav>
+
+        {/* Not a third identity choice: it is a different errand, so it sits
+            below the rule rather than beside the two paths. */}
+        <p className="aside">
+          <Link href="/questions">Not a prayer request? Ask a question or leave a note.</Link>
+        </p>
 
         <ShareLink />
         <QrCode />
