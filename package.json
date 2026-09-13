@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "verify": "node scripts/verify-supabase.mjs",
+    "verify:team": "node scripts/verify-team-boundary.mjs",
     "test:hook": "node .claude/hooks/guard-bash.test.mjs"
   },
   "dependencies": {
