@@ -22,6 +22,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
+        {/* The commit this build came from, stamped by Vercel at build time.
+            npm run verify reads it off the live site and compares it to HEAD.
+            Without it a stale deployment is invisible: every other check talks
+            to Supabase directly, so they all passed happily while the public
+            site served an old build for a day.
+            A sha is not a secret — it is on every commit in the repository —
+            and it names nothing about the church. */}
+        <meta name="build-commit" content={process.env.VERCEL_GIT_COMMIT_SHA ?? 'local'} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* One family, the way a Bible is set. Karla is gone: a second face was

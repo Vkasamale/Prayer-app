@@ -13,6 +13,7 @@
 //   delete from submissions where body like 'AUTOMATED CHECK%';
 
 import { readFileSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import { createClient } from '@supabase/supabase-js'
 
 // Read .env.local directly: this runs outside Next.js, which is what normally
@@ -132,6 +133,59 @@ check(
   Boolean(trend.error),
   trend.error ? '' : 'it returned ' + JSON.stringify(trend.data),
 )
+
+// 10. The live site is running the code in this repository.
+//
+//     Everything above talks to Supabase directly and never touches the
+//     deployment, which is how a stale build stayed invisible: every check
+//     passed while the public site served old code. Vercel stamps the commit
+//     into a meta tag at build time; this reads it back and compares.
+//
+//     Skipped when commits are not pushed, because the live site is then
+//     correctly behind, and failing every run would train people to ignore it.
+const SITE = process.env.PRAYER_SITE_URL || 'https://send-a-prayer.vercel.app'
+
+function git(args) {
+  try {
+    return execFileSync('git', args, {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim()
+  } catch {
+    return ''
+  }
+}
+
+const head = git(['rev-parse', 'HEAD'])
+const unpushed = git(['log', 'origin/main..HEAD', '--oneline'])
+
+if (!head) {
+  console.log('SKIP  live site runs this commit — not a git checkout')
+} else if (unpushed) {
+  const count = unpushed.split('\n').filter(Boolean).length
+  console.log(`SKIP  live site runs this commit — ${count} commit(s) not pushed yet`)
+} else {
+  let live = ''
+  let reason = ''
+  try {
+    const response = await fetch(SITE, { cache: 'no-store' })
+    if (!response.ok) {
+      reason = 'the site answered ' + response.status
+    } else {
+      const html = await response.text()
+      live = html.match(/<meta name="build-commit" content="([^"]*)"/)?.[1] ?? ''
+      if (!live) reason = 'no build-commit meta tag — the deployment predates this check'
+    }
+  } catch (error) {
+    reason = 'could not reach ' + SITE + ': ' + error.message
+  }
+
+  check(
+    'live site runs this commit',
+    live === head,
+    reason || (live === head ? '' : `live is on ${live.slice(0, 7)}, HEAD is ${head.slice(0, 7)}`),
+  )
+}
 
 console.log('')
 if (failures.length) {
