@@ -1,0 +1,71 @@
+# Ask Vercel to build whatever is now on main.
+#
+# Vercel's own GitHub integration refuses to build a commit whose author it
+# cannot match to the account owning the project. That check fired on
+# 2026-09-13 and the live site sat on an old build for a day while every other
+# check passed, because nothing we ran looked at the deployment.
+#
+# A deploy hook has no opinion about who wrote the commit. It is a URL that
+# starts a build of the branch it was created for, and this asks for one on
+# every push to main.
+#
+# Setting it up, once:
+#
+#   1. Vercel -> the project -> Settings -> Git -> Deploy Hooks.
+#      Create one for branch `main`. Copy the URL.
+#   2. GitHub -> the repository -> Settings -> Secrets and variables ->
+#      Actions -> New repository secret.
+#      Name it VERCEL_DEPLOY_HOOK and paste the URL in.
+#
+# The URL is a credential: anyone holding it can trigger builds of this
+# project, so it lives in the secret and never in this file. If it leaks,
+# delete the hook in Vercel and create a new one.
+#
+# This does not wait for the build. `npm run verify` is what confirms the live
+# site is actually running this commit, and that is the check that matters.
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  # So a build can be asked for by hand when one needs repeating.
+  workflow_dispatch:
+
+# A later push makes an earlier build pointless. Vercel builds whatever is on
+# the branch when it starts, so the last request wins regardless; cancelling
+# saves the wait without changing the outcome.
+concurrency:
+  group: deploy-main
+  cancel-in-progress: true
+
+jobs:
+  ask-vercel-to-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger the Vercel deploy hook
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "VERCEL_DEPLOY_HOOK is not set. See the comment at the top of"
+            echo "this file for the two steps that create it."
+            exit 1
+          fi
+
+          # --fail-with-body so a rejection is a failed job rather than a green
+          # tick over an error page. Silence on failure is the thing this whole
+          # workflow exists to stop.
+          status=$(curl --silent --show-error --fail-with-body \
+            --max-time 30 \
+            --retry 2 --retry-connrefused \
+            --output response.txt \
+            --write-out '%{http_code}' \
+            -X POST "$HOOK") || {
+              echo "The deploy hook refused. Vercel answered $status:"
+              cat response.txt
+              exit 1
+            }
+
+          echo "Vercel accepted the build request (HTTP $status)."
+          cat response.txt
