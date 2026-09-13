@@ -1,19 +1,31 @@
 /* Flood Church prayer app.
-   A dim sanctuary at dusk: the person using this is at the back of the room and
-   does not want to be looked at. Nothing on screen is bright except one warm
-   light, and the amber accent appears exactly once. */
+   An opened Bible: thin cream paper, ink, a gilt edge, hairline rules. One
+   typeface throughout, the way a Bible is set.
+
+   Red is not a decoration here. It is the red-letter convention — the words of
+   Christ — so it appears on a verse only when Christ is the one speaking, and
+   nowhere else on the page. Anything else that needs emphasis uses gilt or ink.
+
+   This replaced a dark "dim sanctuary at dusk" palette. That design existed so
+   a person at the back of a room would not be lit up by their own screen, and
+   that reason has not gone away; it is now carried by the writing and by the
+   absence of any church name rather than by the colour. Worth watching in the
+   trial: a bright page in a dark room is conspicuous in a way the old one
+   was not. */
 
 :root {
-  --night:  #101a1f;
-  --deep:   #17252c;
-  --raised: #1d2f38;
-  --line:   #263a44;
-  --mist:   #d5dedd;
-  --quiet:  #8fa1a4;
-  --candle: #d9a441;
+  --paper:      #f4ecdc;
+  --leaf:       #fbf6ea;
+  --raised:     #f7f0e0;
+  --rule:       #d8c9a8;
+  --ink:        #2a2219;
+  --ink-strong: #1b1510;
+  --faded:      #6b5d4b;
+  --gilt:       #b08d3f;
+  --red:        #8c1c13;
 
   --display: 'Petrona', Georgia, 'Times New Roman', serif;
-  --body: 'Karla', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --body: 'Petrona', Georgia, 'Times New Roman', serif;
 }
 
 * { box-sizing: border-box; }
@@ -21,8 +33,8 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--night);
-  color: var(--mist);
+  background: var(--paper);
+  color: var(--ink);
   font-family: var(--body);
   -webkit-font-smoothing: antialiased;
 }
@@ -32,33 +44,38 @@ body {
   line-height: 1.6;
 }
 
-/* The one lit thing on the page. Sits behind the heading and fades out well
-   before the choices, so the eye lands on the words first. */
+/* The gilt edge of the block, down the outer margin of the leaf. The old design
+   had a breathing candle glow here; paper does not glow, so it is gone rather
+   than recoloured. This is the only ornament on the page. */
 .glow {
   position: fixed;
-  top: -18vh;
-  left: 50%;
-  width: min(46rem, 130vw);
-  aspect-ratio: 1;
-  translate: -50% 0;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(217, 164, 65, 0.14) 0%,
-    rgba(217, 164, 65, 0.05) 38%,
-    transparent 68%
+  inset: 0 auto 0 0;
+  width: 6px;
+  background: linear-gradient(
+    to right,
+    var(--gilt) 0%,
+    #d8bd7a 40%,
+    rgba(176, 141, 63, 0.25) 75%,
+    transparent 100%
   );
   pointer-events: none;
-  animation: breathe 11s ease-in-out infinite;
 }
 
-@keyframes breathe {
-  0%, 100% { opacity: 0.75; }
-  50%      { opacity: 1; }
+.glow::after {
+  content: '';
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: 6px;
+  background: linear-gradient(
+    to left,
+    var(--gilt) 0%,
+    #d8bd7a 40%,
+    rgba(176, 141, 63, 0.25) 75%,
+    transparent 100%
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .glow { animation: none; }
   * { transition: none !important; }
 }
 
@@ -73,36 +90,93 @@ body {
   min-height: 100svh;
 }
 
+/* --- Running head -------------------------------------------------------- */
+/* A Bible tells you where you are at the top of the leaf. This does the same
+   job for the page, and it is the only place the layout admits it is a book. */
+
+.running-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 -0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--faded);
+}
+
+/* --- Verse --------------------------------------------------------------- */
+/* Set as a Bible sets one: verse number as a small superior figure, the words
+   in the text size, the reference beneath in small caps.
+   Red is reserved for the red-letter convention. .verse-red is for words Christ
+   speaks and nothing else — anyone else, including Paul and Peter, is ink. */
+
+.verse {
+  margin: 0 0 1.35rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+  text-indent: -0.1em;
+}
+
+.verse-red { color: var(--red); }
+
+.verse-quiet {
+  font-style: italic;
+  color: var(--ink);
+}
+
+.v-num {
+  font-size: 0.62em;
+  font-weight: 600;
+  vertical-align: 0.5em;
+  color: var(--gilt);
+  margin-right: 0.25em;
+  font-variant-numeric: lining-nums;
+}
+
+.verse-ref {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--faded);
+}
+
 /* --- Crisis notice ------------------------------------------------------- */
 /* Permanent, above everything, shown before anyone types a word. It is not
    triggered by anything and never hides. */
 
 .notice {
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--candle);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--gilt);
   border-radius: 2px;
-  background: var(--deep);
+  background: var(--leaf);
   padding: 0.9rem 1rem;
   font-size: 0.875rem;
-  color: var(--quiet);
+  color: var(--faded);
 }
 
 .notice p { margin: 0; }
 .notice p + p { margin-top: 0.5rem; }
 
 .notice strong {
-  color: var(--mist);
+  color: var(--ink);
   font-weight: 600;
 }
 
 .notice a {
-  color: var(--candle);
+  color: var(--gilt);
   text-decoration: none;
-  border-bottom: 1px solid rgba(217, 164, 65, 0.4);
+  border-bottom: 1px solid rgba(176, 141, 63, 0.55);
   white-space: nowrap;
 }
 
-.notice a:hover { border-bottom-color: var(--candle); }
+.notice a:hover { border-bottom-color: var(--gilt); }
 
 /* --- Heading ------------------------------------------------------------- */
 
@@ -110,7 +184,7 @@ body {
   font-size: 0.75rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--quiet);
+  color: var(--faded);
   margin: 0 0 0.75rem;
 }
 
@@ -121,12 +195,12 @@ h1 {
   line-height: 1.15;
   letter-spacing: -0.01em;
   margin: 0 0 0.75rem;
-  color: #eef3f2;
+  color: var(--ink-strong);
 }
 
 .lede {
   margin: 0;
-  color: var(--quiet);
+  color: var(--faded);
   font-size: 1rem;
   max-width: 28rem;
 }
@@ -147,8 +221,8 @@ h1 {
   text-align: left;
   font: inherit;
   color: inherit;
-  background: var(--deep);
-  border: 1px solid var(--line);
+  background: var(--leaf);
+  border: 1px solid var(--rule);
   border-radius: 3px;
   padding: 1.15rem 1.25rem;
   cursor: pointer;
@@ -158,11 +232,11 @@ h1 {
 
 .path:hover {
   background: var(--raised);
-  border-color: #34505d;
+  border-color: var(--gilt);
 }
 
 .path:focus-visible {
-  outline: 2px solid var(--candle);
+  outline: 2px solid var(--gilt);
   outline-offset: 2px;
 }
 
@@ -170,22 +244,22 @@ h1 {
   font-family: var(--display);
   font-size: 1.3rem;
   font-weight: 500;
-  color: #eef3f2;
+  color: var(--ink-strong);
   margin: 0 0 0.3rem;
 }
 
 .path-detail {
   margin: 0;
   font-size: 0.9rem;
-  color: var(--quiet);
+  color: var(--faded);
 }
 
 .footnote {
   margin: auto 0 0;
   padding-top: 1.5rem;
   font-size: 0.8rem;
-  color: #6f8285;
-  border-top: 1px solid var(--line);
+  color: var(--faded);
+  border-top: 1px solid var(--rule);
 }
 
 .footnote p { margin: 0; }
@@ -203,7 +277,7 @@ h1 {
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--mist);
+  color: var(--ink);
   padding: 0;
   margin: 0 0 0.25rem;
 }
@@ -211,21 +285,21 @@ h1 {
 .hint {
   margin: 0 0 0.6rem;
   font-size: 0.8rem;
-  color: var(--quiet);
+  color: var(--faded);
 }
 
 .input {
   width: 100%;
-  background: var(--deep);
-  border: 1px solid var(--line);
+  background: var(--leaf);
+  border: 1px solid var(--rule);
   border-radius: 3px;
-  color: var(--mist);
+  color: var(--ink);
   font: inherit;
   padding: 0.7rem 0.8rem;
 }
 
 .input:focus-visible {
-  outline: 2px solid var(--candle);
+  outline: 2px solid var(--gilt);
   outline-offset: 1px;
   border-color: transparent;
 }
@@ -250,8 +324,8 @@ h1 {
   gap: 0.5rem;
   min-height: 2.75rem;
   padding: 0.4rem 0.8rem 0.4rem 0.6rem;
-  background: var(--deep);
-  border: 1px solid var(--line);
+  background: var(--leaf);
+  border: 1px solid var(--rule);
   border-radius: 3px;
   font-size: 0.9rem;
   cursor: pointer;
@@ -260,7 +334,7 @@ h1 {
 .choice:hover { background: var(--raised); }
 
 .choice input {
-  accent-color: var(--candle);
+  accent-color: var(--gilt);
   width: 1.05rem;
   height: 1.05rem;
   margin: 0;
@@ -268,18 +342,18 @@ h1 {
 }
 
 .choice:focus-within {
-  outline: 2px solid var(--candle);
+  outline: 2px solid var(--gilt);
   outline-offset: 1px;
 }
 
 .error {
   margin: 0 0 1rem;
   padding: 0.7rem 0.85rem;
-  border: 1px solid #7c4a3a;
-  border-left: 3px solid #c8705a;
+  border: 1px solid #d8b3a6;
+  border-left: 3px solid var(--red);
   border-radius: 2px;
-  background: #2a1d1b;
-  color: #eccfc7;
+  background: #f7e7e0;
+  color: #6b1f16;
   font-size: 0.875rem;
 }
 
@@ -288,24 +362,26 @@ h1 {
   min-height: 3rem;
   font: inherit;
   font-weight: 600;
-  color: #16212a;
-  background: var(--candle);
+  /* Ink on paper, not gilt: cream on gilt measures about 2.2:1 and a person
+     upset enough to be here should not have to squint at the send button. */
+  color: var(--paper);
+  background: var(--ink-strong);
   border: 0;
   border-radius: 3px;
   cursor: pointer;
   transition: background 160ms ease;
 }
 
-.send:hover:not(:disabled) { background: #e8b559; }
+.send:hover:not(:disabled) { background: #3a2f22; }
 
 .send:focus-visible {
-  outline: 2px solid var(--mist);
+  outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
 
 .send:disabled {
-  background: var(--line);
-  color: var(--quiet);
+  background: var(--rule);
+  color: var(--faded);
   cursor: default;
 }
 
@@ -327,9 +403,9 @@ h1 {
 .quiet-button {
   font: inherit;
   font-size: 0.85rem;
-  color: var(--quiet);
+  color: var(--faded);
   background: transparent;
-  border: 1px solid var(--line);
+  border: 1px solid var(--rule);
   border-radius: 3px;
   padding: 0.45rem 0.7rem;
   min-height: 2.25rem;
@@ -337,31 +413,31 @@ h1 {
 }
 
 .quiet-button:hover {
-  color: var(--mist);
+  color: var(--ink);
   background: var(--raised);
 }
 
 .quiet-button:focus-visible {
-  outline: 2px solid var(--candle);
+  outline: 2px solid var(--gilt);
   outline-offset: 2px;
 }
 
 .quiet-button.danger:hover {
-  color: #eccfc7;
-  border-color: #7c4a3a;
-  background: #2a1d1b;
+  color: #6b1f16;
+  border-color: #d8b3a6;
+  background: #f7e7e0;
 }
 
 .tabs {
   display: flex;
   gap: 0.5rem;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--rule);
 }
 
 .tab {
   font: inherit;
   font-size: 0.9rem;
-  color: var(--quiet);
+  color: var(--faded);
   background: transparent;
   border: 0;
   border-bottom: 2px solid transparent;
@@ -370,16 +446,16 @@ h1 {
   cursor: pointer;
 }
 
-.tab:hover { color: var(--mist); }
-.tab:focus-visible { outline: 2px solid var(--candle); outline-offset: 2px; }
+.tab:hover { color: var(--ink); }
+.tab:focus-visible { outline: 2px solid var(--gilt); outline-offset: 2px; }
 
 .tab-on {
-  color: var(--mist);
-  border-bottom-color: var(--candle);
+  color: var(--ink);
+  border-bottom-color: var(--gilt);
 }
 
 .empty {
-  color: var(--quiet);
+  color: var(--faded);
   font-size: 0.95rem;
 }
 
@@ -393,14 +469,14 @@ h1 {
 }
 
 .request {
-  background: var(--deep);
-  border: 1px solid var(--line);
+  background: var(--leaf);
+  border: 1px solid var(--rule);
   border-radius: 3px;
   padding: 1rem 1.1rem;
 }
 
 /* An urgent request is the one thing on this page allowed to shout. */
-.request-urgent { border-left: 3px solid var(--candle); }
+.request-urgent { border-left: 3px solid var(--gilt); }
 
 .request-meta {
   display: flex;
@@ -413,13 +489,13 @@ h1 {
 .who {
   font-family: var(--display);
   font-size: 1.05rem;
-  color: #eef3f2;
+  color: var(--ink-strong);
 }
 
 .when {
   margin-left: auto;
   font-size: 0.8rem;
-  color: var(--quiet);
+  color: var(--faded);
 }
 
 .tag {
@@ -428,19 +504,19 @@ h1 {
   text-transform: uppercase;
   padding: 0.15rem 0.45rem;
   border-radius: 2px;
-  border: 1px solid var(--line);
-  color: var(--quiet);
+  border: 1px solid var(--rule);
+  color: var(--faded);
 }
 
 .tag-counseling {
-  color: #a8c7cc;
-  border-color: #3a5a63;
+  color: #5c4a2e;
+  border-color: var(--gilt);
 }
 
 .tag-urgent {
-  color: #16212a;
-  background: var(--candle);
-  border-color: var(--candle);
+  color: var(--ink-strong);
+  background: var(--gilt);
+  border-color: var(--gilt);
 }
 
 .request-body {
@@ -449,7 +525,7 @@ h1 {
   line-height: 1.65;
 }
 
-.cleared { color: var(--quiet); }
+.cleared { color: var(--faded); }
 
 .request-actions {
   display: flex;
@@ -462,9 +538,9 @@ h1 {
    these numbers should not compete with it. */
 
 .dashboard {
-  border: 1px solid var(--line);
+  border: 1px solid var(--rule);
   border-radius: 3px;
-  background: var(--deep);
+  background: var(--leaf);
   padding: 1.1rem 1.2rem;
 }
 
@@ -487,19 +563,19 @@ h1 {
   font-family: var(--display);
   font-size: 1.9rem;
   line-height: 1;
-  color: #eef3f2;
+  color: var(--ink-strong);
 }
 
 .stat-label {
   font-size: 0.78rem;
-  color: var(--quiet);
+  color: var(--faded);
 }
 
 .stat-note {
   margin: 0;
   font-size: 0.78rem;
   line-height: 1.5;
-  color: var(--quiet);
+  color: var(--faded);
 }
 
 .stat-note + .stat-note { margin-top: 0.4rem; }
@@ -515,7 +591,7 @@ h1 {
   font-family: var(--display);
   font-weight: 500;
   font-size: 1rem;
-  color: #eef3f2;
+  color: var(--ink-strong);
   margin: 0 0 0.7rem;
 }
 
@@ -538,13 +614,13 @@ h1 {
 
 .trend-month {
   font-size: 0.75rem;
-  color: var(--quiet);
+  color: var(--faded);
   white-space: nowrap;
 }
 
 .trend-track {
   height: 0.7rem;
-  background: var(--night);
+  background: var(--paper);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -552,14 +628,14 @@ h1 {
 .trend-bar {
   display: block;
   height: 100%;
-  background: var(--candle);
+  background: var(--gilt);
   /* Rounded only at the end the data reaches, so the baseline stays square. */
   border-radius: 0 3px 3px 0;
 }
 
 .trend-count {
   font-size: 0.8rem;
-  color: var(--mist);
+  color: var(--ink);
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
@@ -574,10 +650,10 @@ h1 {
   font-family: var(--display);
   font-weight: 500;
   font-size: 1.15rem;
-  color: #eef3f2;
+  color: var(--ink-strong);
   margin: 0 0 0.6rem;
   padding-bottom: 0.4rem;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--rule);
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
@@ -586,13 +662,13 @@ h1 {
 .group-count {
   font-family: var(--body);
   font-size: 0.75rem;
-  color: var(--quiet);
+  color: var(--faded);
 }
 
 .also {
   margin: -0.3rem 0 0.9rem;
   font-size: 0.78rem;
-  color: var(--quiet);
+  color: var(--faded);
 }
 
 /* --- Wednesday summary --------------------------------------------------- */
@@ -600,33 +676,33 @@ h1 {
    holds before anyone opens a single theme. */
 
 .summary {
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--candle);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--gilt);
   border-radius: 3px;
-  background: var(--deep);
+  background: var(--leaf);
   padding: 1rem 1.1rem;
 }
 
 .summary-line {
   margin: 0;
   font-size: 0.95rem;
-  color: var(--mist);
+  color: var(--ink);
 }
 
-.summary-line strong { color: #eef3f2; }
+.summary-line strong { color: var(--ink-strong); }
 
 .summary-urgent {
   margin-top: 0.35rem;
-  color: var(--candle);
+  color: var(--gilt);
   font-size: 0.85rem;
 }
 
 /* --- Collapsible groups -------------------------------------------------- */
 
 details.group {
-  border: 1px solid var(--line);
+  border: 1px solid var(--rule);
   border-radius: 3px;
-  background: rgba(23, 37, 44, 0.5);
+  background: var(--leaf);
 }
 
 details.group + details.group { margin-top: 0.5rem; }
@@ -655,7 +731,7 @@ details.group + details.group { margin-top: 0.5rem; }
   content: '';
   width: 0;
   height: 0;
-  border-left: 5px solid var(--quiet);
+  border-left: 5px solid var(--faded);
   border-top: 4px solid transparent;
   border-bottom: 4px solid transparent;
   transition: rotate 140ms ease;
@@ -667,11 +743,11 @@ details.group[open] > .group-heading .group-heading-inner::before { rotate: 90de
 .group > .group-heading:hover { background: var(--raised); }
 
 .group > .group-heading:focus-visible {
-  outline: 2px solid var(--candle);
+  outline: 2px solid var(--gilt);
   outline-offset: -2px;
 }
 
-details.group[open] > .group-heading { border-bottom: 1px solid var(--line); }
+details.group[open] > .group-heading { border-bottom: 1px solid var(--rule); }
 
 details.group > .requests { padding: 0.75rem; }
 
@@ -686,7 +762,7 @@ details.group > .requests { padding: 0.75rem; }
 
 .share-note {
   font-size: 0.8rem;
-  color: var(--quiet);
+  color: var(--faded);
 }
 
 /* --- Dashboard time windows ---------------------------------------------- */
@@ -700,25 +776,25 @@ details.group > .requests { padding: 0.75rem; }
 .period {
   font: inherit;
   font-size: 0.78rem;
-  color: var(--quiet);
+  color: var(--faded);
   background: transparent;
-  border: 1px solid var(--line);
+  border: 1px solid var(--rule);
   border-radius: 2px;
   padding: 0.25rem 0.55rem;
   cursor: pointer;
 }
 
-.period:hover { color: var(--mist); background: var(--raised); }
+.period:hover { color: var(--ink); background: var(--raised); }
 
 .period:focus-visible {
-  outline: 2px solid var(--candle);
+  outline: 2px solid var(--gilt);
   outline-offset: 2px;
 }
 
 .period-on {
-  color: #16212a;
-  background: var(--candle);
-  border-color: var(--candle);
+  color: var(--ink-strong);
+  background: var(--gilt);
+  border-color: var(--gilt);
 }
 
 /* A link styled as a button: calling is a real link, so it stays an anchor and
@@ -731,7 +807,7 @@ a.quiet-button {
 /* Fields that only appear once something above them is ticked. The rule marks
    them as belonging to that choice rather than floating loose in the form. */
 .nested {
-  border-left: 2px solid var(--line);
+  border-left: 2px solid var(--rule);
   padding-left: 1rem;
   margin-bottom: 1.5rem;
 }

@@ -86,6 +86,11 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
       <>
         <div className="glow" aria-hidden="true" />
         <main className="page">
+          <p className="running-head" aria-hidden="true">
+            <span>Prayer requests</span>
+            <span>1 Peter 5</span>
+          </p>
+
           <header>
             <h1>It is with the prayer team.</h1>
             <p className="lede">
@@ -93,6 +98,14 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
               {isNamed
                 ? ' They have your number if you asked to talk.'
                 : ' We do not know who you are, and we will not try to find out.'}
+            </p>
+            {/* Ink, not red: Peter is speaking, not Christ. The red-letter
+                convention is the reason red exists in this palette, so using it
+                here would make it decoration. */}
+            <p className="verse verse-quiet">
+              <span className="v-num">7</span>
+              Casting all your care upon him; for he careth for you.
+              <span className="verse-ref">1 Peter 5:7</span>
             </p>
           </header>
 

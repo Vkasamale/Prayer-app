@@ -29,6 +29,11 @@ export default function IdentityChoice() {
       <div className="glow" aria-hidden="true" />
 
       <main className="page">
+        <p className="running-head" aria-hidden="true">
+          <span>Prayer requests</span>
+          <span>Matthew 11</span>
+        </p>
+
         <section className="notice" aria-label="Before you start">
           <p>
             <strong>Nobody is reading this page right now.</strong> Requests are
@@ -50,6 +55,16 @@ export default function IdentityChoice() {
 
         <header>
           <h1>Share what is on your heart.</h1>
+          {/* Red because Christ is the one speaking — the red-letter
+              convention, not an accent colour. See globals.css. King James,
+              because it is public domain and a licensed translation is not
+              ours to paste onto a deployed page. */}
+          <p className="verse verse-red">
+            <span className="v-num">28</span>
+            Come unto me, all ye that labour and are heavy laden, and I will give
+            you rest.
+            <span className="verse-ref">Matthew 11:28</span>
+          </p>
           <p className="lede">
             The prayer team will pray over what you send. First, choose how you
             would like to be known.
