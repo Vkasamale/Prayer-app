@@ -18,13 +18,89 @@ half-finished state and should not be left sitting.
 Then confirm the deployment came up with `npm run verify`: eleven checks, all of
 which passed when this session closed.
 
-### What the new session needs connected
+## Setting up the new account
 
-- **Supabase**, for project `fcrsegyrpieibtmaptir`. Without it the database
-  cannot be read or migrated, and most of the work below is blocked.
-- **Vercel** is useful but not required; pushing to `main` deploys.
-- If neither is connected on the new account, say so before starting rather than
-  after.
+Do this before any work. Most of it is one-time. If the new account is being used
+on **the same machine**, items 3 to 7 are already in place and only need
+checking; on a fresh machine or a fresh clone, all of them are needed.
+
+### 1. Connect Supabase — required
+
+The agent reads the schema, checks grants and applies migrations through the
+Supabase connector. Without it almost everything below is blocked, and the agent
+can only guess about the database — which is how the last session's security
+defect survived as long as it did.
+
+Connect it in the claude.ai connector settings for that account. A session cannot
+authorise a connector for itself, so this is a human step. The project is
+`fcrsegyrpieibtmaptir`; a second, unrelated project shares the account, so match
+the reference rather than picking the first one listed.
+
+**Tell the new session which connectors are live.** If Supabase is missing it
+should say so and stop, not carry on reasoning about a database it cannot see.
+
+### 2. Connect Vercel — optional
+
+Useful for reading deployment logs. Not required: pushing to `main` deploys by
+itself, and the site can be checked by loading it.
+
+### 3. Dashboard and repository access, in Vincent's own name
+
+None of these belong to the Claude account, and all three are needed:
+
+- **Supabase dashboard** — for creating team accounts and deleting rows, which
+  are Vincent's alone.
+- **GitHub**, push rights to `Vkasamale/Prayer-app`.
+- **Vercel**, the project that deploys `send-a-prayer.vercel.app`.
+
+### 4. `.env.local` — not in git, and the app will not run without it
+
+It is gitignored, so it does not travel with a clone. `.env.example` shows the
+shape. Two variables:
+
+```
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+```
+
+Both come from the Supabase dashboard → Project Settings → API. The anon key is
+the one that ships in the browser and can do exactly one thing, so it is not a
+secret in the usual sense — but put it in the file, never in a chat.
+
+`scripts/verify-supabase.mjs` reads this file directly, because it runs outside
+Next.js.
+
+### 5. `npm install`, and Node
+
+Built and run on Node v24. Run `npm install` after any fresh clone.
+
+### 6. The hooks travel, but may need approving
+
+`.claude/settings.json` and `.claude/hooks/guard-bash.mjs` are in the repository,
+so they arrive with it. A new account may still need to approve hook execution
+before they run. They are worth having: they refuse `npx next build` while the
+dev server is running, and refuse a push carrying a migration that cannot be
+confirmed as applied. Both rules exist because both failures happened.
+
+Confirm they are live early, on something harmless, rather than finding out they
+are inert at the moment one would have saved you.
+
+### 7. Git identity
+
+Commits are attributed to `Vincent <vinnykasa@gmail.com>`, set per-repository in
+`.git/config`. That file does not travel with a fresh clone, and a machine with
+no global identity refuses to commit at all until it is set again. The Claude
+account's own email is unrelated and should not be used here.
+
+### First session checklist
+
+- [ ] Supabase connector authorised, correct project
+- [ ] `.env.local` present, both variables
+- [ ] `npm install` done
+- [ ] Hooks approved and confirmed firing
+- [ ] Git identity set
+- [ ] Push the waiting commits
+- [ ] `npm run verify` — expect 11 passing
 
 ## THE AGENDA
 
