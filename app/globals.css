@@ -39,6 +39,21 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Paper grain. Generated, not a file: an SVG turbulence filter inlined as a
+   data URI, held at an opacity where nobody would point at it but a flat
+   background would be noticed if it were taken away. Fixed, so it does not
+   travel with the text and give the scroll away as a scroll. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.055'/%3E%3C/svg%3E");
+}
+
+.page > * { position: relative; z-index: 1; }
+
 body {
   min-height: 100svh;
   line-height: 1.6;
@@ -151,13 +166,18 @@ body {
 /* Permanent, above everything, shown before anyone types a word. It is not
    triggered by anything and never hides. */
 
+/* Set as a book sets a preface: ruled off above and below, italic, no box. The
+   old panel was the other obviously-website object on the page. Its job has not
+   changed — this is read before anyone types a word — and rules above and below
+   hold the eye as well as a border did. */
 .notice {
-  border: 1px solid var(--rule);
-  border-left: 3px solid var(--gilt);
-  border-radius: 2px;
-  background: var(--leaf);
-  padding: 0.9rem 1rem;
+  border: 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  background: transparent;
+  padding: 0.95rem 0.25rem;
   font-size: 0.875rem;
+  font-style: italic;
   color: var(--faded);
 }
 
@@ -209,48 +229,72 @@ h1 {
 /* Both are full-weight cards. Neither is styled as the lesser option: the
    anonymous path is the reason this app exists and is not a fallback. */
 
+/* Not cards. A card is the most website-looking object there is: a box with a
+   fill, a border and a corner radius, floating on a background. These are
+   entries in a book — numbered, ruled off from each other, sitting directly on
+   the paper with nothing behind them. The number is the only ornament, and it
+   is set like a verse number because the two choices are a real sequence: the
+   first one is the one most people need. */
+
 .paths {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0;
+  border-top: 1px solid var(--rule);
 }
 
 .path {
-  display: block;
+  display: grid;
+  grid-template-columns: 1.9rem 1fr;
+  gap: 0 0.4rem;
   width: 100%;
   text-align: left;
   font: inherit;
   color: inherit;
-  background: var(--leaf);
-  border: 1px solid var(--rule);
-  border-radius: 3px;
-  padding: 1.15rem 1.25rem;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  padding: 1.3rem 0.25rem 1.4rem;
   cursor: pointer;
   text-decoration: none;
-  transition: background 160ms ease, border-color 160ms ease;
+  transition: background 160ms ease;
+  counter-increment: path;
 }
 
-.path:hover {
-  background: var(--raised);
-  border-color: var(--gilt);
+/* The entry number, in the margin where a Bible keeps its verse numbers. */
+.path::before {
+  content: counter(path);
+  grid-row: 1 / span 2;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gilt);
+  line-height: 1.9;
+  font-variant-numeric: lining-nums;
 }
+
+.paths { counter-reset: path; }
+
+/* A hover that tints the paper rather than lighting a box. */
+.path:hover { background: rgba(176, 141, 63, 0.07); }
 
 .path:focus-visible {
   outline: 2px solid var(--gilt);
-  outline-offset: 2px;
+  outline-offset: -2px;
 }
 
 .path-name {
   font-family: var(--display);
-  font-size: 1.3rem;
-  font-weight: 500;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   color: var(--ink-strong);
-  margin: 0 0 0.3rem;
+  margin: 0 0 0.35rem;
 }
 
 .path-detail {
   margin: 0;
   font-size: 0.9rem;
+  line-height: 1.65;
   color: var(--faded);
 }
 
@@ -288,14 +332,28 @@ h1 {
   color: var(--faded);
 }
 
+/* A ruled line to write on, which is what a book gives you when it wants
+   something back. The fill stays — a bare underline on textured paper is too
+   faint to read as a field on a phone — but it is barely there, and the rule
+   under it does the work. */
 .input {
   width: 100%;
-  background: var(--leaf);
-  border: 1px solid var(--rule);
-  border-radius: 3px;
+  background: rgba(255, 253, 247, 0.6);
+  border: 0;
+  border-bottom: 1px solid var(--ink);
+  border-radius: 0;
   color: var(--ink);
   font: inherit;
-  padding: 0.7rem 0.8rem;
+  padding: 0.6rem 0.5rem;
+}
+
+/* The colophon: the copyright line the NIV requires, set the size a book sets
+   its printing notice. */
+.colophon {
+  margin-top: 0.9rem !important;
+  font-size: 0.68rem;
+  line-height: 1.5;
+  color: var(--faded);
 }
 
 .input:focus-visible {
@@ -304,10 +362,15 @@ h1 {
   border-color: transparent;
 }
 
+/* Tall enough that a single underline leaves it floating, so this one keeps a
+   hairline all round. The baseline rule stays ink: it is the line you write on,
+   and the other three are just the edge of the space. */
 .textarea {
   resize: vertical;
   min-height: 9rem;
   line-height: 1.6;
+  border: 1px solid var(--rule);
+  border-bottom: 1px solid var(--ink);
 }
 
 .choices {
@@ -326,7 +389,7 @@ h1 {
   padding: 0.4rem 0.8rem 0.4rem 0.6rem;
   background: var(--leaf);
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: 0;
   font-size: 0.9rem;
   cursor: pointer;
 }
@@ -351,7 +414,7 @@ h1 {
   padding: 0.7rem 0.85rem;
   border: 1px solid #d8b3a6;
   border-left: 3px solid var(--red);
-  border-radius: 2px;
+  border-radius: 0;
   background: #f7e7e0;
   color: #6b1f16;
   font-size: 0.875rem;
@@ -367,7 +430,7 @@ h1 {
   color: var(--paper);
   background: var(--ink-strong);
   border: 0;
-  border-radius: 3px;
+  border-radius: 0;
   cursor: pointer;
   transition: background 160ms ease;
 }
@@ -406,7 +469,7 @@ h1 {
   color: var(--faded);
   background: transparent;
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: 0;
   padding: 0.45rem 0.7rem;
   min-height: 2.25rem;
   cursor: pointer;
@@ -471,7 +534,7 @@ h1 {
 .request {
   background: var(--leaf);
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: 0;
   padding: 1rem 1.1rem;
 }
 
@@ -503,7 +566,7 @@ h1 {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   padding: 0.15rem 0.45rem;
-  border-radius: 2px;
+  border-radius: 0;
   border: 1px solid var(--rule);
   color: var(--faded);
 }
@@ -539,7 +602,7 @@ h1 {
 
 .dashboard {
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: 0;
   background: var(--leaf);
   padding: 1.1rem 1.2rem;
 }
@@ -621,7 +684,7 @@ h1 {
 .trend-track {
   height: 0.7rem;
   background: var(--paper);
-  border-radius: 2px;
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -630,7 +693,7 @@ h1 {
   height: 100%;
   background: var(--gilt);
   /* Rounded only at the end the data reaches, so the baseline stays square. */
-  border-radius: 0 3px 3px 0;
+  border-radius: 0;
 }
 
 .trend-count {
@@ -678,7 +741,7 @@ h1 {
 .summary {
   border: 1px solid var(--rule);
   border-left: 3px solid var(--gilt);
-  border-radius: 3px;
+  border-radius: 0;
   background: var(--leaf);
   padding: 1rem 1.1rem;
 }
@@ -701,7 +764,7 @@ h1 {
 
 details.group {
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: 0;
   background: var(--leaf);
 }
 
@@ -779,7 +842,7 @@ details.group > .requests { padding: 0.75rem; }
   color: var(--faded);
   background: transparent;
   border: 1px solid var(--rule);
-  border-radius: 2px;
+  border-radius: 0;
   padding: 0.25rem 0.55rem;
   cursor: pointer;
 }

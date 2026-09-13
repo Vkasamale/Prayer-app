@@ -56,14 +56,16 @@ export default function IdentityChoice() {
         <header>
           <h1>Share what is on your heart.</h1>
           {/* Red because Christ is the one speaking — the red-letter
-              convention, not an accent colour. See globals.css. King James,
-              because it is public domain and a licensed translation is not
-              ours to paste onto a deployed page. */}
+              convention, not an accent colour. See globals.css.
+              NIV, which is copyrighted: Biblica permit up to 500 verses
+              non-commercially provided the notice appears, and it does, in the
+              footnote below. Two verses is well inside that. If this ever takes
+              money, the permission has to be looked at again. */}
           <p className="verse verse-red">
             <span className="v-num">28</span>
-            Come unto me, all ye that labour and are heavy laden, and I will give
-            you rest.
-            <span className="verse-ref">Matthew 11:28</span>
+            Come to me, all you who are weary and burdened, and I will give you
+            rest.
+            <span className="verse-ref">Matthew 11:28 (NIV)</span>
           </p>
           <p className="lede">
             The prayer team will pray over what you send. First, choose how you
@@ -105,6 +107,13 @@ export default function IdentityChoice() {
           <p>
             If you share your name, the church keeps your contact details so the
             team can follow up. Ask any time and we will remove them.
+          </p>
+          {/* A condition of using the NIV, not a courtesy. Biblica require the
+              notice wherever their text appears. */}
+          <p className="colophon">
+            Scripture quotations taken from The Holy Bible, New International
+            Version® NIV®. Copyright © 1973, 1978, 1984, 2011 by Biblica, Inc.™
+            Used by permission. All rights reserved worldwide.
           </p>
         </footer>
       </main>

@@ -104,8 +104,8 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
                 here would make it decoration. */}
             <p className="verse verse-quiet">
               <span className="v-num">7</span>
-              Casting all your care upon him; for he careth for you.
-              <span className="verse-ref">1 Peter 5:7</span>
+              Cast all your anxiety on him because he cares for you.
+              <span className="verse-ref">1 Peter 5:7 (NIV)</span>
             </p>
           </header>
 
