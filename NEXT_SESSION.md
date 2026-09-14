@@ -5,17 +5,24 @@ them were learned the expensive way.
 
 ## Start here
 
-Three commits are unpushed and the live site is a design behind. Before
-anything else:
+**Pushing deploys again.** This was not true for three sessions — Vercel was
+refusing to build pushed commits, and every deploy had to go through the CLI.
+On 2026-09-14 a push of `1830a43` deployed on its own and `npm run verify`
+passed its twelfth check against it. Whether the GitHub Action from `bb76983`
+is doing it or Vercel's own integration recovered has not been established, so
+do not assume it is permanently fixed: **read the stamp after any deploy.**
+
+Everything through `1830a43` is pushed and live.
 
 1. **`npm run verify`** — twelve checks. The twelfth compares the commit the
    live site was built from against `HEAD`, and it **skips rather than fails**
-   while commits are unpushed. A skip proves nothing; if you need to know what
-   is live, read the stamp directly:
+   while commits are unpushed. A skip proves nothing; to know what is live,
+   read the stamp directly:
    `curl -s https://send-a-prayer.vercel.app | grep -o 'build-commit[^>]*'`
-2. **Push, then deploy.** Pushing does not deploy — see "The deployment
-   problem". The deploy is
+2. **If a push does not deploy**, fall back to the CLI — it still works:
    `npx vercel --prod --build-env VERCEL_GIT_COMMIT_SHA=$(git rev-parse HEAD)`.
+   The `--build-env` is not optional; without it the stamp ships as `local` and
+   the twelfth check fails on a good deployment.
 3. **Two test rows are in the database** and are Vincent's to clear:
    `npx supabase db query --linked "delete from submissions where body like 'AUTOMATED CHECK%'"`
 
@@ -226,8 +233,8 @@ machine.
 
 ### State of play, one line each
 
-- Live at https://send-a-prayer.vercel.app, running `18790c3`. **Three commits
-  ahead of that locally**, all design work.
+- Live at https://send-a-prayer.vercel.app, running `1830a43` — the whole of
+  this session's work, deployed by push and confirmed by the stamp.
 - The app is set as an aged scroll on a leaf of an old book. See "The design".
 - Migrations 0001-0013 applied and listed in `supabase/applied.txt`.
 - `npm run verify`: 12 checks. `npm run verify:team`: 10. `npm run test:hook`: 5.
@@ -242,7 +249,8 @@ machine.
 - The design system `Aged Scroll` exists in Claude Design. Stage 3 of the
   roadmap still wants the church logo uploaded, **marked print-only** — it must
   never appear on the congregation's side.
-- **Every push needs a manual deploy** until the Vercel question is settled.
+- **A push deployed on its own on 2026-09-14**, for the first time in three
+  sessions. Treat as improved, not as proven — check the stamp each time.
 
 ## The design, and what it costs
 
