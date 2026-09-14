@@ -72,16 +72,19 @@ export default function IdentityChoice() {
         {/* Not a third identity choice: it is a different errand, so it sits
             below the rule rather than beside the two paths. */}
         <p className="aside">
-          <Link href="/questions">Not a prayer request? Ask a question or leave a note.</Link>
+          <Link href="/questions">Leave a note or comment instead.</Link>
         </p>
 
-        <ShareLink />
-        <QrCode />
+        <div className="actions">
+          <ShareLink />
+          <span className="actions-or" aria-hidden="true">or</span>
+          <QrCode />
+        </div>
 
         <footer className="footnote">
           <p>
-            <strong>Only the prayer team and church leadership can read what you
-            send.</strong> It is not posted anywhere, not shown to the
+            <strong>Note:</strong> Only the prayer team and church leadership
+            can read what you send. It is not posted anywhere, not shown to the
             congregation, and not shared outside that team.
           </p>
           <p>

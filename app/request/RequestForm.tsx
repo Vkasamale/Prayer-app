@@ -147,25 +147,6 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
     <>
       <div className="leaf-edges" aria-hidden="true" />
       <main className="page">
-        <section className="notice" aria-label="Before you start">
-          <p>
-            <strong>Nobody is reading this page right now.</strong> The prayer
-            team prays over these {REVIEW_CADENCE}.
-          </p>
-          {EMERGENCY_CONTACTS.length > 0 && (
-            <p>
-              If you are in danger, call{' '}
-              {EMERGENCY_CONTACTS.map((contact, index) => (
-                <span key={contact.phone}>
-                  {index > 0 && ' or '}
-                  {contact.label} on <a href={'tel:' + contact.phone}>{contact.phone}</a>
-                </span>
-              ))}
-              .
-            </p>
-          )}
-        </section>
-
         <header>
           <h1 className="title">What are your prayer requests or praises?</h1>
         </header>

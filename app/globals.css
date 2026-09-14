@@ -816,3 +816,41 @@ details.group>.requests{border-top:0}
 .stave {
   margin-inline: 0;
 }
+
+/* --- The two quiet actions ------------------------------------------------ */
+/* Share and the QR code are one choice offered two ways, so they sit on one
+   line with the word between them rather than stacked as two separate
+   invitations. They wrap on a narrow screen, and the "or" goes with them. */
+
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.45rem;
+}
+
+/* At phone width the two labels plus the word between them only just fit the
+   column, so the buttons give up some padding rather than the row giving up
+   and stacking. Neither label wraps inside its own box. */
+.actions .quiet-button {
+  padding-inline: 0.6rem;
+  white-space: nowrap;
+  font-size: 0.78rem;
+}
+
+.actions-or {
+  font-size: var(--text-hint);
+  color: var(--faded);
+  font-style: italic;
+}
+
+/* Each half keeps its own note underneath without stretching the row. The two
+   halves come from different components with different wrappers, which left
+   their buttons sitting 8px apart vertically until both were made flex rows. */
+.actions .share,
+.actions .qr {
+  flex: 0 1 auto;
+  display: flex;
+  align-items: center;
+  margin: 0;
+}

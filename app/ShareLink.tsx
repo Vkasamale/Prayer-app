@@ -47,7 +47,7 @@ export default function ShareLink() {
   return (
     <div className="share">
       <button className="quiet-button" type="button" onClick={share}>
-        Share this with someone
+        Share this page with someone
       </button>
       {state === 'copied' && (
         <span className="share-note" role="status">
