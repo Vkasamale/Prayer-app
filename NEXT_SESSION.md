@@ -5,15 +5,43 @@ them were learned the expensive way.
 
 ## Start here
 
-The account move is done and the setup below is working. Two things before any
-new work:
+Three commits are unpushed and the live site is a design behind. Before
+anything else:
 
-1. **`npm run verify`** — twelve checks. The twelfth is new and compares the
-   commit the live site was built from against `HEAD`. If it fails, the site is
-   running old code, which is a thing that happened and went unnoticed for a
-   day.
-2. **One commit is unpushed**, `bb76983`, and it is optional. See "The
-   deployment problem" before pushing it.
+1. **`npm run verify`** — twelve checks. The twelfth compares the commit the
+   live site was built from against `HEAD`, and it **skips rather than fails**
+   while commits are unpushed. A skip proves nothing; if you need to know what
+   is live, read the stamp directly:
+   `curl -s https://send-a-prayer.vercel.app | grep -o 'build-commit[^>]*'`
+2. **Push, then deploy.** Pushing does not deploy — see "The deployment
+   problem". The deploy is
+   `npx vercel --prod --build-env VERCEL_GIT_COMMIT_SHA=$(git rev-parse HEAD)`.
+3. **Two test rows are in the database** and are Vincent's to clear:
+   `npx supabase db query --linked "delete from submissions where body like 'AUTOMATED CHECK%'"`
+
+### What the design now depends on
+
+The app's stylesheet is **the Claude Design export's own**, ported verbatim.
+That has a consequence worth stating plainly: `app/globals.css` is no longer
+the place to change how this app looks. Change it in the design system, export,
+and port again — otherwise the next sync silently loses the edit.
+
+The deliberate departures from the export are collected at the **end** of
+`globals.css`, each with the reason. Anything above that point came from the
+export and should not be hand-edited.
+
+**Accessibility debt, incurred deliberately.** Focus indicators are removed
+throughout, at Vincent's direction, asked twice and confirmed. Nothing shows
+which field or checkbox has focus, so the form cannot be completed by keyboard
+without guessing. The checked state survives — a red cross is a shape, not a
+colour — but this is the one thing in the app that would fail an accessibility
+review, and it is a decision rather than an oversight. If it is ever revisited,
+`DESIGN.md` §8 still holds the floor it was measured against.
+
+**Untested on a real phone.** Everything this session did was verified in a
+desktop browser at 375px. Three things specifically want a real device: the
+torn sheet edges (the paper reaches under the spine gutter at narrow widths),
+the leaf-turn animation, and the brush-stroke button at touch size.
 
 ## Setting up
 
@@ -178,9 +206,10 @@ machine.
    `supabase/applied.txt` **after reading the live database**, or the push guard
    will refuse — which is the point of it.
 
-3. **Bring the prayer team page across to the new design.** It has not been
-   looked at since the repaint and holds the most card-like surfaces left. Sign
-   in as `prayerteam@example.com`.
+3. **The prayer team's screens have still never had a design pass.** They now
+   inherit the ported stylesheet, so they are no longer actively wrong, but
+   nobody has looked at them since it landed. Screens 8-13 of
+   `TEMPLATE_BRIEF.md`. Sign in as `prayerteam@example.com`.
 
 4. **Test the QR save on a real phone.** The PNG is produced correctly —
    verified in the running app, 34KB, 32% dark pixels — but whether iOS hands it
@@ -197,41 +226,61 @@ machine.
 
 ### State of play, one line each
 
-- Live at https://send-a-prayer.vercel.app, running `bb76983`, confirmed by
-  reading the build-commit stamp off the live page.
-- The app now looks like an opened Bible. See "The design" below.
-- Migrations 0001-0012 applied and listed in `supabase/applied.txt`.
+- Live at https://send-a-prayer.vercel.app, running `18790c3`. **Three commits
+  ahead of that locally**, all design work.
+- The app is set as an aged scroll on a leaf of an old book. See "The design".
+- Migrations 0001-0013 applied and listed in `supabase/applied.txt`.
 - `npm run verify`: 12 checks. `npm run verify:team`: 10. `npm run test:hook`: 5.
   `npx tsc --noEmit`: clean.
 - The database is empty. No test rows outstanding.
 - Accounts: `vkasamale@gmail.com` (leadership), `prayerteam@example.com`
   (prayer_team, created 2026-09-13).
+- Five design documents: `DESIGN_FRAMEWORK.md` (the method, any project),
+  `DESIGN.md` (this app's rulebook), `VOICE.md` (how it sounds),
+  `DESIGN_ROADMAP.md` (the sequence), `TEMPLATE_BRIEF.md` (all thirteen screens
+  with their real copy).
+- The design system `Aged Scroll` exists in Claude Design. Stage 3 of the
+  roadmap still wants the church logo uploaded, **marked print-only** — it must
+  never appear on the congregation's side.
 - **Every push needs a manual deploy** until the Vercel question is settled.
 
 ## The design, and what it costs
 
-The app is set as an opened Bible: cream paper, ink, a spine down the left where
-the paper darkens into the gutter, the gilt edge of the block down the right,
-hairline rules, and Petrona alone across display and body — one family, the way
-a Bible is set.
+The page is a leaf of an old book: aged parchment, iron-gall ink, a spine down
+one edge where the paper darkens into the gutter, and the gilt edge of the
+block down the other. The two edges are never the same — a book has one spine.
+Every navigation turns the leaf, so the sides swap.
 
-Two rules in it are deliberate and should survive future edits:
+The scroll is a **motif inside that page, never the page itself**. It appears
+in exactly two places: the running head, and anything written in. This was
+tried as a whole-page treatment and rejected — turning the whole surface into a
+scroll makes every element shout, and the page stops being something you read
+and becomes something you look at.
+
+Rules that should survive future edits:
 
 - **Red is the red-letter convention, not an accent colour.** Matthew 11:28 on
-  the first screen is Christ speaking and is set in red. 1 Peter 5:7 on the
-  confirmation screen is Peter, so it is ink italic. Which voice gets the colour
-  is the rule, and it keeps red to at most once on a page.
-- **Nothing is a card.** The identity choices are numbered entries ruled off
-  from each other, sitting directly on the paper. The crisis notice is a
-  preface, italic between two rules. Every corner radius is zero. A card is the
-  most website-looking object there is.
+  the first screen is Christ speaking and is red. 1 Peter 5:7 on the
+  confirmation screen is Peter, so it is ink italic. Which voice gets the
+  colour is the rule, and it keeps red to at most once on a page.
+- **Nothing is a card.** Numbered entries ruled off from each other, sitting on
+  the paper. Every corner radius is zero except the staves, which are
+  cylinders.
+- **A scroll marks where words are set down.** The title of the leaf, and the
+  space you write in. Everything else is the leaf. A one-line field gets the
+  paper without the rods.
+- **One typeface, Petrona**, across display and body.
 
-**What it gives up.** The previous palette was dark, and the reason is written
-at the top of `globals.css`: a person at the back of a room should not be lit up
-by their own screen. A bright page is conspicuous in a way the old one was not.
-That argument now rests entirely on the writing and on the absent church name.
-**Ask the testers about this directly** — it is the largest open risk in the
-redesign.
+`DESIGN.md` holds the full rulebook and the measured values. `VOICE.md` holds
+the writing.
+
+**What it gives up.** The original palette was dark, and the reason is still
+true: a person at the back of a room should not be lit up by their own screen.
+Parchment is brighter than the cream that replaced it, and brighter again than
+the dark. That argument now rests entirely on the writing and on the absent
+church name. **Ask the testers about this directly** — it is the largest open
+risk in the redesign, and it has been carried unanswered across three sessions
+now.
 
 **The verses are NIV**, which is copyrighted. Biblica permit up to 500 verses
 non-commercially provided their notice appears, and it does, as a colophon at
@@ -249,6 +298,7 @@ above when you pick a handoff up.
 | 2 | 2026-09-11 | Apply migration 0010 and clear the deck for the QR code | landed | 0010 was already applied — verified by function signature, columns, view and grants. `npm run verify` extended from 8 to 10 checks, all passing. Both counseling paths verified by rollback test. Test-row delete refused to the agent, handed to Vincent and done. |
 | 3 | 2026-09-11 | Write the standing rules down, build the QR material, prove team sign-in | landed | `AGENTS.md` and `CLAUDE.md` written; handoff ledger started; a hook now enforces two of the rules; QR code and A4/A6 print material built and checked pixel-for-pixel against the generator; team sign-in confirmed working on the live site by Vincent. |
 | 4 | 2026-09-11 | Security audit before the congregation sees it; the list at volume; the monthly trend | landed | Found and fixed a column leak that let any prayer team member read counseling phone numbers (migration 0011). Cut a Wednesday meeting's data use from about 21 downloads to 1. Moved the counts behind a Totals tab and added a 12-month trend (migration 0012). Mocked the list at 100 requests. 11 checks passing. Six commits left unpushed for the next account. |
+| 6 | 2026-09-14 | Give the app a design system and port the design back into it | landed | Five design documents written (framework, rulebook, voice, roadmap, screen brief). Migration 0013 applied and proven: questions are a third submission_kind, with their own route and a team tab. `app/globals.css` replaced by the Claude Design export's own stylesheet, verbatim. Scroll rebuilt from real elements; ink-stroke button and red-cross tick carried as masks. Every navigation now turns a leaf. Three commits, unpushed. |
 | 5 | 2026-09-13 | Push the waiting work, prove the prayer team boundary from a real session, redesign the app as a Bible | landed | Six waiting commits pushed. Push guard given a confirmation path it never had (`supabase/applied.txt`) plus a test. Prayer team boundary proven from a real signed-in session against a real counseling request put through the live form — and the exercise found the test was looking at the wrong table, because the named path stores the number on `submitters.phone`, which 0011 never touched. App redesigned as an opened Bible: NIV verses, no cards, QR code shown and saveable on the page. Discovered Vercel had been silently refusing to deploy; added a twelfth check that reads the build's commit off the live site, the only thing in the repo that would have caught it. Supabase advisors triaged. Database left empty. |
 
 ## Where things live
@@ -280,6 +330,25 @@ The sources are in the repository and can be published again.
   `supabase db push` ever.
 
 ## Closed — do not re-test
+
+### 2026-09-14
+
+- **Questions are a third `submission_kind`.** Migration 0013 applied and read
+  back (`enum_range` is `{prayer,counseling,question}`). A question put through
+  the real form arrives in `submissions_for_team` as kind `question`, confirmed
+  from a signed-in prayer team session. Same table, same row-level security,
+  same retention — no new surface to secure.
+- **The design is ported from the export, not approximated.** `app/globals.css`
+  is the Claude Design template's own stylesheet. Do not re-derive it by hand.
+- **The reference images were measured, not described.** Sheet mean `#BFA97E`
+  at 34% saturation; clean centre `#E7DAC7`; stains `#AF9467` at 41%; stave
+  `#67472D`; finial `#6F533B`. Saturation rises as the sheet darkens. Digitised
+  manuscripts disagree (desaturated grey-olive) and were deliberately rejected:
+  archival accuracy reads as dirty on a phone.
+- **The leaf turn works, and why.** Next remounts `template.tsx` per
+  navigation; that remount is the turn. The side must be decided in the browser
+  — deciding it on the server both broke hydration and put one visitor's
+  position in the book into module scope shared across requests.
 
 ### 2026-09-13
 
