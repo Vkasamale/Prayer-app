@@ -1,941 +1,818 @@
-/* Flood Church prayer app.
-   An opened Bible: thin cream paper, ink, a gilt edge, hairline rules. One
-   typeface throughout, the way a Bible is set.
+/* The export inlines Petrona as bundled font assets. Those are stripped here:
+   this app already loads the same family from Google Fonts in app/layout.tsx,
+   which is what the export's own header says it mirrors. Nothing else in the
+   ported sheet is altered. */
 
-   Red is not a decoration here. It is the red-letter convention — the words of
-   Christ — so it appears on a verse only when Christ is the one speaking, and
-   nowhere else on the page. Anything else that needs emphasis uses gilt or ink.
+/* Aged Scroll.
+ *
+ * Ported verbatim from the Claude Design template export ("Prayer App Screens",
+ * 2026-09-14). Every value, gradient and mask below came from that export and
+ * should be changed there rather than here — the design system is the source of
+ * truth, and a local edit is a divergence that the next sync silently loses.
+ *
+ * Two things are appended after the ported sheet because the template has no
+ * knowledge of them: the turning leaf, which is a behaviour of the running app
+ * rather than of a static artboard, and the mirrored edges that go with it. */
 
-   This replaced a dark "dim sanctuary at dusk" palette. That design existed so
-   a person at the back of a room would not be lit up by their own screen, and
-   that reason has not gone away; it is now carried by the writing and by the
-   absence of any church name rather than by the colour. Worth watching in the
-   trial: a bright page in a dark room is conspicuous in a way the old one
-   was not. */
+/* Petrona, loaded exactly as the app loads it in app/layout.tsx. The binaries
+   are not vendored into this system — Google serves them — so there are no
+   local @font-face rules to declare. Weights 400/500/600 and 400 italic are the
+   only cuts used anywhere. */
+/* vietnamese */
+/* latin-ext */
+/* latin */
+/* vietnamese */
+/* latin-ext */
+/* latin */
+/* vietnamese */
+/* latin-ext */
+/* latin */
+/* vietnamese */
+/* latin-ext */
+/* latin */
+/* Every value has one job. There are no spare colours. Values are DESIGN.md §3,
+   which the brand holder confirmed wins over the lighter cream in the live
+   app's globals.css. */
+:root{
+/* --- Ground and ink ----------------------------------------------------- */
+--paper:#DED0AB;        /* the parchment ground; the whole page sits on it */
+--leaf:#EADCB8;         /* a sheet lying on the parchment */
+--raised:#E6D7B2;       /* a surface lifted very slightly off the ground */
+--rule:#BDA876;         /* hairline rules and dividers */
+--ink:#3B2B16;          /* body text; iron gall, not black */
+--ink-strong:#281C0D;   /* headings and anything that must carry */
+--faded:#635030;        /* hints, captions, metadata; 4.6:1 on paper */
+--gilt:#9A7B34;         /* focus rings and numerals; never a fill */
+--gilt-fill:#A6843A;    /* the one gilt ground ink sits on; 4.7:1 with --ink-strong */
+--red:#7E2012;          /* the words of Christ, and nothing else */
+
+/* --- The sheet, measured pixel by pixel off the reference images -------- */
+--sheet-centre:#E7DAC7; /* clean middle, saturation 24% */
+--sheet-edge:#D9C5AA;   /* approaching the perimeter */
+--sheet-stain:#AF9467;  /* darkest 5%, saturation 41% */
+--sheet-light:#CDC09C;  /* lightest 5% */
+--sheet-mean:#BFA97E;   /* field mean, saturation 34% */
+
+/* --- The staves: dark walnut, not gilt --------------------------------- */
+--stave:#67472D;        /* stave body, mid-length */
+--finial:#6F533B;       /* the turned end cap */
+
+/* --- Semantic aliases -------------------------------------------------- */
+--surface-page:var(--paper);
+--surface-sheet:var(--leaf);
+--surface-raised:var(--raised);
+--text-body:var(--ink);
+--text-heading:var(--ink-strong);
+--text-secondary:var(--faded);
+--text-on-ink:var(--paper);
+--text-christ:var(--red);
+--line-hairline:var(--rule);
+--focus-ring:var(--gilt);
+--numeral:var(--gilt);
+--fill-shout:var(--gilt-fill);
+--fill-primary:var(--ink-strong);
+--fill-primary-hover:#382814;
+--tint-hover:rgba(154,123,52,0.09); /* @kind color */
+}
+
+/* One family throughout. Display and body are the same face, the way a Bible is
+   set. A second family would make this look like a website. Headings are weight
+   400, never bold: scale carries the hierarchy, weight does not. */
+:root{
+--font-display:'Petrona',Georgia,'Times New Roman',serif;
+--font-body:var(--font-display);
+
+--text-title:clamp(2rem,9vw,2.75rem);
+--text-stat:1.9rem;
+--text-group:1.15rem;
+--text-path:1.15rem;
+--text-verse:1.05rem;
+--text-who:1.05rem;
+--text-body-size:1rem;
+--text-lede:1rem;
+--text-trend-title:1rem;
+--text-empty:0.95rem;
+--text-summary:0.95rem;
+--text-label:0.9rem;
+--text-detail:0.9rem;
+--text-choice:0.9rem;
+--text-notice:0.875rem;
+--text-quiet-button:0.85rem;
+--text-running-head:0.85rem;
+--text-hint:0.8rem;
+--text-when:0.8rem;
+--text-caption:0.78rem;
+--text-eyebrow:0.75rem;
+--text-month:0.75rem;
+--text-tag:0.7rem;
+--text-verse-ref:0.7rem;
+--text-colophon:0.68rem;
+
+--lh-tight:1; /* @kind other */
+--lh-title:1.15; /* @kind other */
+--lh-body:1.6; /* @kind other */
+--lh-detail:1.65; /* @kind other */
+--lh-verse:1.7; /* @kind other */
+
+--ls-title:-0.01em; /* @kind other */
+--ls-running-head:0.18em; /* @kind other */
+--ls-verse-ref:0.16em; /* @kind other */
+--ls-eyebrow:0.14em; /* @kind other */
+--ls-tag:0.06em; /* @kind other */
+--ls-path:0.02em; /* @kind other */
+
+--weight-regular:400; /* @kind other */
+--weight-medium:500; /* @kind other */
+--weight-semibold:600; /* @kind other */
+
+/* The transferable number: 60–65 characters. 32rem at 1rem lands in range. */
+--measure:32rem; /* @kind spacing */
+--measure-lede:28rem; /* @kind spacing */
+--measure-caption:22rem; /* @kind spacing */
+}
+
+/* Every corner radius is zero, except the staves, which are cylinders.
+   Horizontal page padding is asymmetric: wider on the spine side than the gilt
+   side, the way a bound page actually sits. */
+:root{
+--space-1:0.25rem;
+--space-2:0.4rem;
+--space-3:0.5rem;
+--space-4:0.6rem;
+--space-5:0.75rem;
+--space-6:0.9rem;
+--space-7:1rem;
+--space-8:1.3rem;
+--space-9:1.5rem;
+--space-10:2rem;
+--space-11:3rem;
+
+--page-max:32rem;
+--page-max-wide:46rem;
+--page-gap:2rem;
+--page-pad-block-start:2rem;
+--page-pad-block-end:3rem;
+
+--spine-w:min(34px,7vw); /* @kind spacing */
+--gilt-w:min(20px,4.5vw); /* @kind spacing */
+--page-pad-spine:calc(0.9rem + min(34px,7vw));
+--page-pad-gilt:calc(0.9rem + min(20px,4.5vw));
+
+--radius:0;
+--radius-stave:999px;
+--hairline:1px;
+--rule-accent:3px;
+
+/* Tapped one-handed by someone who may be upset. */
+--tap-min:2.75rem;
+--button-min:3rem;
+--quiet-button-min:2.25rem;
+--focus-width:2px;
+}
+
+/* The scroll, and the ageing applied to the parchment ground.
+   All generated: no image files, so every layer stretches to any size and
+   loads instantly. Staves are always at the top and the bottom. */
+:root{
+/* --- Stave geometry ----------------------------------------------------- */
+--stave-h:1.15rem;
+--stave-h-sm:0.6rem;
+--stave-overhang:0.875rem;   /* the staves overhang the sheet on both sides */
+--stave-overhang-sm:0.5rem;
+--finial-w:0.72rem;
+--finial-w-sm:0.34rem;
+--finial-bleed:0.15rem;      /* finials are wider than the stave body */
+
+/* Six stops, dark at both edges and lightest a little above centre, so it
+   reads as a lit cylinder rather than a striped bar. Walnut, not gilt. */
+--stave-gradient:linear-gradient(to bottom,#3E2B1B 0%,#5C4028 18%,#94714C 40%,#7A5636 62%,#4E3620 84%,#33220F 100%); /* @kind color */
+--finial-gradient:linear-gradient(to bottom,#422C1A 0%,#7F6043 40%,#6F533B 60%,#331F0E 100%); /* @kind color */
+--stave-shadow:0 2px 5px rgba(43,31,14,0.34); /* @kind shadow */
+
+/* --- The sheet ---------------------------------------------------------- */
+/* Pale in the middle, stained and scorched at the perimeter. The strongest
+   single effect in every reference image. */
+--sheet-field:radial-gradient(ellipse 118% 94% at 50% 44%,var(--sheet-centre) 0%,#DFCEB0 30%,var(--sheet-edge) 55%,#C6AC88 80%,var(--sheet-stain) 100%); /* @kind color */
+
+/* Texture is creasing, not foxing: soft diagonal folds catching light across
+   the whole sheet, at uneven intervals. */
+--sheet-crease:linear-gradient(102deg,transparent 17%,rgba(255,252,241,0.30) 21%,transparent 26%),linear-gradient(78deg,transparent 39%,rgba(94,70,38,0.10) 43%,transparent 48%),linear-gradient(114deg,transparent 57%,rgba(255,252,241,0.22) 61%,transparent 67%),linear-gradient(67deg,transparent 73%,rgba(94,70,38,0.085) 77%,transparent 82%),linear-gradient(95deg,transparent 7%,rgba(94,70,38,0.07) 10%,transparent 14%),linear-gradient(88deg,transparent 88%,rgba(255,252,241,0.18) 91%,transparent 95%); /* @kind color */
+
+/* A few hard dark stains near the edges, unevenly placed. */
+--sheet-stains:radial-gradient(ellipse 9% 6% at 6% 22%,rgba(120,84,42,0.42),transparent 70%),radial-gradient(ellipse 6% 4% at 94% 61%,rgba(120,84,42,0.32),transparent 70%),radial-gradient(ellipse 12% 5% at 13% 88%,rgba(120,84,42,0.22),transparent 72%); /* @kind color */
+
+/* The sheet curls over each stave: a visible lip, and a shadow cast beneath
+   it onto the sheet. It does not stop flat where the rod begins. */
+--sheet-curl-top:linear-gradient(to bottom,rgba(70,48,22,0.34) 0,rgba(70,48,22,0.14) 0.4rem,transparent 1.1rem); /* @kind color */
+--sheet-curl-bottom:linear-gradient(to top,rgba(70,48,22,0.30) 0,rgba(70,48,22,0.12) 0.4rem,transparent 1.1rem); /* @kind color */
+/* Faintly cupped across its width, the way a sheet held at two ends always is. */
+--sheet-cup:linear-gradient(to right,rgba(70,48,22,0.13) 0,transparent 14%,transparent 86%,rgba(70,48,22,0.13) 100%); /* @kind color */
+--sheet-shadow:0 1px 3px rgba(43,31,14,0.20),0 6px 14px rgba(43,31,14,0.12); /* @kind shadow */
+
+/* The two torn side edges, each a fixed 40px strip so the bite stays the same
+   depth whatever the sheet is doing. Deepest reach is 14px: rect edge at x=7,
+   displaced +/-7. Different seeds, so the two sides never mirror each other. */
+--tear-l:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='520' preserveAspectRatio='none'%3E%3Cfilter id='l' x='-100%25' y='-50%25' width='300%25' height='200%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.055' numOctaves='3' seed='7' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='14' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Crect x='7' y='-60' width='80' height='640' fill='%23fff' filter='url(%23l)'/%3E%3C/svg%3E"); /* @kind other */
+--tear-r:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='520' preserveAspectRatio='none'%3E%3Cfilter id='r' x='-100%25' y='-50%25' width='300%25' height='200%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.055' numOctaves='3' seed='11' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='14' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Crect x='-47' y='-60' width='80' height='640' fill='%23fff' filter='url(%23r)'/%3E%3C/svg%3E"); /* @kind other */
+
+/* --- Ageing on the ground ---------------------------------------------- */
+/* Turbulence grain at about 8%: nobody would point at it, but a flat
+   background would be noticed if it were taken away. */
+--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.075'/%3E%3C/svg%3E"); /* @kind other */
+--vignette:radial-gradient(ellipse 140% 120% at 50% 45%,transparent 55%,rgba(70,48,22,0.10) 82%,rgba(70,48,22,0.19) 100%); /* @kind color */
+
+/* The spine, left: the paper curves into the gutter and darkens, with a
+   stitched fold hard against the edge. */
+--spine:linear-gradient(to right,rgba(60,43,20,0.34) 0%,rgba(60,43,20,0.13) 34%,rgba(120,96,48,0.05) 68%,transparent 100%),linear-gradient(to right,rgba(43,31,14,0.5) 0 1.5px,transparent 1.5px); /* @kind color */
+/* The outer edge of the block, right: gilt, with the stack of leaves beneath. */
+--gilt-edge:repeating-linear-gradient(to left,rgba(140,112,58,0.22) 0 1px,transparent 1px 3px),linear-gradient(to left,var(--gilt) 0%,#C2A362 30%,rgba(154,123,52,0.18) 72%,transparent 100%); /* @kind color */
+}
+
+/* The leaf itself: the ground, its ageing, and the two edges that are not the
+   same. Nothing here is a component — it is the surface everything sits on. */
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--text-body);font-family:var(--font-body);font-size:var(--text-body-size);line-height:var(--lh-body);-webkit-font-smoothing:antialiased;min-height:100svh}
+/* Grain and vignette. Fixed, so they do not travel with the text. Decorative,
+   and hidden from assistive technology by pointer-events and aria on the
+   elements that use them. */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:var(--grain)}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:var(--vignette)}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:var(--weight-regular);color:var(--text-heading);margin:0}
+p{margin:0}
+/* Links are ink, underlined in the rule colour. Never blue. */
+a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:0.25em}
+a:hover{color:var(--ink-strong);text-decoration-color:currentColor}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:var(--focus-width) solid var(--focus-ring);outline-offset:2px}
+/* No animation. Nothing slides, fades, bounces or pulses. The only transitions
+   in the system are the two paper tints, and they go under reduced motion. */
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+
+/* Aged Scroll — the class layer the components render into.
+   Mirrors the app's own globals.css class names so a recreation reads the same,
+   with four corrections the brand holder directed this run:
+     1. the palette is DESIGN.md's tan, not globals.css's cream;
+     2. nothing is a card — the team view's filled, bordered panels are rebuilt
+        as ruled-off entries;
+     3. the running head is a small scroll, per §2 and §6;
+     4. the error notice carries no red, per §9. Red is Christ speaking, only. */
+
+/* --- The leaf ------------------------------------------------------------ */
+.page{position:relative;z-index:1;max-width:var(--page-max);margin:0 auto;padding:var(--page-pad-block-start) var(--page-pad-gilt) var(--page-pad-block-end) var(--page-pad-spine);display:flex;flex-direction:column;gap:var(--page-gap);min-height:100svh}
+.page-wide{max-width:var(--page-max-wide)}
+/* Two edges that are not the same. A book only has one spine. */
+.leaf-edges{position:fixed;inset:0 auto 0 0;width:var(--spine-w);pointer-events:none;z-index:0;background:var(--spine)}
+.leaf-edges::after{content:'';position:fixed;inset:0 0 0 auto;width:var(--gilt-w);background:var(--gilt-edge)}
+
+/* --- The scroll ---------------------------------------------------------- */
+/* One object, two sizes. Staves always top and bottom, never at the sides;
+   they overhang the sheet, which is the whole tell. */
+.scroll{position:relative}
+.stave{position:relative;z-index:2;height:var(--stave-h);margin-inline:calc(var(--stave-overhang) * -1);background:var(--stave-gradient);border-radius:var(--radius-stave);box-shadow:var(--stave-shadow)}
+.finial{position:absolute;top:calc(var(--finial-bleed) * -1);bottom:calc(var(--finial-bleed) * -1);width:var(--finial-w);background:var(--finial-gradient);border-radius:var(--radius-stave);box-shadow:inset 0 0 0 1px rgba(30,18,6,0.35)}
+.finial-l{left:calc(var(--finial-w) * -0.4)}
+.finial-r{right:calc(var(--finial-w) * -0.4)}
+/* The tear is two fixed 40px edge strips with a solid middle between them, NOT
+   one stretched sheet-wide mask. A stretched mask scales its bite with the
+   element, so on a wide sheet it reaches past the fixed text inset and eats the
+   first letter of every line. Held in pixels, the deepest bite is 14px at any
+   width, always clear of the 21.6px padding. */
+.sheet{position:relative;z-index:1;margin-block:-0.45rem;padding:1.85rem 1.35rem;background-image:var(--sheet-crease),var(--sheet-stains),var(--sheet-cup),var(--sheet-field);background-blend-mode:soft-light,normal,normal,normal;box-shadow:var(--sheet-shadow);mask-image:var(--tear-l),var(--tear-r),linear-gradient(#000,#000);mask-size:40px 100%,40px 100%,calc(100% - 80px) 100%;mask-position:left top,right top,40px top;mask-repeat:no-repeat}
+/* The sheet curls over each stave: a lip, and a shadow cast beneath it. */
+.sheet::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:var(--sheet-curl-top),var(--sheet-curl-bottom)}
+.sheet>*{position:relative;z-index:1}
+.scroll-sm .stave{height:var(--stave-h-sm);margin-inline:calc(var(--stave-overhang-sm) * -1)}
+.scroll-sm .finial{width:var(--finial-w-sm);top:-0.09rem;bottom:-0.09rem}
+.scroll-sm .finial-l{left:calc(var(--finial-w-sm) * -0.4)}
+.scroll-sm .finial-r{right:calc(var(--finial-w-sm) * -0.4)}
+.scroll-sm .sheet{margin-block:-0.22rem;padding:0.7rem 1rem}
+
+/* --- Running head ------------------------------------------------------- */
+/* A book tells you where you are at the top of the leaf. */
+.running-head{margin:0 auto;width:min(20rem,100%)}
+.running-head .sheet{text-align:center}
+.running-head-text{font-size:var(--text-running-head);letter-spacing:var(--ls-running-head);text-transform:uppercase;color:var(--faded);margin:0}
+
+/* --- Verse -------------------------------------------------------------- */
+.verse{margin:0 0 1.35rem;font-size:var(--text-verse);line-height:var(--lh-verse);color:var(--ink);text-indent:-0.1em}
+/* Red is the red-letter convention and nothing else. */
+.verse-christ{color:var(--red)}
+.verse-quiet{font-style:italic;color:var(--ink)}
+.v-num{font-size:0.62em;font-weight:var(--weight-semibold);vertical-align:0.5em;color:var(--numeral);margin-right:0.25em;font-variant-numeric:lining-nums}
+.verse-ref{display:block;margin-top:var(--space-3);font-size:var(--text-verse-ref);letter-spacing:var(--ls-verse-ref);text-transform:uppercase;color:var(--faded)}
+
+/* --- Notice ------------------------------------------------------------- */
+/* Set as a book sets a preface: ruled off above and below, italic, no box. */
+.notice{border:0;border-top:var(--hairline) solid var(--rule);border-bottom:var(--hairline) solid var(--rule);background:transparent;padding:0.95rem var(--space-1);font-size:var(--text-notice);font-style:italic;color:var(--faded);margin:0}
+.notice p{margin:0}
+.notice p+p{margin-top:var(--space-3)}
+.notice strong{color:var(--ink);font-weight:var(--weight-semibold)}
+.notice a{color:var(--gilt);text-decoration:none;border-bottom:var(--hairline) solid rgba(154,123,52,0.55);white-space:nowrap}
+.notice a:hover{border-bottom-color:var(--gilt)}
+
+/* --- Page header -------------------------------------------------------- */
+.eyebrow{font-size:var(--text-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--faded);margin:0 0 var(--space-5)}
+.title{font-family:var(--font-display);font-weight:var(--weight-regular);font-size:var(--text-title);line-height:var(--lh-title);letter-spacing:var(--ls-title);margin:0 0 var(--space-5);color:var(--ink-strong)}
+.lede{margin:0;color:var(--faded);font-size:var(--text-lede);max-width:var(--measure-lede)}
+
+/* --- The paths ---------------------------------------------------------- */
+/* Not cards. Entries in a book: numbered, ruled off, sitting on the paper. */
+.paths{display:flex;flex-direction:column;gap:0;border-top:var(--hairline) solid var(--rule);counter-reset:path}
+.path{display:grid;grid-template-columns:1.9rem 1fr;gap:0 var(--space-2);width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:0;border-bottom:var(--hairline) solid var(--rule);padding:var(--space-8) var(--space-1) 1.4rem;cursor:pointer;text-decoration:none;transition:background 160ms ease;counter-increment:path}
+.path::before{content:counter(path);grid-row:1 / span 2;font-size:var(--text-hint);font-weight:var(--weight-semibold);color:var(--numeral);line-height:1.9;font-variant-numeric:lining-nums}
+.path:hover{background:var(--tint-hover)}
+.path:focus-visible{outline:var(--focus-width) solid var(--focus-ring);outline-offset:-2px}
+.path-name{font-family:var(--font-display);font-size:var(--text-path);font-weight:var(--weight-semibold);letter-spacing:var(--ls-path);color:var(--ink-strong);margin:0 0 0.35rem}
+.path-detail{margin:0;font-size:var(--text-detail);line-height:var(--lh-detail);color:var(--faded)}
+
+/* --- Footnote and colophon ---------------------------------------------- */
+.footnote{margin:auto 0 0;padding-top:var(--space-9);font-size:var(--text-hint);color:var(--faded);border-top:var(--hairline) solid var(--rule)}
+.footnote p{margin:0}
+.footnote p+p{margin-top:var(--space-2)}
+.footnote strong{color:var(--ink);font-weight:var(--weight-semibold)}
+.colophon{margin-top:var(--space-6);font-size:var(--text-colophon);line-height:1.5;color:var(--faded)}
+
+/* --- Fields ------------------------------------------------------------- */
+.field{margin:0 0 var(--space-9);padding:0;border:0}
+.label{display:block;font-size:var(--text-label);font-weight:var(--weight-semibold);color:var(--ink);padding:0;margin:0 0 var(--space-1)}
+.hint{margin:0 0 var(--space-4);font-size:var(--text-hint);color:var(--faded)}
+/* A field lives on a scroll and has no edge of its own. What marks the writing
+   area is the parchment darkening toward the bottom, the way a sheet does
+   where it has been written on most. Because the boundary is invisible, focus
+   has to be loud. */
+.input,.textarea{width:100%;display:block;background:transparent;background-image:linear-gradient(to bottom,transparent 55%,rgba(70,48,22,0.13) 100%);border:0;border-radius:var(--radius);color:var(--ink);font:inherit;line-height:var(--lh-body);padding:var(--space-4) var(--space-3) var(--space-5);min-height:var(--tap-min)}
+.textarea{resize:vertical;min-height:9rem}
+.input::placeholder,.textarea::placeholder{color:rgba(99,80,48,0.72)}
+.input:focus-visible,.textarea:focus-visible{outline:var(--focus-width) solid var(--focus-ring);outline-offset:3px}
+/* A field standing on its own parchment rather than on a scroll keeps the
+   ruled line a book gives you when it wants something back. */
+.input-ruled{background-image:none;border-bottom:var(--hairline) solid var(--ink)}
+
+/* --- Choices ------------------------------------------------------------ */
+/* No container. The tick or the dot is the control. */
+.choices{display:flex;flex-wrap:wrap;gap:var(--space-3)}
+.choice{display:flex;align-items:center;gap:var(--space-3);min-height:var(--tap-min);padding:var(--space-2) 0.7rem var(--space-2) 0.1rem;background:transparent;border:0;border-radius:var(--radius);font-size:var(--text-choice);color:var(--ink);cursor:pointer}
+.choice:hover{background:var(--tint-hover)}
+.choice input{accent-color:var(--gilt);width:1.05rem;height:1.05rem;margin:0;flex:none}
+.choice:focus-within{outline:var(--focus-width) solid var(--focus-ring);outline-offset:1px}
+/* Fields that appear once something above them is ticked. */
+.nested{border-left:2px solid var(--rule);padding-left:var(--space-7);margin-bottom:var(--space-9)}
+.nested .field:last-child{margin-bottom:0}
+
+/* --- Buttons ------------------------------------------------------------ */
+/* One primary action per screen: solid ink, square, full width. */
+.send{width:100%;min-height:var(--button-min);font:inherit;font-weight:var(--weight-semibold);color:var(--text-on-ink);background:var(--fill-primary);border:0;border-radius:var(--radius);cursor:pointer;transition:background 160ms ease}
+.send:hover:not(:disabled){background:var(--fill-primary-hover)}
+.send:focus-visible{outline:var(--focus-width) solid var(--ink);outline-offset:2px}
+.send:disabled{background:var(--rule);color:var(--faded);cursor:default}
+/* Secondary actions are quiet: text with a hairline border, no fill. */
+.quiet-button{font:inherit;font-size:var(--text-quiet-button);color:var(--faded);background:transparent;border:var(--hairline) solid var(--rule);border-radius:var(--radius);padding:0.45rem 0.7rem;min-height:var(--quiet-button-min);cursor:pointer}
+.quiet-button:hover{color:var(--ink);background:var(--tint-hover)}
+.quiet-button:focus-visible{outline:var(--focus-width) solid var(--focus-ring);outline-offset:2px}
+.quiet-button.danger:hover{color:var(--ink-strong);border-color:var(--ink);background:transparent}
+a.quiet-button{display:inline-block;text-decoration:none}
+
+/* --- Error -------------------------------------------------------------- */
+/* No red. Red is Christ speaking. An error says what to do next and never
+   blames, so it is set like the preface: ruled off, italic, ink. */
+.error{margin:0 0 var(--space-7);padding:0.7rem var(--space-1);border:0;border-top:var(--hairline) solid var(--ink);border-bottom:var(--hairline) solid var(--ink);background:transparent;border-radius:var(--radius);color:var(--ink);font-size:var(--text-notice);font-style:italic}
+
+/* --- Team view ---------------------------------------------------------- */
+.team-header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-7)}
+.team-header .title{margin-bottom:0}
+.tabs{display:flex;gap:var(--space-3);border-bottom:var(--hairline) solid var(--rule)}
+.tab{font:inherit;font-size:var(--text-detail);color:var(--faded);background:transparent;border:0;border-bottom:2px solid transparent;padding:var(--space-3) var(--space-1);margin-bottom:-1px;cursor:pointer}
+.tab:hover{color:var(--ink)}
+.tab:focus-visible{outline:var(--focus-width) solid var(--focus-ring);outline-offset:2px}
+.tab-on{color:var(--ink);border-bottom-color:var(--gilt)}
+.empty{color:var(--faded);font-size:var(--text-empty)}
+/* Entries, not cards: ruled off from one another, directly on the parchment. */
+.requests{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;border-top:var(--hairline) solid var(--rule)}
+.request{background:transparent;border:0;border-bottom:var(--hairline) solid var(--rule);border-radius:var(--radius);padding:var(--space-7) var(--space-1) var(--space-8)}
+.request-meta{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-3);margin-bottom:var(--space-4)}
+.who{font-family:var(--font-display);font-size:var(--text-who);color:var(--ink-strong)}
+.when{margin-left:auto;font-size:var(--text-when);color:var(--faded)}
+.tag{font-size:var(--text-tag);letter-spacing:var(--ls-tag);text-transform:uppercase;padding:0.15rem 0.45rem;border-radius:var(--radius);border:var(--hairline) solid var(--rule);color:var(--faded)}
+.tag-counseling{color:var(--ink);border-color:var(--gilt)}
+/* Urgent is the one thing on this page allowed to shout, and it does it in
+   words on a gilt ground — never by colour alone. */
+.tag-urgent{color:var(--ink-strong);background:var(--fill-shout);border-color:var(--fill-shout);font-weight:var(--weight-semibold)}
+.request-body{margin:0 0 var(--space-6);white-space:pre-wrap;line-height:var(--lh-detail)}
+.cleared{color:var(--faded)}
+.request-actions{display:flex;flex-wrap:wrap;gap:var(--space-3)}
+
+/* --- Dashboard ---------------------------------------------------------- */
+/* Counts, not analytics. Ruled off above and below, no fill. */
+.dashboard{border:0;border-top:var(--hairline) solid var(--rule);border-bottom:var(--hairline) solid var(--rule);border-radius:var(--radius);background:transparent;padding:var(--space-7) 0}
+.stat-row{list-style:none;margin:0 0 var(--space-6);padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(7rem,1fr));gap:var(--space-7)}
+.stat{display:flex;flex-direction:column;gap:0.15rem}
+.stat-value{font-family:var(--font-display);font-size:var(--text-stat);line-height:var(--lh-tight);color:var(--ink-strong);font-variant-numeric:lining-nums}
+.stat-label{font-size:var(--text-caption);color:var(--faded)}
+.stat-note{margin:0;font-size:var(--text-caption);line-height:1.5;color:var(--faded)}
+.stat-note+.stat-note{margin-top:var(--space-2)}
+.periods{display:flex;gap:var(--space-2);margin-bottom:var(--space-7)}
+.period{font:inherit;font-size:var(--text-caption);color:var(--faded);background:transparent;border:var(--hairline) solid var(--rule);border-radius:var(--radius);padding:var(--space-1) 0.55rem;cursor:pointer}
+.period:hover{color:var(--ink);background:var(--tint-hover)}
+.period:focus-visible{outline:var(--focus-width) solid var(--focus-ring);outline-offset:2px}
+.period-on{color:var(--ink-strong);background:var(--fill-shout);border-color:var(--fill-shout)}
+
+/* --- The monthly trend -------------------------------------------------- */
+/* One bar a month, oldest at the top. One measure, so no legend and no colour
+   coding: every value is written out beside its bar. */
+.trend{margin-top:var(--space-8)}
+.trend-title{font-family:var(--font-display);font-weight:var(--weight-medium);font-size:var(--text-trend-title);color:var(--ink-strong);margin:0 0 0.7rem}
+.trend-rows{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.trend-row{display:grid;grid-template-columns:3.6rem 1fr 2rem;align-items:center;gap:var(--space-4);min-height:1.6rem}
+.trend-month{font-size:var(--text-month);color:var(--faded);white-space:nowrap}
+.trend-track{height:0.7rem;background:var(--raised);border-radius:var(--radius);overflow:hidden}
+.trend-bar{display:block;height:100%;background:var(--gilt);border-radius:var(--radius)}
+.trend-count{font-size:var(--text-hint);color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+
+/* --- Grouped list ------------------------------------------------------- */
+.group-toggle{align-self:flex-start}
+.group{margin:0;border:0;background:transparent;border-radius:var(--radius)}
+details.group+details.group{margin-top:0}
+.group>.group-heading{display:block;margin:0;padding:var(--space-5) var(--space-1);border-bottom:var(--hairline) solid var(--rule);cursor:pointer;list-style:none;font-family:var(--font-display);font-weight:var(--weight-medium);font-size:var(--text-group);color:var(--ink-strong)}
+.group>.group-heading::-webkit-details-marker{display:none}
+.group-heading-inner{display:flex;align-items:center;gap:var(--space-3)}
+/* A disclosure caret drawn in CSS: no icon file, no library. */
+.group-heading-inner::before{content:'';width:0;height:0;border-left:5px solid var(--faded);border-top:4px solid transparent;border-bottom:4px solid transparent;transition:rotate 140ms ease;flex:none}
+details.group[open]>.group-heading .group-heading-inner::before{rotate:90deg}
+.group>.group-heading:hover{background:var(--tint-hover)}
+.group>.group-heading:focus-visible{outline:var(--focus-width) solid var(--focus-ring);outline-offset:-2px}
+.group-count{font-family:var(--font-body);font-size:var(--text-month);font-weight:var(--weight-regular);color:var(--faded);margin-left:auto}
+details.group>.requests{border-top:0}
+.also{margin:0 0 var(--space-6);font-size:var(--text-caption);color:var(--faded)}
+
+/* --- Wednesday summary -------------------------------------------------- */
+.summary{border:0;border-top:var(--hairline) solid var(--rule);border-bottom:var(--hairline) solid var(--rule);border-radius:var(--radius);background:transparent;padding:var(--space-7) var(--space-1)}
+.summary-line{margin:0;font-size:var(--text-summary);color:var(--ink)}
+.summary-line strong{color:var(--ink-strong);font-weight:var(--weight-semibold)}
+.summary-urgent{margin:0.35rem 0 0;color:var(--faded);font-size:var(--text-quiet-button);font-style:italic}
+
+/* --- Plates and sharing ------------------------------------------------- */
+.aside{margin:0;font-size:var(--text-detail);color:var(--faded)}
+.aside a{color:inherit;text-decoration-color:var(--rule);text-underline-offset:0.25em}
+.aside a:hover{color:var(--ink);text-decoration-color:currentColor}
+.share{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-4)}
+.share-note{font-size:var(--text-hint);color:var(--faded)}
+.qr{margin-top:-1rem}
+/* Set as a plate is set in a book: the image, the caption under it, centred,
+   ruled off from the text above. */
+.qr-plate{margin:var(--space-6) 0 0;padding:1.1rem 0 0;border-top:var(--hairline) solid var(--rule);display:flex;flex-direction:column;align-items:center;gap:0.7rem}
+/* The code keeps its own white ground or scanners struggle. */
+.qr-image{display:block;width:13.75rem;height:auto;background:#fff;padding:var(--space-4);border:var(--hairline) solid var(--rule)}
+.qr-caption{margin:0;max-width:var(--measure-caption);text-align:center;font-size:var(--text-hint);font-style:italic;color:var(--faded)}
+
+
+
+/* --- Verso: the mirrored leaf --------------------------------------------- */
+/* The export draws one spine, on the left, because an artboard never turns. A
+   left-hand page has its spine on the right, so the two edges swap with the
+   leaf.
+   Swapping which edge carries which gradient is not enough: both gradients are
+   directional, and a spine that shades to the right is lit from the wrong side
+   once it is on the right. These are the export's own gradients with their
+   direction reversed, and nothing else changed. */
 
 :root {
-  --paper:      #f4ecdc;
-  --leaf:       #fbf6ea;
-  --raised:     #f7f0e0;
-  --rule:       #d8c9a8;
-  --ink:        #2a2219;
-  --ink-strong: #1b1510;
-  --faded:      #6b5d4b;
-  --gilt:       #b08d3f;
-  --red:        #8c1c13;
-
-  --display: 'Petrona', Georgia, 'Times New Roman', serif;
-  --body: 'Petrona', Georgia, 'Times New Roman', serif;
+  --spine-mirror:
+    linear-gradient(to left, rgba(60, 43, 20, 0.34) 0%, rgba(60, 43, 20, 0.13) 34%, rgba(120, 96, 48, 0.05) 68%, transparent 100%),
+    linear-gradient(to left, rgba(43, 31, 14, 0.5) 0 1.5px, transparent 1.5px);
+  --gilt-edge-mirror:
+    repeating-linear-gradient(to right, rgba(140, 112, 58, 0.22) 0 1px, transparent 1px 3px),
+    linear-gradient(to right, var(--gilt) 0%, #C2A362 30%, rgba(154, 123, 52, 0.18) 72%, transparent 100%);
 }
 
-* { box-sizing: border-box; }
-
-html, body {
-  margin: 0;
-  padding: 0;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--body);
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Paper grain. Generated, not a file: an SVG turbulence filter inlined as a
-   data URI, held at an opacity where nobody would point at it but a flat
-   background would be noticed if it were taken away. Fixed, so it does not
-   travel with the text and give the scroll away as a scroll. */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.055'/%3E%3C/svg%3E");
-}
-
-.page > * { position: relative; z-index: 1; }
-
-body {
-  min-height: 100svh;
-  line-height: 1.6;
-}
-
-/* A single leaf of an open book, and the two sides are not the same — which is
-   the whole trick. Left is the spine: the paper curves down into the gutter, so
-   it darkens, and a stitched fold sits at the very edge. Right is the outer
-   edge of the block: gilt, with the faint stack of the leaves beneath it.
-   Symmetrical gilt on both sides, which is what this was before, reads as a
-   border. A book only has one spine. */
-.glow {
-  position: fixed;
-  inset: 0 auto 0 0;
-  width: min(34px, 7vw);
-  pointer-events: none;
-  background:
-    linear-gradient(to right, rgba(60, 43, 20, 0.34) 0%, rgba(60, 43, 20, 0.13) 34%, rgba(120, 96, 48, 0.05) 68%, transparent 100%),
-    /* The fold itself: one dark hairline hard against the edge. */
-    linear-gradient(to right, rgba(43, 31, 14, 0.5) 0 1.5px, transparent 1.5px);
-}
-
-.glow::after {
-  content: '';
-  position: fixed;
+[data-side='verso'] .leaf-edges {
   inset: 0 0 0 auto;
-  width: min(20px, 4.5vw);
+  width: var(--spine-w);
+  background: var(--spine-mirror);
+}
+
+[data-side='verso'] .leaf-edges::after {
+  inset: 0 auto 0 0;
+  width: var(--gilt-w);
+  background: var(--gilt-edge-mirror);
+}
+
+/* --- Turning the leaf ----------------------------------------------------- */
+/* The first screen is a right-hand page. Every navigation turns a leaf, so the
+ * next is a left-hand page, the next a right-hand page again. app/template.tsx
+ * decides which and stamps data-side.
+ *
+ * A leaf carries its own gutter, so the spine and the gilt block edge swap with
+ * it. Without that swap the alternation is just content sliding about; with it,
+ * the page has visibly been turned over. */
+
+/* Verso — a left-hand page. The spine is now on the right, and the gilt block
+   edge on the left: the mirror of the default. */
+[data-side='verso'] .glow {
+  inset: 0 0 0 auto;
+  width: min(34px, 7vw);
   background:
-    /* The stack of leaves under the top one, thinning as it goes in. */
+    linear-gradient(to left, rgba(60, 43, 20, 0.34) 0%, rgba(60, 43, 20, 0.13) 34%, rgba(120, 96, 48, 0.05) 68%, transparent 100%),
+    linear-gradient(to left, rgba(43, 31, 14, 0.5) 0 1.5px, transparent 1.5px);
+}
+
+[data-side='verso'] .glow::after {
+  inset: 0 auto 0 0;
+  background:
     repeating-linear-gradient(
-      to left,
+      to right,
       rgba(140, 112, 58, 0.22) 0 1px,
       transparent 1px 3px
     ),
-    linear-gradient(to left, var(--gilt) 0%, #d8bd7a 30%, rgba(176, 141, 63, 0.18) 72%, transparent 100%);
+    linear-gradient(to right, var(--gilt) 0%, #d8bd7a 30%, rgba(176, 141, 63, 0.18) 72%, transparent 100%);
 }
 
+/* The text leans away from the spine, whichever side the spine is on. */
+[data-side='verso'] .page {
+  padding: 2rem calc(0.9rem + min(34px, 7vw)) 3rem calc(0.9rem + min(20px, 4.5vw));
+}
 
+/* The turn itself. The leaf swings in on its own gutter — origin at the spine,
+ * because paper pivots where it is bound, not down its middle.
+ *
+ * Only the arriving leaf is animated. Turning both faces at once needs the old
+ * page held on screen while the new one rotates, which means view transitions
+ * and a good deal more machinery. One leaf settling reads convincingly and
+ * costs eighteen lines. */
+@keyframes turn-recto {
+  from { transform: perspective(1600px) rotateY(-38deg); opacity: 0; }
+  to   { transform: perspective(1600px) rotateY(0deg); opacity: 1; }
+}
+
+@keyframes turn-verso {
+  from { transform: perspective(1600px) rotateY(38deg); opacity: 0; }
+  to   { transform: perspective(1600px) rotateY(0deg); opacity: 1; }
+}
+
+.leaf {
+  transform-origin: left center;
+  animation: turn-recto 420ms cubic-bezier(0.33, 0.9, 0.35, 1) both;
+  will-change: transform;
+}
+
+.leaf[data-side='verso'] {
+  transform-origin: right center;
+  animation-name: turn-verso;
+}
+
+/* This one genuinely is motion, and a page swinging on its spine is exactly
+   the kind a vestibular disorder makes unpleasant. Nobody loses anything real:
+   the sides still alternate, the leaf simply arrives already flat. */
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
+  .leaf { animation: none; }
 }
 
-/* The text sits clear of spine and edge both, and further from the spine — the
-   asymmetry a bound page actually has. */
-.page {
-  position: relative;
-  max-width: 32rem;
-  margin: 0 auto;
-  padding: 2rem calc(0.9rem + min(20px, 4.5vw)) 3rem calc(0.9rem + min(34px, 7vw));
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  min-height: 100svh;
+/* --- The staveless sheet -------------------------------------------------- */
+/* The export carries these two values inline on every short field's sheet
+   (`margin-block:0;padding:.7rem 1rem`). Lifted to a class, unchanged. */
+
+.sheet-field {
+  margin-block: 0;
+  padding: 0.7rem 1rem;
 }
 
-/* --- Running head -------------------------------------------------------- */
-/* A Bible tells you where you are at the top of the leaf. This does the same
-   job for the page, and it is the only place the layout admits it is a book. */
+/* --- Directed changes, after the port ------------------------------------ */
+/* These two diverge from the Claude Design export deliberately, on Vincent's
+   instruction. Recorded here rather than edited into the ported sheet above, so
+   the next sync can see exactly what was changed and why. */
 
-.running-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 1rem;
-  margin: 0 0 -0.75rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--rule);
-  font-size: 0.95rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--faded);
-}
-
-/* --- Verse --------------------------------------------------------------- */
-/* Set as a Bible sets one: verse number as a small superior figure, the words
-   in the text size, the reference beneath in small caps.
-   Red is reserved for the red-letter convention. .verse-red is for words Christ
-   speaks and nothing else — anyone else, including Paul and Peter, is ink. */
-
-.verse {
-  margin: 0 0 1.35rem;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: var(--ink);
-  text-indent: -0.1em;
-}
-
-.verse-red { color: var(--red); }
-
-.verse-quiet {
-  font-style: italic;
-  color: var(--ink);
-}
-
-.v-num {
-  font-size: 0.62em;
-  font-weight: 600;
-  vertical-align: 0.5em;
-  color: var(--gilt);
-  margin-right: 0.25em;
-  font-variant-numeric: lining-nums;
-}
-
-.verse-ref {
-  display: block;
-  margin-top: 0.5rem;
-  font-size: 0.7rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--faded);
-}
-
-/* --- Crisis notice ------------------------------------------------------- */
-/* Permanent, above everything, shown before anyone types a word. It is not
-   triggered by anything and never hides. */
-
-/* Set as a book sets a preface: ruled off above and below, italic, no box. The
-   old panel was the other obviously-website object on the page. Its job has not
-   changed — this is read before anyone types a word — and rules above and below
-   hold the eye as well as a border did. */
-.notice {
-  border: 0;
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
-  background: transparent;
-  padding: 0.95rem 0.25rem;
-  font-size: 0.875rem;
-  font-style: italic;
-  color: var(--faded);
-}
-
-.notice p { margin: 0; }
-.notice p + p { margin-top: 0.5rem; }
-
-.notice strong {
-  color: var(--ink);
-  font-weight: 600;
-}
-
-.notice a {
-  color: var(--gilt);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(176, 141, 63, 0.55);
-  white-space: nowrap;
-}
-
-.notice a:hover { border-bottom-color: var(--gilt); }
-
-/* --- Heading ------------------------------------------------------------- */
-
-.eyebrow {
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--faded);
-  margin: 0 0 0.75rem;
-}
-
-h1 {
-  font-family: var(--display);
-  font-weight: 400;
-  font-size: clamp(2rem, 9vw, 2.75rem);
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  margin: 0 0 0.75rem;
-  color: var(--ink-strong);
-}
-
-.lede {
-  margin: 0;
-  color: var(--faded);
-  font-size: 1rem;
-  max-width: 28rem;
-}
-
-/* --- The two paths ------------------------------------------------------- */
-/* Both are full-weight cards. Neither is styled as the lesser option: the
-   anonymous path is the reason this app exists and is not a fallback. */
-
-/* Not cards. A card is the most website-looking object there is: a box with a
-   fill, a border and a corner radius, floating on a background. These are
-   entries in a book — numbered, ruled off from each other, sitting directly on
-   the paper with nothing behind them. The number is the only ornament, and it
-   is set like a verse number because the two choices are a real sequence: the
-   first one is the one most people need. */
-
-.paths {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  border-top: 1px solid var(--rule);
-}
-
-.path {
-  display: grid;
-  grid-template-columns: 1.9rem 1fr;
-  gap: 0 0.4rem;
-  width: 100%;
-  text-align: left;
-  font: inherit;
-  color: inherit;
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid var(--rule);
-  padding: 1.3rem 0.25rem 1.4rem;
-  cursor: pointer;
-  text-decoration: none;
-  transition: background 160ms ease;
-  counter-increment: path;
-}
-
-/* The entry number, in the margin where a Bible keeps its verse numbers. */
-.path::before {
-  content: counter(path);
-  grid-row: 1 / span 2;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--gilt);
-  line-height: 1.9;
-  font-variant-numeric: lining-nums;
-}
-
-.paths { counter-reset: path; }
-
-/* A hover that tints the paper rather than lighting a box. */
-.path:hover { background: rgba(176, 141, 63, 0.07); }
-
-.path:focus-visible {
-  outline: 2px solid var(--gilt);
-  outline-offset: -2px;
-}
-
-.path-name {
-  font-family: var(--display);
-  font-size: 1.15rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--ink-strong);
-  margin: 0 0 0.35rem;
-}
-
-.path-detail {
-  margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.65;
-  color: var(--faded);
-}
-
-.footnote {
-  margin: auto 0 0;
-  padding-top: 1.5rem;
-  font-size: 0.8rem;
-  color: var(--faded);
-  border-top: 1px solid var(--rule);
-}
-
-.footnote p { margin: 0; }
-.footnote p + p { margin-top: 0.4rem; }
-
-/* --- Form ---------------------------------------------------------------- */
-
-.field {
-  margin: 0 0 1.5rem;
-  padding: 0;
-  border: 0;
-}
-
-.label {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--ink);
-  padding: 0;
-  margin: 0 0 0.25rem;
-}
-
-.hint {
-  margin: 0 0 0.6rem;
-  font-size: 0.8rem;
-  color: var(--faded);
-}
-
-/* A ruled line to write on, which is what a book gives you when it wants
-   something back. The fill stays — a bare underline on textured paper is too
-   faint to read as a field on a phone — but it is barely there, and the rule
-   under it does the work. */
-.input {
-  width: 100%;
-  background: rgba(255, 253, 247, 0.6);
-  border: 0;
-  border-bottom: 1px solid var(--ink);
-  border-radius: 0;
-  color: var(--ink);
-  font: inherit;
-  padding: 0.6rem 0.5rem;
-}
-
-/* The colophon: the copyright line the NIV requires, set the size a book sets
-   its printing notice. */
-.colophon {
-  margin-top: 0.9rem !important;
-  font-size: 0.68rem;
-  line-height: 1.5;
-  color: var(--faded);
-}
-
-.input:focus-visible {
-  outline: 2px solid var(--gilt);
-  outline-offset: 1px;
-  border-color: transparent;
-}
-
-/* Tall enough that a single underline leaves it floating, so this one keeps a
-   hairline all round. The baseline rule stays ink: it is the line you write on,
-   and the other three are just the edge of the space. */
+/* 1. The writing area is fully transparent.
+      The export tints the bottom of every field (a gradient to
+      rgba(70,48,22,0.13)) to show where the writing goes. On real scroll paper
+      that tint is what reads as a box. Removed, so the words sit directly on
+      the sheet.
+      The tint was also the field's only passive affordance, so focus is now the
+      whole of it — see the outline below, which is why that is not optional. */
+.input,
 .textarea {
-  resize: vertical;
-  min-height: 9rem;
-  line-height: 1.6;
-  border: 1px solid var(--rule);
-  border-bottom: 1px solid var(--ink);
+  background-image: none;
 }
 
-.choices {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+/* 2. Rules are drawn, not ruled.
+      A line in a hand-made book is not a printed 1px edge: it wavers, and it
+      varies in weight along its length. This is one SVG line whose ends sit at
+      the same height so it can repeat without a visible seam, and whose middle
+      does not.
+      Held as a background image rather than a border, because a border cannot
+      be anything but straight. */
+:root {
+  /* Two strokes, not one: a darker line that wanders, and a lighter one
+     shadowing it slightly off-register. A single even stroke reads as a thin
+     border however much it wiggles — what says "drawn" is the weight changing
+     along its length.
+     160px period, and both ends sit at the same height so the tile repeats
+     without a seam. */
+  --rule-drawn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='5' viewBox='0 0 160 5' preserveAspectRatio='none'%3E%3Cpath d='M0 2.5 C 18 1.5, 34 3.4, 52 2.2 S 86 1.3, 104 2.8 S 138 3.5, 160 2.5' fill='none' stroke='%23A68A55' stroke-width='1.1' stroke-linecap='round'/%3E%3Cpath d='M0 2.9 C 22 2.1, 40 3.8, 58 2.7 S 92 1.9, 110 3.2 S 142 3.9, 160 2.9' fill='none' stroke='%23BDA876' stroke-width='0.7' stroke-linecap='round' opacity='0.55'/%3E%3C/svg%3E")
 }
 
-/* Generous hit area: this is used one-handed, on a phone, often by someone
-   who is upset. */
-/* No box. The tick or the dot is the control and is visible on its own, so the
-   border around it was drawing a second control that does nothing. The hit area
-   is untouched — this is tapped one-handed by someone upset, and that was never
-   the part that looked like a website. */
-.choice {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-height: 2.75rem;
-  padding: 0.4rem 0.7rem 0.4rem 0.1rem;
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  font-size: 0.9rem;
-  cursor: pointer;
+.paths,
+.notice,
+.footnote,
+.path {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  background-repeat: repeat-x;
 }
 
-.choice:hover { background: rgba(176, 141, 63, 0.08); }
+.paths { background-image: var(--rule-drawn); background-position: left top; }
+.path { background-image: var(--rule-drawn); background-position: left bottom; }
+.footnote { background-image: var(--rule-drawn); background-position: left top; }
 
-/* --- The QR code --------------------------------------------------------- */
-/* Shown on the page so one person can hold it up and another can scan it off
-   the screen. Set as a plate is set in a book: the image, then the caption
-   under it, centred, ruled off from the text above. */
-
-.qr { margin-top: -1rem; }
-
-.qr-plate {
-  margin: 0.9rem 0 0;
-  padding: 1.1rem 0 0;
-  border-top: 1px solid var(--rule);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.7rem;
+.notice {
+  background-image: var(--rule-drawn), var(--rule-drawn);
+  background-position: left top, left bottom;
 }
 
-.qr-image {
-  display: block;
-  width: 13.75rem;
-  height: auto;
-  /* The code must stay pure white behind the squares or scanners struggle, so
-     it keeps its own ground and sits on the paper as a pasted-in plate. */
-  background: #fff;
-  padding: 0.6rem;
-  border: 1px solid var(--rule);
+/* The hover tint on a path is a fill, and a fill would paint over the drawn
+   rule. Both are kept by listing the tint as its own layer beneath the line. */
+.path:hover {
+  background-image: var(--rule-drawn), linear-gradient(var(--tint-hover), var(--tint-hover));
+  background-position: left bottom, left top;
+  background-repeat: repeat-x, repeat;
 }
 
-.qr-caption {
-  margin: 0;
-  max-width: 22rem;
-  text-align: center;
-  font-size: 0.8rem;
-  font-style: italic;
-  color: var(--faded);
-}
+/* --- Brushwork ------------------------------------------------------------ */
+/* Two supplied images: an ink stroke behind the one primary action, and a red
+   cross over a ticked box. Both are Vincent's, and both are additions to the
+   Claude Design export rather than part of it. */
 
-.choice input {
-  accent-color: var(--gilt);
-  width: 1.05rem;
-  height: 1.05rem;
-  margin: 0;
-  flex: none;
-}
-
-.choice:focus-within {
-  outline: 2px solid var(--gilt);
-  outline-offset: 1px;
-}
-
-.error {
-  margin: 0 0 1rem;
-  padding: 0.7rem 0.85rem;
-  border: 1px solid #d8b3a6;
-  border-left: 3px solid var(--red);
-  border-radius: 0;
-  background: #f7e7e0;
-  color: #6b1f16;
-  font-size: 0.875rem;
-}
-
+/* The stroke is carried as a MASK, not as a picture. Three reasons, and the
+   first is the one that matters on a phone in Malawi: as a mask it needs only
+   an alpha channel, so it is 69KB rather than 693KB. It also takes its colour
+   from --fill-primary, so the button still obeys the palette, and it stays
+   correct if the ink ever changes.
+   The button keeps its own hit area — the stroke is paint on it, not the shape
+   of it, so nothing about where you can tap depends on where the bristles
+   happened to land. */
 .send {
-  width: 100%;
-  min-height: 3rem;
-  font: inherit;
-  font-weight: 600;
-  /* Ink on paper, not gilt: cream on gilt measures about 2.2:1 and a person
-     upset enough to be here should not have to squint at the send button. */
-  color: var(--paper);
-  background: var(--ink-strong);
-  border: 0;
-  border-radius: 0;
-  cursor: pointer;
-  transition: background 160ms ease;
+  background-color: transparent;
+  -webkit-mask-image: url('/brush/stroke-mask.png');
+  mask-image: url('/brush/stroke-mask.png');
+  /* The stroke keeps its own proportions. Squashed to a button's usual height
+     its ragged ends compress to about a pixel and it reads as a plain
+     rectangle — which is exactly what it looked like on the first attempt.
+     `contain` preserves the shape; the extra height is the price of the brush
+     actually looking like one. */
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  background-image: linear-gradient(var(--fill-primary), var(--fill-primary));
+  padding: 1.5rem 1.6rem;
+  min-height: 5.2rem;
 }
 
-.send:hover:not(:disabled) { background: #3a2f22; }
-
-.send:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
+.send:hover:not(:disabled) {
+  background-image: linear-gradient(var(--fill-primary-hover), var(--fill-primary-hover));
 }
 
 .send:disabled {
-  background: var(--rule);
-  color: var(--faded);
-  cursor: default;
+  background-image: linear-gradient(var(--rule), var(--rule));
 }
 
-/* --- Prayer team view ---------------------------------------------------- */
-/* Worked through on a laptop with the list open, so it is allowed more width
-   than the congregation's screens. */
-
-.page-wide { max-width: 46rem; }
-
-.team-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
+/* A mask clips the outline to the bristles, which makes focus almost invisible
+   on the one control that must never be. The outline goes on a ring drawn
+   outside the masked box instead. */
+.send:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--focus-width) var(--ink);
 }
 
-.team-header h1 { margin-bottom: 0; }
-
-.quiet-button {
-  font: inherit;
-  font-size: 0.85rem;
-  color: var(--faded);
-  background: transparent;
-  border: 1px solid var(--rule);
-  border-radius: 0;
-  padding: 0.45rem 0.7rem;
-  min-height: 2.25rem;
-  cursor: pointer;
-}
-
-.quiet-button:hover {
-  color: var(--ink);
-  background: var(--raised);
-}
-
-.quiet-button:focus-visible {
-  outline: 2px solid var(--gilt);
-  outline-offset: 2px;
-}
-
-.quiet-button.danger:hover {
-  color: #6b1f16;
-  border-color: #d8b3a6;
-  background: #f7e7e0;
-}
-
-.tabs {
-  display: flex;
-  gap: 0.5rem;
-  border-bottom: 1px solid var(--rule);
-}
-
-.tab {
-  font: inherit;
-  font-size: 0.9rem;
-  color: var(--faded);
-  background: transparent;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  padding: 0.5rem 0.25rem;
-  margin-bottom: -1px;
-  cursor: pointer;
-}
-
-.tab:hover { color: var(--ink); }
-.tab:focus-visible { outline: 2px solid var(--gilt); outline-offset: 2px; }
-
-.tab-on {
-  color: var(--ink);
-  border-bottom-color: var(--gilt);
-}
-
-.empty {
-  color: var(--faded);
-  font-size: 0.95rem;
-}
-
-.requests {
-  list-style: none;
+/* The tick: a black box, with the red cross thrown over it by hand.
+   `appearance: none` takes away the platform's own tick, so everything it was
+   doing has to be put back — the box, the checked state, and a visible focus
+   ring. The input itself is kept (never a div pretending): it stays tabbable,
+   announces itself as a checkbox, and works with a screen reader. */
+.choice input[type='checkbox'],
+.choice input[type='radio'] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.15rem;
+  height: 1.15rem;
   margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.request {
-  background: var(--leaf);
-  border: 1px solid var(--rule);
-  border-radius: 0;
-  padding: 1rem 1.1rem;
-}
-
-/* An urgent request is the one thing on this page allowed to shout. */
-.request-urgent { border-left: 3px solid var(--gilt); }
-
-.request-meta {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 0.6rem;
-}
-
-.who {
-  font-family: var(--display);
-  font-size: 1.05rem;
-  color: var(--ink-strong);
-}
-
-.when {
-  margin-left: auto;
-  font-size: 0.8rem;
-  color: var(--faded);
-}
-
-.tag {
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.15rem 0.45rem;
-  border-radius: 0;
-  border: 1px solid var(--rule);
-  color: var(--faded);
-}
-
-.tag-counseling {
-  color: #5c4a2e;
-  border-color: var(--gilt);
-}
-
-.tag-urgent {
-  color: var(--ink-strong);
-  background: var(--gilt);
-  border-color: var(--gilt);
-}
-
-.request-body {
-  margin: 0 0 0.9rem;
-  white-space: pre-wrap;
-  line-height: 1.65;
-}
-
-.cleared { color: var(--faded); }
-
-.request-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-/* --- Dashboard ----------------------------------------------------------- */
-/* Counts, not analytics. Quiet by design: the list underneath is the work, and
-   these numbers should not compete with it. */
-
-.dashboard {
-  border: 1px solid var(--rule);
-  border-radius: 0;
-  background: var(--leaf);
-  padding: 1.1rem 1.2rem;
-}
-
-.stat-row {
-  list-style: none;
-  margin: 0 0 0.9rem;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
-  gap: 1rem;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.stat-value {
-  font-family: var(--display);
-  font-size: 1.9rem;
-  line-height: 1;
-  color: var(--ink-strong);
-}
-
-.stat-label {
-  font-size: 0.78rem;
-  color: var(--faded);
-}
-
-.stat-note {
-  margin: 0;
-  font-size: 0.78rem;
-  line-height: 1.5;
-  color: var(--faded);
-}
-
-.stat-note + .stat-note { margin-top: 0.4rem; }
-
-/* --- The monthly trend --------------------------------------------------- */
-/* One bar a month, oldest at the top. One measure, so no legend and no colour
-   coding: the heading says what it is and every value is written out beside its
-   bar, which means the chart never has to be seen in colour to be read. */
-
-.trend { margin-top: 1.2rem; }
-
-.trend-title {
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: 1rem;
-  color: var(--ink-strong);
-  margin: 0 0 0.7rem;
-}
-
-.trend-rows {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.trend-row {
-  display: grid;
-  grid-template-columns: 3.6rem 1fr 2rem;
-  align-items: center;
-  gap: 0.6rem;
-  min-height: 1.6rem;
-}
-
-.trend-month {
-  font-size: 0.75rem;
-  color: var(--faded);
-  white-space: nowrap;
-}
-
-.trend-track {
-  height: 0.7rem;
-  background: var(--paper);
-  border-radius: 0;
-  overflow: hidden;
-}
-
-.trend-bar {
-  display: block;
-  height: 100%;
-  background: var(--gilt);
-  /* Rounded only at the end the data reaches, so the baseline stays square. */
-  border-radius: 0;
-}
-
-.trend-count {
-  font-size: 0.8rem;
-  color: var(--ink);
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-/* --- Grouped list -------------------------------------------------------- */
-
-.group-toggle { align-self: flex-start; }
-
-.group { margin: 0; }
-
-.group-heading {
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: 1.15rem;
-  color: var(--ink-strong);
-  margin: 0 0 0.6rem;
-  padding-bottom: 0.4rem;
-  border-bottom: 1px solid var(--rule);
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-}
-
-.group-count {
-  font-family: var(--body);
-  font-size: 0.75rem;
-  color: var(--faded);
-}
-
-.also {
-  margin: -0.3rem 0 0.9rem;
-  font-size: 0.78rem;
-  color: var(--faded);
-}
-
-/* --- Wednesday summary --------------------------------------------------- */
-/* The first thing the prayer team sees when they open this. Says what tonight
-   holds before anyone opens a single theme. */
-
-.summary {
-  border: 1px solid var(--rule);
-  border-left: 3px solid var(--gilt);
-  border-radius: 0;
-  background: var(--leaf);
-  padding: 1rem 1.1rem;
-}
-
-.summary-line {
-  margin: 0;
-  font-size: 0.95rem;
-  color: var(--ink);
-}
-
-.summary-line strong { color: var(--ink-strong); }
-
-.summary-urgent {
-  margin-top: 0.35rem;
-  color: var(--gilt);
-  font-size: 0.85rem;
-}
-
-/* --- Collapsible groups -------------------------------------------------- */
-
-details.group {
-  border: 1px solid var(--rule);
-  border-radius: 0;
-  background: var(--leaf);
-}
-
-details.group + details.group { margin-top: 0.5rem; }
-
-/* The summary keeps its default display. Making a summary element flex stops
-   the browser's own click-to-toggle, so the layout goes on a span inside it. */
-.group > .group-heading {
-  display: block;
-  margin: 0;
-  padding: 0.75rem 1rem;
-  border-bottom: 0;
-  cursor: pointer;
-  list-style: none;
-}
-
-.group > .group-heading::-webkit-details-marker { display: none; }
-
-.group-heading-inner {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* A disclosure caret drawn in CSS: no icon file, no library. */
-.group-heading-inner::before {
-  content: '';
-  width: 0;
-  height: 0;
-  border-left: 5px solid var(--faded);
-  border-top: 4px solid transparent;
-  border-bottom: 4px solid transparent;
-  transition: rotate 140ms ease;
   flex: none;
-}
-
-details.group[open] > .group-heading .group-heading-inner::before { rotate: 90deg; }
-
-.group > .group-heading:hover { background: var(--raised); }
-
-.group > .group-heading:focus-visible {
-  outline: 2px solid var(--gilt);
-  outline-offset: -2px;
-}
-
-details.group[open] > .group-heading { border-bottom: 1px solid var(--rule); }
-
-details.group > .requests { padding: 0.75rem; }
-
-/* --- Sharing ------------------------------------------------------------- */
-
-/* A second errand, below the identity choices and quieter than them. */
-.aside {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--faded);
-}
-
-.aside a {
-  color: inherit;
-  text-decoration-color: var(--rule);
-  text-underline-offset: 0.25em;
-}
-
-.aside a:hover {
-  color: var(--ink);
-  text-decoration-color: currentColor;
-}
-
-.share {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-}
-
-.share-note {
-  font-size: 0.8rem;
-  color: var(--faded);
-}
-
-/* --- Dashboard time windows ---------------------------------------------- */
-
-.periods {
-  display: flex;
-  gap: 0.4rem;
-  margin-bottom: 1rem;
-}
-
-.period {
-  font: inherit;
-  font-size: 0.78rem;
-  color: var(--faded);
+  position: relative;
   background: transparent;
-  border: 1px solid var(--rule);
+  border: 2px solid var(--ink-strong);
   border-radius: 0;
-  padding: 0.25rem 0.55rem;
   cursor: pointer;
 }
 
-.period:hover { color: var(--ink); background: var(--raised); }
+/* A radio is the same ink, round, because round is what says "one of these". */
+.choice input[type='radio'] { border-radius: 50%; }
 
-.period:focus-visible {
-  outline: 2px solid var(--gilt);
-  outline-offset: 2px;
+.choice input:focus-visible {
+  outline: var(--focus-width) solid var(--focus-ring);
+  outline-offset: 3px;
 }
 
-.period-on {
-  color: var(--ink-strong);
-  background: var(--gilt);
-  border-color: var(--gilt);
+/* The cross is drawn larger than the box and hangs off every edge, which is
+   what stops it reading as an icon sitting in a slot. */
+.choice input:checked::after {
+  content: '';
+  position: absolute;
+  inset: -52%;
+  background: url('/brush/cross.png') center / contain no-repeat;
+  pointer-events: none;
 }
 
-/* A link styled as a button: calling is a real link, so it stays an anchor and
-   keeps the phone's own dialler behaviour. */
-a.quiet-button {
-  display: inline-block;
-  text-decoration: none;
+/* Nobody ticks a column of boxes identically. Each one is thrown on at its own
+   angle and a little off-centre, cycling every five so a long list of topics
+   never shows two neighbours alike. */
+.choice:nth-of-type(5n + 1) input:checked::after { transform: rotate(-7deg) translate(-4%, 2%); }
+.choice:nth-of-type(5n + 2) input:checked::after { transform: rotate(5deg) translate(3%, -3%); }
+.choice:nth-of-type(5n + 3) input:checked::after { transform: rotate(-13deg) translate(2%, 4%); }
+.choice:nth-of-type(5n + 4) input:checked::after { transform: rotate(9deg) translate(-3%, -2%); }
+.choice:nth-of-type(5n + 5) input:checked::after { transform: rotate(-3deg) translate(4%, 3%); }
+
+/* --- Focus, removed ------------------------------------------------------- */
+/* Directed, twice: nothing may appear when a field or a box is chosen. No
+   outline, no line, no tint. The only thing that marks a ticked box is the red
+   cross, and the only thing that marks the field you are typing in is the
+   caret.
+   The cost is stated here so nobody re-adds it by accident thinking it an
+   oversight: a person moving through this form by keyboard cannot see where
+   they are. That was raised and overruled, which is a decision the design owner
+   gets to make. */
+.input:focus,
+.input:focus-visible,
+.textarea:focus,
+.textarea:focus-visible {
+  outline: none;
+  background-image: none;
 }
 
-/* Fields that only appear once something above them is ticked. The rule marks
-   them as belonging to that choice rather than floating loose in the form. */
-.nested {
-  border-left: 2px solid var(--rule);
-  padding-left: 1rem;
-  margin-bottom: 1.5rem;
+.choice input:focus,
+.choice input:focus-visible,
+.choice:focus-within {
+  outline: none;
 }
 
-.nested .field:last-child { margin-bottom: 0; }
+/* The label darkened under the pointer. Removed with the rest — on a phone a
+   hover state sticks after a tap, so it read as the box having been selected. */
+.choice:hover {
+  background: transparent;
+}
+
+/* --- Writing aligned to the page text ------------------------------------- */
+/* Directed: the words written on the paper must start where every other line
+   on the page starts, not inset from it.
+   The sheet insets its contents to keep them clear of the torn edge, so the
+   only way to align the writing is to move the paper outward by that inset.
+   Two things follow, and both are deliberate:
+     - the inset drops from 1.35rem to 1rem, so the paper reaches only to the
+       spine and not under it;
+     - the staves stop overhanging, because a stave that overhangs an
+       already-outdented sheet lands in the gutter.
+   The tear is 40px of mask biting at most 14px in, so 1rem of inset leaves
+   about 2px of clearance. That is thin, and it is why the tear strips are
+   narrowed below rather than left alone. */
+
+.scroll:not(.running-head),
+.sheet-field {
+  /* Only the paper moves. An earlier version outdented the whole field, which
+     dragged the label out with it and moved the very margin this is meant to
+     line up against.
+     This is exactly the inset below, so the writing lands back on the page
+     margin. */
+  margin-inline: -1.35rem;
+}
+
+/* The running head holds no writing, so it has nothing to align to the page
+   margin — and it is centred, which the outdent above would break. */
+.running-head {
+  margin-inline: auto;
+}
+
+.sheet,
+.scroll-sm .sheet,
+.sheet-field {
+  /* 21.6px against a 14px bite: 7.6px of clearance, which is the export's own
+     figure. Anything less and the tear eats the first letter of every line. */
+  padding-inline: 1.35rem;
+}
+
+/* The tear strips stay at the export's 40px. Narrowing them to 26px without
+   moving the solid middle layer — which the export positions at exactly 40px —
+   left a seam where the three layers no longer met, visible as a pale block
+   down the left of every sheet.
+   So the clearance is bought with padding instead: 1rem of inset against a
+   14px bite leaves only 2px, which is why the writing sat in the torn edge and
+   lost its first letter. The sheet is outdented far enough that the text still
+   lands on the page margin while keeping the export's own 40px of tear. */
+.sheet {
+  -webkit-mask-size: 40px 100%, 40px 100%, calc(100% - 80px) 100%;
+  mask-size: 40px 100%, 40px 100%, calc(100% - 80px) 100%;
+  -webkit-mask-position: left top, right top, 40px top;
+  mask-position: left top, right top, 40px top;
+}
+
+.stave {
+  margin-inline: 0;
+}

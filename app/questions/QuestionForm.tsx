@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { getBrowserId } from '@/lib/browserId'
 import { getSupabase } from '@/lib/supabase'
+import Scroll, { Sheet } from '../Scroll'
 
 // Questions and notes, kept apart from prayer requests.
 //
@@ -71,13 +72,13 @@ export default function QuestionForm() {
   if (sent) {
     return (
       <>
-        <div className="glow" aria-hidden="true" />
+        <div className="leaf-edges" aria-hidden="true" />
         <main className="page">
-          <p className="running-head" aria-hidden="true">
-            <span>Questions and notes</span>
-          </p>
+          <Scroll small className="running-head">
+          <p className="running-head-text">Questions and notes</p>
+        </Scroll>
           <header>
-            <h1>It has been sent.</h1>
+            <h1 className="title">It has been sent.</h1>
             <p className="lede">
               {phone.trim()
                 ? 'Someone will get back to you on the number you left.'
@@ -97,14 +98,14 @@ export default function QuestionForm() {
 
   return (
     <>
-      <div className="glow" aria-hidden="true" />
+      <div className="leaf-edges" aria-hidden="true" />
       <main className="page">
-        <p className="running-head" aria-hidden="true">
-          <span>Questions and notes</span>
-        </p>
+        <Scroll small className="running-head">
+          <p className="running-head-text">Questions and notes</p>
+        </Scroll>
 
         <header>
-          <h1>Ask a question or leave a note.</h1>
+          <h1 className="title">Ask a question or leave a note.</h1>
           <p className="lede">
             Anything that is not a prayer request — a question for the church, a
             comment, something you think we should know.
@@ -117,14 +118,16 @@ export default function QuestionForm() {
               A number to reach you on (optional)
             </label>
             <p className="hint">Without one there is no way to answer you.</p>
-            <input
-              id="questionPhone"
-              className="input"
-              type="tel"
-              autoComplete="tel"
-              value={phone}
-              onChange={(event) => setPhone(event.target.value)}
-            />
+            <Sheet>
+              <input
+                id="questionPhone"
+                className="input"
+                type="tel"
+                autoComplete="tel"
+                value={phone}
+                onChange={(event) => setPhone(event.target.value)}
+              />
+            </Sheet>
             <label className="choice">
               <input
                 type="checkbox"
@@ -139,15 +142,17 @@ export default function QuestionForm() {
             <label className="label" htmlFor="questionBody">
               Write your question or note below
             </label>
-            <textarea
-              id="questionBody"
-              className="input textarea"
-              value={body}
-              maxLength={MAX_BODY}
-              rows={7}
-              onChange={(event) => setBody(event.target.value)}
-              autoFocus
-            />
+            <Scroll>
+              <textarea
+                id="questionBody"
+                className="textarea"
+                value={body}
+                maxLength={MAX_BODY}
+                rows={7}
+                onChange={(event) => setBody(event.target.value)}
+                autoFocus
+              />
+            </Scroll>
           </div>
 
           {error && (
@@ -157,7 +162,7 @@ export default function QuestionForm() {
           )}
 
           <button className="send" type="submit" disabled={sending}>
-            {sending ? 'Sending…' : 'Send it'}
+            {sending ? 'Sending…' : 'Send'}
           </button>
         </form>
       </main>

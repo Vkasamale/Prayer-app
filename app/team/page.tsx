@@ -112,11 +112,11 @@ function SignIn() {
 
   return (
     <>
-      <div className="glow" aria-hidden="true" />
+      <div className="leaf-edges" aria-hidden="true" />
       <main className="page">
         <header>
           <p className="eyebrow">{CHURCH_NAME}</p>
-          <h1>Prayer team</h1>
+          <h1 className="title">Prayer team</h1>
           <p className="lede">
             Accounts are set up by the church. There is no sign-up here.
           </p>
@@ -284,12 +284,12 @@ function PrayerList() {
 
   return (
     <>
-      <div className="glow" aria-hidden="true" />
+      <div className="leaf-edges" aria-hidden="true" />
       <main className="page page-wide">
         <header className="team-header">
           <div>
             <p className="eyebrow">{CHURCH_NAME}</p>
-            <h1>Prayer team</h1>
+            <h1 className="title">Prayer team</h1>
           </div>
           <button className="quiet-button" onClick={() => getSupabase().auth.signOut()}>
             Sign out

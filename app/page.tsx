@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import ShareLink from './ShareLink'
 import QrCode from './QrCode'
+import Scroll from './Scroll'
 
 // The identity choice, shown before the form and before anything is typed.
 //
@@ -26,22 +27,22 @@ import QrCode from './QrCode'
 export default function IdentityChoice() {
   return (
     <>
-      <div className="glow" aria-hidden="true" />
+      <div className="leaf-edges" aria-hidden="true" />
 
       <main className="page">
-        <p className="running-head" aria-hidden="true">
-          <span>Prayer requests</span>
-        </p>
+        <Scroll small className="running-head">
+          <p className="running-head-text">Prayer requests</p>
+        </Scroll>
 
         <header>
-          <h1>Share what is on your heart.</h1>
+          <h1 className="title">Share what is on your heart.</h1>
           {/* Red because Christ is the one speaking — the red-letter
               convention, not an accent colour. See globals.css.
               NIV, which is copyrighted: Biblica permit up to 500 verses
               non-commercially provided the notice appears, and it does, in the
               footnote below. Two verses is well inside that. If this ever takes
               money, the permission has to be looked at again. */}
-          <p className="verse verse-red">
+          <p className="verse verse-christ">
             <span className="v-num">28</span>
             Come to me, all you who are weary and burdened, and I will give you
             rest.

@@ -39,7 +39,34 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Petrona:ital,wght@0,400;0,500;0,600;1,400&display=swap"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {/* The torn edge of every scroll, defined once and referenced by CSS.
+            feTurbulence generates noise; feDisplacementMap pushes the sheet's
+            own edge around by that noise, so no two millimetres of the edge
+            tear alike. A repeating shape would be spotted immediately.
+            baseFrequency is deliberately uneven — low across, higher down — so
+            the tearing runs along the sides rather than the top and bottom,
+            which is where a rolled sheet is cut straight. */}
+        <svg width="0" height="0" aria-hidden="true" focusable="false">
+          <filter id="torn-edge">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.012 0.09"
+              numOctaves="3"
+              seed="7"
+              result="noise"
+            />
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="noise"
+              scale="11"
+              xChannelSelector="R"
+              yChannelSelector="G"
+            />
+          </filter>
+        </svg>
+        {children}
+      </body>
     </html>
   )
 }

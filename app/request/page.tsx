@@ -17,7 +17,7 @@ export default async function RequestPage({
   if (identity !== 'named' && identity !== 'anonymous') {
     return (
       <>
-        <div className="glow" aria-hidden="true" />
+        <div className="leaf-edges" aria-hidden="true" />
         <main className="page">
           <header>
             <h1>Let us start again.</h1>

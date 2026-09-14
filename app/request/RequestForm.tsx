@@ -8,6 +8,7 @@ import QrCode from '../QrCode'
 import { CATEGORIES, type Category } from '@/lib/categories'
 import { getBrowserId } from '@/lib/browserId'
 import { getSupabase } from '@/lib/supabase'
+import Scroll, { Sheet } from '../Scroll'
 
 type Membership = 'yes' | 'no' | 'unanswered'
 
@@ -85,14 +86,14 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
   if (sent) {
     return (
       <>
-        <div className="glow" aria-hidden="true" />
+        <div className="leaf-edges" aria-hidden="true" />
         <main className="page">
-          <p className="running-head" aria-hidden="true">
-            <span>Prayer requests</span>
-          </p>
+          <Scroll small className="running-head">
+          <p className="running-head-text">Prayer requests</p>
+        </Scroll>
 
           <header>
-            <h1>It is with the prayer team.</h1>
+            <h1 className="title">It is with the prayer team.</h1>
             <p className="lede">
               They will pray over it {REVIEW_CADENCE}.
               {isNamed
@@ -144,7 +145,7 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
 
   return (
     <>
-      <div className="glow" aria-hidden="true" />
+      <div className="leaf-edges" aria-hidden="true" />
       <main className="page">
         <section className="notice" aria-label="Before you start">
           <p>
@@ -166,7 +167,7 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
         </section>
 
         <header>
-          <h1>What are your prayer requests or praises?</h1>
+          <h1 className="title">What are your prayer requests or praises?</h1>
         </header>
 
         <form onSubmit={handleSubmit} noValidate>
@@ -176,26 +177,30 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
                 <label className="label" htmlFor="firstName">
                   First name
                 </label>
-                <input
-                  id="firstName"
-                  className="input"
-                  autoComplete="given-name"
-                  value={firstName}
-                  onChange={(event) => setFirstName(event.target.value)}
-                />
+                <Sheet>
+                  <input
+                    id="firstName"
+                    className="input"
+                    autoComplete="given-name"
+                    value={firstName}
+                    onChange={(event) => setFirstName(event.target.value)}
+                  />
+                </Sheet>
               </div>
 
               <div className="field">
                 <label className="label" htmlFor="lastName">
                   Last name
                 </label>
-                <input
-                  id="lastName"
-                  className="input"
-                  autoComplete="family-name"
-                  value={lastName}
-                  onChange={(event) => setLastName(event.target.value)}
-                />
+                <Sheet>
+                  <input
+                    id="lastName"
+                    className="input"
+                    autoComplete="family-name"
+                    value={lastName}
+                    onChange={(event) => setLastName(event.target.value)}
+                  />
+                </Sheet>
               </div>
 
               <div className="field">
@@ -206,14 +211,16 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
                   Only the church leadership sees this. The prayer team prays for
                   you by first name.
                 </p>
-                <input
-                  id="phone"
-                  className="input"
-                  type="tel"
-                  autoComplete="tel"
-                  value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
-                />
+                <Sheet>
+                  <input
+                    id="phone"
+                    className="input"
+                    type="tel"
+                    autoComplete="tel"
+                    value={phone}
+                    onChange={(event) => setPhone(event.target.value)}
+                  />
+                </Sheet>
                 <label className="choice">
                   <input
                     type="checkbox"
@@ -279,15 +286,17 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
             <label className="label" htmlFor="body">
               Write your prayer request below
             </label>
-            <textarea
-              id="body"
-              className="input textarea"
-              value={body}
-              maxLength={MAX_BODY}
-              rows={7}
-              onChange={(event) => setBody(event.target.value)}
-              autoFocus
-            />
+            <Scroll>
+              <textarea
+                id="body"
+                className="textarea"
+                value={body}
+                maxLength={MAX_BODY}
+                rows={7}
+                onChange={(event) => setBody(event.target.value)}
+                autoFocus
+              />
+            </Scroll>
             {!isNamed && (
               <p className="hint">
                 Nothing you write here is tied to you. No name, no number, no
@@ -321,14 +330,16 @@ export default function RequestForm({ isNamed }: { isNamed: boolean }) {
                     No name needed. This number is kept with this request only and
                     is seen by church leadership alone.
                   </p>
-                  <input
-                    id="contactPhone"
-                    className="input"
-                    type="tel"
-                    autoComplete="tel"
-                    value={contactPhone}
-                    onChange={(event) => setContactPhone(event.target.value)}
-                  />
+                  <Sheet>
+                    <input
+                      id="contactPhone"
+                      className="input"
+                      type="tel"
+                      autoComplete="tel"
+                      value={contactPhone}
+                      onChange={(event) => setContactPhone(event.target.value)}
+                    />
+                  </Sheet>
                   <label className="choice">
                     <input
                       type="checkbox"
